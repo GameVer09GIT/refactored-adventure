@@ -1,0 +1,15 @@
+# Ghost Materials
+newmtl M_GhostCloth
+Ka 1.000 1.000 1.000
+Kd 0.850 0.820 0.780
+Ks 0.050 0.050 0.050
+d 1.0
+illum 2
+map_Kd Textures/burlap_cloth.jpg
+
+newmtl M_GhostEyes
+Ka 0.000 0.000 0.000
+Kd 0.050 0.050 0.050
+Ks 0.000 0.000 0.000
+d 1.0
+illum 1
