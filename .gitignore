@@ -105,3 +105,9 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Temporary crash recovery and diagnostic reports
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/*report*.txt
+/[Aa]ssets/*report*.txt.meta
+/[Aa]ssets/_Recovery*

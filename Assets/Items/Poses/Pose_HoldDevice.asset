@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2505b5759e233464db6a23bd97dd1c13, type: 3}
+  m_Name: Pose_HoldDevice
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorGame.Inventory.HandPose
+  poseName: HoldDevice
+  description: "T\u01B0 th\u1EBF tay tr\xE1i gi\u1EEF c\u1EA1nh thi\u1EBFt b\u1ECB
+    radar, ng\xF3n c\xE1i t\u1EF1a m\u1EB7t tr\u01B0\u1EDBc"
+  thumb:
+    joint1: 18
+    joint2: 14
+    joint3: 0
+    spread: 20
+  index:
+    joint1: 32
+    joint2: 42
+    joint3: 26
+    spread: -4
+  middle:
+    joint1: 34
+    joint2: 44
+    joint3: 28
+    spread: 0
+  ring:
+    joint1: 33
+    joint2: 42
+    joint3: 26
+    spread: 4
+  pinky:
+    joint1: 30
+    joint2: 38
+    joint3: 22
+    spread: 8
+  wristRotationOffset: {x: 5, y: 0, z: 0}
+  wristPositionOffset: {x: 0, y: 0, z: 0}

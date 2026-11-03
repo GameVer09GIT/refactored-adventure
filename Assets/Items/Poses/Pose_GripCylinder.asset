@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2505b5759e233464db6a23bd97dd1c13, type: 3}
+  m_Name: Pose_GripCylinder
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorGame.Inventory.HandPose
+  poseName: GripCylinder
+  description: "T\u01B0 th\u1EBF \xF4m th\xE2n h\xECnh tr\u1EE5 \u0111\xE8n pin,
+    ng\xF3n c\xE1i \u0111\u1EB7t s\xE1t n\xFAt b\u1EA5m"
+  thumb:
+    joint1: 28
+    joint2: 24
+    joint3: 0
+    spread: -16
+  index:
+    joint1: 48
+    joint2: 54
+    joint3: 34
+    spread: 4
+  middle:
+    joint1: 52
+    joint2: 58
+    joint3: 36
+    spread: 0
+  ring:
+    joint1: 50
+    joint2: 56
+    joint3: 35
+    spread: -4
+  pinky:
+    joint1: 46
+    joint2: 50
+    joint3: 30
+    spread: -8
+  wristRotationOffset: {x: 0, y: 0, z: 0}
+  wristPositionOffset: {x: 0, y: 0, z: 0}
