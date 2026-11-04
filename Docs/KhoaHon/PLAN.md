@@ -223,3 +223,54 @@ Không có quyết định thiết kế tự đặt thêm ở Phase 0.
 
 - Duyệt **scene (b)**: dựng `KH_Main` mới, tạo `KH_Player.prefab` từ bản sao Player của MapKinhDi.
 - Đồng ý thay đổi duy nhất vào code dùng chung: thêm `Recorder, FilmCamera, Crowbar` vào cuối enum `ItemType`.
+
+---
+
+## 10. HƯỚNG B (đã duyệt 2026-11-05): dùng map cũ làm nền
+
+Người dùng chọn hướng B: `KH_Main` = bản sao `MapKinhDi_Ver1`. Mọi thao tác chạy bằng công cụ có thể chạy lại:
+`KhoaHon/Build/3. Convert MapKinhDi → KH_Main (Hướng B)` (`Assets/_KhoaHon/Editor/KhoaHonVillaConverter.cs`).
+File `MapKinhDi_Ver1.unity` gốc **không bị sửa**. Greybox cũ được giữ ở `KH_Greybox.unity` để tham khảo.
+
+### 10.1. Biệt thự Thanh Vân = Villa1
+- Khung x[66.7, 110.7] z[7.5, 27.5]. Sàn tầng trệt y = 11, sàn tầng 2 y = 18, trần cao 7 m.
+- Giếng trời x[82.7, 94.7] z[11.5, 23.5].
+- Cửa chính đôi ở mặt nam (x ≈ 80.7). Cầu thang chữ U ở phòng đông bắc: đợt 1 x ≈ 103.6 lên phía nam tới chiếu nghỉ y ≈ 14.7, đợt 2 x ≈ 105.75 lên phía bắc tới tầng 2.
+
+| Tầng | Phòng | Vùng |
+|---|---|---|
+| Trệt | Sảnh Chính (tiền sảnh + sảnh giếng trời) | x[78.7, 94.7] |
+| Trệt | Phòng Khách | x[66.7, 78.7] z[7.5, 15.5] |
+| Trệt | Nhà Bếp (nắp hầm) | x[66.7, 78.7] z[15.5, 27.5] |
+| Trệt | Phòng Làm Việc (két) | x[94.7, 110.7] z[7.5, 15.5] |
+| Trệt | Phòng cầu thang (cửa khóa `key_upstairs`) | x[94.7, 110.7] z[15.5, 27.5] |
+| 2 | Hành lang vòng quanh giếng trời | x[78.7, 102.7] |
+| 2 | Trẻ Em (Mộc) | x[66.7, 78.7] z[19.5, 27.5] |
+| 2 | Phòng Thờ | x[66.7, 78.7] z[15.5, 19.5] |
+| 2 | Gia Nhân (Thổ), xa cầu thang nhất | x[66.7, 78.7] z[7.5, 15.5] |
+| 2 | Ngủ Chủ Nhân (Hỏa) | x[102.7, 110.7] z[7.5, 11.5] |
+| 2 | Thư Viện Cổ (Kim) | x[106.7, 110.7] z[11.5, 23.5] |
+| 2 | Khách Trọ (Thủy) | x[106.7, 110.7] z[23.5, 27.5] |
+| Hầm | Dưới Nhà Bếp, gốc (65.2, 11, 20.3) | cầu thang sâu 10 m đi về phía tây, xà lim, sảnh tế bát giác |
+
+### 10.2. Thay đổi so với map gốc (chỉ trong bản sao)
+- Gỡ con ma demo (`Ghost` + `GhostAI`) và `NavMesh_Manager` cũ.
+- Gỡ rào chắn cầu thang của bản demo: 2 khối `_BLOCKERCUBE`, ghế dài, ghế và tủ trên chiếu nghỉ.
+- 24 cánh `Villa1_Door_*` gốc → bỏ bản trùng còn 13, chuyển thành `DoorInteractable`:
+  - cửa chính đôi được liên kết, sập khóa khi vào;
+  - cửa phòng cầu thang khóa bằng chìa;
+  - cửa sau và cửa ban công khóa "từ bên ngoài".
+- Tầng 2 chia phòng bằng mảnh gốc `Villa1_Wall_Int_A/B` (lưới 4 m) và thêm 4 cánh `Villa1_Door_A`. Gỡ 2 vách cắt hành lang vòng và lan can phía đông lỗ cầu thang.
+- 3 mảnh sàn hư `Villa1_Floor_Mid_C` có lỗ thủng thật → bắc ván gỗ và đặt collider liền.
+- Cầu thang gốc có gờ ~0.4 m (cao hơn stepOffset 0.3) → phủ 2 dốc + chiếu nghỉ vô hình.
+- Mặt đất `Ground_North_Full` (phẳng, y = 10): tắt MeshCollider, thay bằng 4 BoxCollider chừa lỗ cho cầu thang hầm.
+- NavMesh mới (`KH_NavMesh`, vùng quanh biệt thự). Area `Floor2` gồm tầng 2 + nửa trên cầu thang (y ≥ 15).
+
+### 10.3. Bà Quản Gia (thay GhostAI demo)
+- Model `civilian_girl` (rig Humanoid) + clip Idle/Walking/Run có sẵn. Trang phục áo bà ba đen, tóc dài, chùm chìa khóa dựng trong Blender và gắn cứng theo xương.
+- AI: `HousekeeperBrain` (C# thuần, có test) + `HousekeeperAI`. Chỗ trốn `HidingSpot`, nín thở `BreathHold`, tiếng động `PlayerNoiseEmitter`.
+- Âm thanh tự tổng hợp: chùm chìa khóa kéo lê, hát ru "ầu ơ" (giai điệu ngũ cung tự viết), nhịp truy đuổi, thì thầm.
+
+### 10.4. Blender
+- Script `Tools/Blender/khoahon_props.py` chạy nền (`blender --background --python ... -- <out>`), xuất FBX + icon + ảnh xem trước.
+- Model: Ấn Đồng, vạc, bài vị ×2 kiểu, đài sen, búp bê, lược, búa, hài thêu, còi, máy ghi âm, máy ảnh, xà beng, két, nến, xích, nắp hầm, chùm chìa khóa, áo bà ba (thân/vạt/tay), tóc dài.

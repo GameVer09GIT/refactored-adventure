@@ -30,9 +30,20 @@ namespace KhoaHon.EditorTools
         const float F2 = 3.6f;     // sàn tầng 2
         const float H2 = 3.4f;     // chiều cao tường tầng 2
 
-        static Material mWall, mFloor, mDoor, mStone, mGround, mRoad, mInteract, mBlood, mMetal;
-        static KhoaHonDataBuilder.Result data;
-        static readonly List<string> log = new List<string>();
+        internal static Material mWall, mFloor, mDoor, mStone, mGround, mRoad, mInteract, mBlood, mMetal;
+        internal static KhoaHonDataBuilder.Result data;
+        internal static readonly List<string> log = new List<string>();
+
+
+        /// <summary>Khởi tạo vật liệu + dữ liệu để các công cụ khác (VillaConverter) dùng lại hàm dựng.</summary>
+        internal static void Init(KhoaHonDataBuilder.Result r)
+        {
+            data = r;
+            var m = r.mats;
+            mWall = m[0]; mFloor = m[1]; mDoor = m[2]; mStone = m[3]; mGround = m[4]; mRoad = m[5]; mMetal = m[7]; mInteract = m[10]; mBlood = m[11];
+        }
+
+        internal static List<string> Log => log;
 
         [MenuItem("KhoaHon/Build/2. Greybox Scene KH_Main")]
         public static void BuildMenu() => Debug.Log(Build());
@@ -77,7 +88,7 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // Ánh sáng
-        static void BuildLighting(Transform env)
+        internal static void BuildLighting(Transform env)
         {
             var moon = new GameObject("Moonlight").AddComponent<Light>();
             moon.transform.SetParent(env);
@@ -106,7 +117,7 @@ namespace KhoaHon.EditorTools
             log.Add("Lighting ok");
         }
 
-        static void WorkLight(Transform parent, string name, Vector3 pos, float range = 9f, float intensity = 1.6f)
+        internal static void WorkLight(Transform parent, string name, Vector3 pos, float range = 9f, float intensity = 1.6f)
         {
             var l = new GameObject("WorkLight_" + name).AddComponent<Light>();
             l.transform.SetParent(parent);
@@ -120,7 +131,7 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // Ngoại thất
-        static void BuildExterior(Transform level)
+        internal static void BuildExterior(Transform level)
         {
             var ext = Group(level, "Exterior");
             // Mặt đất quanh nhà (chừa đúng footprint nhà để không chắn hầm)
@@ -160,12 +171,12 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // Tầng trệt — x[-12,12] z[-9,9]
-        class Doors
+        internal class Doors
         {
             public DoorInteractable front, stair, living, study, kitchen;
         }
 
-        static Doors BuildGroundFloor(Transform level)
+        internal static Doors BuildGroundFloor(Transform level)
         {
             var gf = Group(level, "GroundFloor");
             var d = new Doors();
@@ -254,7 +265,7 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // Tầng 2 — hành lang z[-1.5,1.5]
-        static void BuildFloor2(Transform level, Doors doors)
+        internal static void BuildFloor2(Transform level, Doors doors)
         {
             var f2 = Group(level, "Floor2");
             float y = F2;
@@ -314,7 +325,7 @@ namespace KhoaHon.EditorTools
             log.Add("Floor 2 ok");
         }
 
-        static void RelicRoom(Transform parent, string id, string label, Vector3 center, Vector3 size, int hanh, Vector3 relicPos, string nameKey, Vector3? wardrobe, Vector3? bed)
+        internal static void RelicRoom(Transform parent, string id, string label, Vector3 center, Vector3 size, int hanh, Vector3 relicPos, string nameKey, Vector3? wardrobe, Vector3? bed)
         {
             var room = Room(parent, id, label, center, size);
             WorkLight(room, id, center + Vector3.up * 2.8f, 8, 1.0f);
@@ -326,7 +337,7 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // Hầm: cầu thang đá từ nắp hầm (x 9 → -5, y 0 → -10), chiếu nghỉ, hành lang, xà lim, sảnh tế bát giác
-        static void BuildCellar(Transform level)
+        internal static void BuildCellar(Transform level)
         {
             var c = Group(level, "Cellar");
             float yb = -10f;
@@ -406,7 +417,7 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // Hệ thống
-        static GameObject BuildSystems()
+        internal static GameObject BuildSystems()
         {
             var sys = new GameObject("KH_GameSystems");
             var gm = sys.AddComponent<GameManager>();
@@ -441,7 +452,7 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // Sao chép Player + UI từ MapKinhDi (KHÔNG sửa/lưu scene nguồn)
-        static GameObject CopyPlayerRig(Scene source, Scene target, GameObject systems)
+        internal static GameObject CopyPlayerRig(Scene source, Scene target, GameObject systems)
         {
             string[] names = { "Player", "Canvas", "DeathScreenManager", "EventSystem", "SpawnPoint" };
             var originals = new List<GameObject>();
@@ -487,7 +498,13 @@ namespace KhoaHon.EditorTools
             var player = copies.First(x => x.name == "Player");
             var spawn = copies.FirstOrDefault(x => x.name == "SpawnPoint");
             var canvas = copies.FirstOrDefault(x => x.name == "Canvas");
+            ConfigurePlayer(player, canvas, spawn, systems, new Vector3(0, 0, -32f), 0f, true);
+            return player;
+        }
 
+        /// <summary>Gắn hệ thống Khóa Hồn lên Player có sẵn: hotbar chiến dịch, tương tác, pin, khóa ô; đặt tại vị trí cho trước.</summary>
+        internal static void ConfigurePlayer(GameObject player, GameObject canvas, GameObject spawn, GameObject systems, Vector3 groundPos, float yaw, bool savePrefab)
+        {
             // Font tiếng Việt cho UI cũ (chỉ sửa bản sao trong scene mới)
             if (canvas != null)
                 foreach (var t in canvas.GetComponentsInChildren<TMP_Text>(true)) t.font = data.style.sansFont;
@@ -506,9 +523,10 @@ namespace KhoaHon.EditorTools
             // Gỡ instance Radar có sẵn dưới holder (nếu có) để không bị khớp nhầm
             foreach (var radar in player.GetComponentsInChildren<RadarItem>(true)) Object.DestroyImmediate(radar.gameObject);
 
-            player.AddComponent<PlayerInteractor>();
-            player.AddComponent<FlashlightBatteryDrain>();
-            var gate = player.AddComponent<HotbarGate>();
+            if (player.GetComponent<PlayerInteractor>() == null) player.AddComponent<PlayerInteractor>();
+            if (player.GetComponent<FlashlightBatteryDrain>() == null) player.AddComponent<FlashlightBatteryDrain>();
+            var gate = player.GetComponent<HotbarGate>();
+            if (gate == null) gate = player.AddComponent<HotbarGate>();
             var gso = new SerializedObject(gate);
             var g = gso.FindProperty("gated");
             g.arraySize = 1;
@@ -521,7 +539,7 @@ namespace KhoaHon.EditorTools
             // Đặt Player ở CP_Gate (chân chạm đất)
             var cc = player.GetComponent<CharacterController>();
             float footOffset = cc != null ? -(cc.center.y - cc.height * 0.5f) + 0.05f : 0.05f;
-            player.transform.SetPositionAndRotation(new Vector3(0, footOffset, -32f), Quaternion.identity);
+            player.transform.SetPositionAndRotation(groundPos + Vector3.up * footOffset, Quaternion.Euler(0, yaw, 0));
             if (spawn != null)
             {
                 spawn.transform.SetPositionAndRotation(player.transform.position, Quaternion.identity);
@@ -532,15 +550,15 @@ namespace KhoaHon.EditorTools
             }
             log.Add($"Player CC h={cc?.height} c={cc?.center} step={cc?.stepOffset} slope={cc?.slopeLimit}");
 
+            if (!savePrefab) return;
             // Prefab KH_Player
             string prefabPath = KhoaHonDataBuilder.Root + "/Prefabs/Characters/KH_Player.prefab";
             PrefabUtility.SaveAsPrefabAssetAndConnect(player, prefabPath, InteractionMode.AutomatedAction);
             log.Add("Prefab " + prefabPath);
-            return player;
         }
 
         // =====================================================================
-        static void BuildCheckpointsAndTriggers(Transform level, Doors doors)
+        internal static void BuildCheckpointsAndTriggers(Transform level, Doors doors)
         {
             var cps = Group(level, "Checkpoints");
             Cp(cps, "CP_Gate", new Vector3(0, 0, -32f), 0, false, GameStage.Stage0_Gate);
@@ -573,7 +591,7 @@ namespace KhoaHon.EditorTools
             log.Add("Checkpoints ok");
         }
 
-        static Checkpoint Cp(Transform parent, string id, Vector3 pos, float yaw, bool onEnter, GameStage stage)
+        internal static Checkpoint Cp(Transform parent, string id, Vector3 pos, float yaw, bool onEnter, GameStage stage)
         {
             var go = new GameObject(id);
             go.transform.SetParent(parent);
@@ -587,7 +605,7 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // NavMesh
-        static int EnsureNavArea(string name, int index)
+        internal static int EnsureNavArea(string name, int index)
         {
             var settings = Unsupported.GetSerializedAssetInterfaceSingleton("NavMeshProjectSettings");
             var so = new SerializedObject(settings);
@@ -606,7 +624,7 @@ namespace KhoaHon.EditorTools
             return index;
         }
 
-        static void BakeNavMesh(Scene scene, int floor2Area)
+        internal static void BakeNavMesh(Scene scene, int floor2Area)
         {
             var go = new GameObject("KH_NavMesh");
             var surf = go.AddComponent<NavMeshSurface>();
@@ -642,7 +660,7 @@ namespace KhoaHon.EditorTools
             log.Add($"NavMesh baked: tris={tri.areas.Length} floor2Tris={f2}");
         }
 
-        static void AddToBuildSettings(string path)
+        internal static void AddToBuildSettings(string path)
         {
             var list = EditorBuildSettings.scenes.ToList();
             if (list.Any(s => s.path == path)) return;
@@ -653,19 +671,19 @@ namespace KhoaHon.EditorTools
 
         // =====================================================================
         // Hình học
-        enum Axis { X, Z }
+        internal enum Axis { X, Z }
 
-        struct Opening { public float center, width, height, sill; }
-        static Opening Op(float center, float width, float height, float sill = 0f) => new Opening { center = center, width = width, height = height, sill = sill };
+        internal struct Opening { public float center, width, height, sill; }
+        internal static Opening Op(float center, float width, float height, float sill = 0f) => new Opening { center = center, width = width, height = height, sill = sill };
 
-        static Transform Group(Transform parent, string name)
+        internal static Transform Group(Transform parent, string name)
         {
             var g = new GameObject(name).transform;
             if (parent != null) g.SetParent(parent, false);
             return g;
         }
 
-        static Transform Room(Transform parent, string id, string label, Vector3 center, Vector3 size)
+        internal static Transform Room(Transform parent, string id, string label, Vector3 center, Vector3 size)
         {
             var g = Group(parent, id);
             g.position = center;
@@ -674,7 +692,7 @@ namespace KhoaHon.EditorTools
             return g;
         }
 
-        static Transform Box(Transform parent, string name, Vector3 pos, Vector3 size, Material mat, bool collider = true, bool keepWorld = false)
+        internal static Transform Box(Transform parent, string name, Vector3 pos, Vector3 size, Material mat, bool collider = true, bool keepWorld = false)
         {
             var g = GameObject.CreatePrimitive(PrimitiveType.Cube);
             g.name = name;
@@ -689,7 +707,7 @@ namespace KhoaHon.EditorTools
         }
 
         /// <summary>Tường dọc trục X (từ x0 tới x1 tại z), có ô cửa/cửa sổ.</summary>
-        static void WallX(Transform parent, string name, float x0, float x1, float z, float y, float h, Opening[] ops)
+        internal static void WallX(Transform parent, string name, float x0, float x1, float z, float y, float h, Opening[] ops)
         {
             var g = Group(parent, name);
             foreach (var seg in Segments(x0, x1, y, h, ops))
@@ -697,7 +715,7 @@ namespace KhoaHon.EditorTools
         }
 
         /// <summary>Tường dọc trục Z (từ z0 tới z1 tại x).</summary>
-        static void WallZ(Transform parent, string name, float z0, float z1, float x, float y, float h, Opening[] ops)
+        internal static void WallZ(Transform parent, string name, float z0, float z1, float x, float y, float h, Opening[] ops)
         {
             var g = Group(parent, name);
             foreach (var seg in Segments(z0, z1, y, h, ops))
@@ -705,7 +723,7 @@ namespace KhoaHon.EditorTools
         }
 
         /// <summary>Chia tường thành các khối (a0, y0, a1, y1) tránh ô mở.</summary>
-        static List<Vector4> Segments(float a0, float a1, float y, float h, Opening[] ops)
+        internal static List<Vector4> Segments(float a0, float a1, float y, float h, Opening[] ops)
         {
             var res = new List<Vector4>();
             var sorted = (ops ?? new Opening[0]).OrderBy(o => o.center).ToList();
@@ -723,7 +741,7 @@ namespace KhoaHon.EditorTools
         }
 
         /// <summary>Tấm sàn (Rect x,z,w,d) tại cao độ y (mặt dưới), chừa các lỗ.</summary>
-        static void Slab(Transform parent, string name, Rect area, float y, float thick, Material mat, Rect[] holes)
+        internal static void Slab(Transform parent, string name, Rect area, float y, float thick, Material mat, Rect[] holes)
         {
             var g = Group(parent, name);
             var xs = new List<float> { area.xMin, area.xMax };
@@ -753,7 +771,7 @@ namespace KhoaHon.EditorTools
         }
 
         /// <summary>Cầu thang: bậc hiển thị (không collider) + dốc collider vô hình để đi mượt.</summary>
-        static void Stairs(Transform parent, string name, Vector3 bottom, Vector3 top, float width, int steps, Material mat)
+        internal static void Stairs(Transform parent, string name, Vector3 bottom, Vector3 top, float width, int steps, Material mat)
         {
             var g = Group(parent, name);
             var flat = new Vector3(top.x - bottom.x, 0, top.z - bottom.z);
@@ -786,7 +804,7 @@ namespace KhoaHon.EditorTools
             ramp.isStatic = true;
         }
 
-        static DoorInteractable Door(Transform parent, string id, Vector3 hingePos, float width, float height, bool locked, string key, string lockedKey, string keyNameKey, Axis axis)
+        internal static DoorInteractable Door(Transform parent, string id, Vector3 hingePos, float width, float height, bool locked, string key, string lockedKey, string keyNameKey, Axis axis)
         {
             var pivot = new GameObject(id);
             pivot.transform.SetParent(parent, true);
@@ -808,13 +826,13 @@ namespace KhoaHon.EditorTools
             return door;
         }
 
-        static AudioClip FindClip(string name)
+        internal static AudioClip FindClip(string name)
         {
             var guid = AssetDatabase.FindAssets(name + " t:AudioClip").FirstOrDefault();
             return guid != null ? AssetDatabase.LoadAssetAtPath<AudioClip>(AssetDatabase.GUIDToAssetPath(guid)) : null;
         }
 
-        static Pickup PickupBox(Transform parent, string id, Vector3 pos, Vector3 size, string nameKey,
+        internal static Pickup PickupBox(Transform parent, string id, Vector3 pos, Vector3 size, string nameKey,
             string key = "", float battery = 0f, int film = 0, StoryFlag[] rewards = null, NotebookSource[] sources = null, bool openDoc = false, string hint = "")
         {
             var t = Box(parent, id, pos, size, mInteract);
@@ -829,7 +847,7 @@ namespace KhoaHon.EditorTools
             return p;
         }
 
-        static ReadableDocument Readable(Transform parent, string name, Vector3 pos, Vector3 size, string docId)
+        internal static ReadableDocument Readable(Transform parent, string name, Vector3 pos, Vector3 size, string docId)
         {
             var t = Box(parent, name, pos, size, mInteract);
             var col = t.GetComponent<BoxCollider>();
@@ -840,7 +858,7 @@ namespace KhoaHon.EditorTools
             return r;
         }
 
-        static void SetArray(Object target, string prop, Object[] values)
+        internal static void SetArray(Object target, string prop, Object[] values)
         {
             var so = new SerializedObject(target);
             var p = so.FindProperty(prop);
