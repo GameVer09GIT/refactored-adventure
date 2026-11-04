@@ -34,7 +34,7 @@ namespace KhoaHon.Interaction
         private void Update()
         {
             if (rayOrigin == null) return;
-            if (ModalUI.IsAnyOpen)
+            if (ModalUI.IsAnyOpen || PlayerState.IsHiding)
             {
                 SetCurrent(null);
                 return;

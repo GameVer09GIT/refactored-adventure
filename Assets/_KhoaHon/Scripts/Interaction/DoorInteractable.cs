@@ -26,8 +26,12 @@ namespace KhoaHon.Interaction
         [SerializeField] private AudioClip lockedClip;
         [Tooltip("Bật khi mở cửa lần đầu (tùy chọn)")]
         [SerializeField] private StoryFlag flagOnFirstOpen = StoryFlag.None;
+        [Tooltip("Cánh còn lại của cửa đôi: mở/đóng/khóa cùng lúc")]
+        [SerializeField] private DoorInteractable linkedDoor;
 
         private bool isOpen;
+        private float leafSide = 1f;
+        private bool propagating;
         private Quaternion closedRot;
         private Coroutine anim;
         private AudioSource audioSource;
@@ -41,9 +45,15 @@ namespace KhoaHon.Interaction
             doorId = id; locked = isLocked; keyId = key; lockedTextKey = lockedKey; keyNameTextKey = keyNameKey;
         }
 
+        public void SetLinked(DoorInteractable other) => linkedDoor = other;
+        public void SetClips(AudioClip open, AudioClip close, AudioClip lockedSnd) { openClip = open; closeClip = close; lockedClip = lockedSnd; }
+
         private void Awake()
         {
             closedRot = transform.localRotation;
+            // Cánh nằm phía +x hay -x của bản lề (cánh gốc Villa1_Door_A trải về -x)
+            var r = GetComponentInChildren<Renderer>();
+            if (r != null) leafSide = transform.InverseTransformPoint(r.bounds.center).x >= 0f ? 1f : -1f;
             audioSource = GetComponent<AudioSource>();
             if (audioSource == null)
             {
@@ -87,7 +97,11 @@ namespace KhoaHon.Interaction
             Toggle();
         }
 
-        public void Unlock() => locked = false;
+        public void Unlock()
+        {
+            locked = false;
+            if (linkedDoor != null && !propagating) { propagating = true; linkedDoor.Unlock(); propagating = false; }
+        }
 
         public void ForceOpen()
         {
@@ -102,6 +116,7 @@ namespace KhoaHon.Interaction
             locked = true;
             keyId = "";
             if (!string.IsNullOrEmpty(newLockedTextKey)) lockedTextKey = newLockedTextKey;
+            if (linkedDoor != null && !propagating) { propagating = true; linkedDoor.CloseAndLock(newLockedTextKey); propagating = false; }
         }
 
         private void Toggle()
@@ -112,6 +127,10 @@ namespace KhoaHon.Interaction
             if (clip != null) audioSource.PlayOneShot(clip);
             if (anim != null) StopCoroutine(anim);
             if (isOpen) openSign = SwingAwaySign();
+            if (linkedDoor != null && !propagating && linkedDoor.isOpen != isOpen)
+            {
+                propagating = true; linkedDoor.locked = false; linkedDoor.Toggle(); propagating = false;
+            }
             anim = StartCoroutine(Rotate(isOpen ? closedRot * Quaternion.Euler(0f, openAngle * openSign, 0f) : closedRot));
         }
 
@@ -128,7 +147,7 @@ namespace KhoaHon.Interaction
             var parentRot = transform.parent != null ? transform.parent.rotation : Quaternion.identity;
             var closedForward = parentRot * closedRot * Vector3.forward;
             float side = Vector3.Dot(pc.transform.position - transform.position, closedForward);
-            return side >= 0f ? 1f : -1f;
+            return (side >= 0f ? 1f : -1f) * leafSide;
         }
 
         private IEnumerator Rotate(Quaternion target)
