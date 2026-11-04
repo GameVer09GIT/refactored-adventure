@@ -41,5 +41,9 @@ Mức ưu tiên: **P1** = ảnh hưởng hiểu cốt truyện / gameplay · **P
 | Âm thanh màn trập + flash | One-shot | Máy ảnh | P2 | — |
 | Tiếng rè cassette | Loop | Máy ghi âm | P2 | — |
 
+| Icon hotbar ×3 | Sprite cho Máy ghi âm, Máy ảnh film, Xà beng | HotbarUI | P2 | Ô trống (icon null) |
+| Pose cầm tay ×3 | Chỉnh IK/offset cầm máy ghi âm, máy ảnh, xà beng (hiện mượn Item_Radar) | Hotbar ô 2–4 | P1 (Phase 3) | Cầm được nhưng xuyên tay |
+
 ## TODO nội dung
+- **Bài chú trên 5 trang bùa**: GDD và PROMPT chưa có lời. Hiện để `[Câu chú n — chờ nội dung]` trong `Data/Talismans/TAL_*.asset`. Cần 4 câu/trang trước Phase 4 (Kết 2 đọc ngược bài chú trang Hỏa).
 - Thẻ phóng viên của Quân: GDD chưa có tên tòa soạn. Hiện để "THẺ PHÓNG VIÊN — Hạ Quân — Phóng viên ảnh".

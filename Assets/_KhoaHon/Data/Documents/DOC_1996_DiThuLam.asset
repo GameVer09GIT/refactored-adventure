@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90e318e617ea7dd4cb2778362dae431d, type: 3}
+  m_Name: DOC_1996_DiThuLam
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.DocumentData
+  id: DOC_1996_DiThuLam
+  title: "Di th\u01B0 L\xE2m Gia Huy"
+  year: 4
+  body: "M\u1ECDi c\u01A1 quan c\u1EE7a ng\xF4i nh\xE0 \u0111\u1EC1u \u0111i\u1EC1u
+    khi\u1EC3n t\u1EEB ph\xF2ng l\xE0m vi\u1EC7c v\xE0 ph\xF2ng th\u1EDD gia t\u1ED9c.
+    M\u1EADt m\xE3 k\xE9t s\u1EAFt n\u1EB1m \u1EDF n\u0103m khai sinh c\u01A1 nghi\u1EC7p
+    n\xE0y. Ta \u0111\xE3 m\u1EDF \u0111\u01B0\u1EE3c k\xE9t, nh\u01B0ng kh\xF4ng
+    qua \u0111\u01B0\u1EE3c b\xE0n th\u1EDD. Ng\u01B0\u1EDDi \u0111\xE0n b\xE0 c\u1EA7m
+    ch\xF9m ch\xECa kh\xF3a \u0111\xEAm n\xE0o c\u0169ng \u0111\u1EE9ng \u1EDF ch\xE2n
+    gi\u01B0\u1EDDng ta. Ta kh\xF4ng ch\u1ECBu n\u1ED5i n\u1EEFa."
+  serif: 1
+  flagOnRead: 0

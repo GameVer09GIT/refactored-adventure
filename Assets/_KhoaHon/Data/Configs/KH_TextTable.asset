@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3913ed5f51e5045acd20091cb8bb5d, type: 3}
+  m_Name: KH_TextTable
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Core.TextTable
+  entries:
+  - key: prompt.open_door
+    text: "[E] M\u1EDF c\u1EEDa"
+  - key: prompt.close_door
+    text: "[E] \u0110\xF3ng c\u1EEDa"
+  - key: prompt.locked
+    text: "C\u1EEDa b\u1ECB kh\xF3a"
+  - key: prompt.unlock_with
+    text: "[E] M\u1EDF kh\xF3a b\u1EB1ng {0}"
+  - key: prompt.pickup
+    text: "[E] Nh\u1EB7t {0}"
+  - key: prompt.read
+    text: "[E] \u0110\u1ECDc: {0}"
+  - key: prompt.inspect
+    text: '[E] Xem'
+  - key: prompt.main_door_locked
+    text: "C\u1EEDa ch\xEDnh \u0111\xE3 b\u1ECB then c\xE0i, kh\xF4ng m\u1EDF \u0111\u01B0\u1EE3c"
+  - key: prompt.stair_door_locked
+    text: "C\u1EEDa l\xEAn t\u1EA7ng hai b\u1ECB kh\xF3a"
+  - key: prompt.chains
+    text: "N\u1EAFp h\u1EA7m b\u1ECB kh\xF3a b\u1EB1ng 5 s\u1EE3i x\xEDch"
+  - key: prompt.altar
+    text: "B\xE0n th\u1EDD gia t\u1ED9c \u2014 13 b\xE0i v\u1ECB, 5 \u0111\xE0i sen"
+  - key: prompt.body
+    text: '[E] Xem'
+  - key: msg.chains
+    text: "N\u0103m s\u1EE3i x\xEDch l\u1EDBn n\u1ED1i ng\u1EA7m v\xE0o t\u01B0\u1EDDng.
+      Kh\xF4ng c\xF3 \u1ED5 kh\xF3a n\xE0o c\u1EA3."
+  - key: msg.altar
+    text: "N\u0103m \u0111\xE0i sen tr\u1ED1ng, m\u1ED7i \u0111\xE0i n\u1EB1m d\u01B0\u1EDBi
+      m\u1ED9t b\xE0i v\u1ECB kh\u1EAFc t\xEAn m\u1ED9t h\xE0nh."
+  - key: msg.rubble
+    text: "\u0110\xE1 s\u1EADp k\xEDn m\u1ED9t \u0111\u01B0\u1EDDng h\u1EA7m khoan
+      h\u1EB9p. Kh\xF4ng \u0111i ti\u1EBFp \u0111\u01B0\u1EE3c."
+  - key: key.upstairs
+    text: "ch\xECa kh\xF3a c\u1EEDa c\u1EA7u thang"
+  - key: item.backpack
+    text: "balo c\u1EE7a Qu\xE2n"
+  - key: item.battery
+    text: "pin ti\u1EC3u"
+  - key: item.film
+    text: "cu\u1ED9n phim"
+  - key: item.safe_placeholder
+    text: "\u0111\u1ED3 trong k\xE9t s\u1EAFt (t\u1EA1m)"
+  - key: item.tape
+    text: "cu\u1ED9n b\u0103ng cassette"
+  - key: item.newspaper
+    text: "m\u1EA9u b\xE1o c\u0169"
+  - key: item.relic_moc
+    text: "b\xFAp b\xEA v\u1EA3i"
+  - key: item.relic_thuy
+    text: "huy\u1EBFt th\u01B0"
+  - key: item.relic_tho
+    text: "l\u01B0\u1EE3c s\u1EEBng g\xE3y"
+  - key: item.relic_kim
+    text: "b\xFAa \u0111\xF3ng \u0111inh"
+  - key: item.relic_hoa
+    text: "\u0111\xF4i h\xE0i th\xEAu"
+  - key: item.generic
+    text: "v\u1EADt ph\u1EA9m"
+  - key: toast.got_item
+    text: "\u0110\xE3 nh\u1EB7t: {0}"
+  - key: toast.notebook_added
+    text: "\u0110\xE3 ghi v\xE0o S\u1ED5 tay: {0}"
+  - key: toast.saved
+    text: "\u0110\xE3 l\u01B0u ti\u1EBFn tr\xECnh"
+  - key: toast.no_save
+    text: "Ch\u01B0a c\xF3 b\u1EA3n l\u01B0u"
+  - key: hint.backpack
+    text: "C\xF3 th\u1EC3 nghe cu\u1ED9n b\u0103ng b\u1EB1ng m\xE1y ghi \xE2m (Tab
+      \u2192 B\u0103ng ghi \xE2m)"
+  - key: sub.front_door_slam
+    text: "(C\u1EEDa ch\xEDnh s\u1EADp l\u1EA1i sau l\u01B0ng. Then c\xE0i r\u01A1i
+      xu\u1ED1ng.)"
+  - key: ui.close
+    text: "\u0110\xF3ng [E]"
+  - key: notebook.title
+    text: "S\u1ED5 tay \u0111i\u1EC1u tra"
+  - key: notebook.hint
+    text: "Tab / J: \u0111\xF3ng  \xB7  Q / E: \u0111\u1ED5i tab"
+  - key: notebook.tab.documents
+    text: "T\xE0i li\u1EC7u"
+  - key: notebook.tab.tapes
+    text: "B\u0103ng ghi \xE2m"
+  - key: notebook.tab.photos
+    text: "\u1EA2nh"
+  - key: notebook.tab.talismans
+    text: "B\xF9a ch\xFA"
+  - key: notebook.tab.relics
+    text: "K\u1EF7 v\u1EADt"
+  - key: notebook.empty
+    text: "Ch\u01B0a c\xF3 g\xEC."
+  - key: notebook.new
+    text: "m\u1EDBi"
+  - key: notebook.tape_hint
+    text: "C\u1EA7m m\xE1y ghi \xE2m \u0111\u1EC3 nghe cu\u1ED9n b\u0103ng n\xE0y."
+  - key: intro.1
+    text: "Qu\xE2n m\u1EA5t t\xEDch \u1EDF bi\u1EC7t th\u1EF1 Thanh V\xE2n \u0111\xE3
+      m\u01B0\u1EDDi b\u1ED1n ng\xE0y."
+  - key: intro.2
+    text: "\u0110\xEAm cu\u1ED1i c\xF9ng, n\xF3 g\u1EEDi cho t\xF4i m\u1ED9t t\u1EA5m
+      \u1EA3nh ch\u1EE5p s\xE0n nh\xE0 b\u1EBFp. C\u1EA3nh s\xE1t n\xF3i \u0111\xF3
+      ch\u1EC9 l\xE0 v\u1EBFt b\u1EA9n."
+  - key: intro.3
+    text: "T\xF4i kh\xF4ng tin."

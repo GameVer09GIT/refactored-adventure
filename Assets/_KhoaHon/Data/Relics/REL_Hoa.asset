@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1db693696d896a44fab4f1242b57fba3, type: 3}
+  m_Name: REL_Hoa
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.RelicData
+  id: REL_Hoa
+  title: "\u0110\xF4i h\xE0i th\xEAu c\u1EE7a Nh\u1ECB n\u01B0\u01A1ng"
+  year: 1
+  body: "\u0110\xF4i h\xE0i th\xEAu c\u1EE7a Nh\u1ECB n\u01B0\u01A1ng, v\u1EE3 b\xE9
+    c\u1EE7a \u0110\u1EA1i Quan, b\u1ECB thi\xEAu s\u1ED1ng \u0111\u1EC3 c\xFAng
+    sao h\u1EA1n.\nL\xF3t trong h\xE0i l\xE0 m\u1ED9t trang b\xF9a."
+  serif: 1
+  hanh: 4
+  talisman: {fileID: 11400000, guid: c3ea8c551d4afc345a31cbbc12e18510, type: 2}
+  pickupLine: "(M\xF9i kh\xE9t tho\u1EA3ng qua.)"
