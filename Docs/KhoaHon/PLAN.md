@@ -109,6 +109,13 @@ Một ô ≈ 1 m. Trần tầng trệt 3.5 m, tầng 2 cao +3.6 m. Hầm sâu ~1
 - Phòng Gia Nhân (lược) đặt ở góc xa cầu thang nhất.
 - NavMesh area `Floor2` gồm hành lang, 6 phòng và cầu thang tới chiếu nghỉ. Bà Quản Gia chỉ được đi trên area này.
 
+### 3.3b. Điều chỉnh khi dựng (Phase 1)
+- Mọi ô cửa rộng **1.4 m**, cao **2.4 m**. Lý do: CharacterController của Vy cao 2 m, và agent NavMesh bán kính 0.5 m không lọt cửa 1.1 m.
+- Cửa cầu thang ở z = −6.0, cách chân dốc 0.8 m. Lỗ nắp hầm x[4.6, 9] để đủ khoảng trống đầu khi xuống.
+- Cửa mở **ra xa người chơi** để không chắn đường.
+- Ánh sáng: dùng đèn làm việc `WorkLight_*` (point light, không đổ bóng) để greybox nhìn được. Phase 3 thay bằng ánh sáng thật.
+- Két sắt: tạm thời là Pickup `Placeholder_SafeContents` (chìa, Sổ Khóa Hồn, bản thiết kế) để chơi xuyên suốt được. Phase 2 thay bằng `SafeKeypad` mã 1921.
+
 ### 3.4. Hầm
 ```
  NẮP HẦM (bếp)

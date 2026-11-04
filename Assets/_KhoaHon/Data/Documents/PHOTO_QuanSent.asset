@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c28122adc2f5cd44b9ec74d2f1d01391, type: 3}
+  m_Name: PHOTO_QuanSent
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.PhotoClueData
+  id: PHOTO_QuanSent
+  title: "\u1EA2nh Qu\xE2n g\u1EEDi"
+  year: 6
+  body: "\u1EA2nh ch\u1EE5p flash s\xE0n nh\xE0 b\u1EBFp, g\u1EEDi \u0111\xEAm cu\u1ED1i
+    c\xF9ng. Tr\xEAn s\xE0n hi\u1EC7n m\u1ED9t k\xFD hi\u1EC7u Ng\u0169 H\xE0nh b\u1EB1ng
+    m\xE1u m\xE0 m\u1EAFt th\u01B0\u1EDDng kh\xF4ng th\u1EA5y."
+  serif: 1
+  flagOnCapture: 0

@@ -27,7 +27,11 @@ Yêu cầu trực tiếp trong chat → `GEMINI.md` + skill unity-mcp-workflow �
 - Namespace `KhoaHon.<Folder>`. Tên class/biến tiếng Anh; comment và tooltip tiếng Việt.
 - Code gameplay để trong **Assembly-CSharp** (không asmdef) vì cần gọi `PlayerController` (global namespace) và `HorrorGame.Inventory`. Project hiện không có asmdef nào ngoài package.
 - Logic thuần (StoryFlags, LotusAltar check, SafeCode, FSM transition table) viết thành class C# không phụ thuộc MonoBehaviour để test được.
-- EditMode test: `Assets/_KhoaHon/Tests/EditMode/`. Cách tham chiếu Assembly-CSharp được chốt ở Phase 1 và ghi lại tại đây.
+- EditMode test (đã chốt ở Phase 1): đặt trong `Assets/_KhoaHon/Tests/Editor/` (thuộc Assembly-CSharp-Editor, tự thấy Assembly-CSharp và NUnit — **không cần asmdef**). Chạy bằng MCP `run_tests` mode `EditMode`, `group_names: ["KhoaHon.Tests"]`.
+- Mỗi ScriptableObject/MonoBehaviour phải nằm trong file `.cs` cùng tên class (Unity yêu cầu).
+- Sau khi tạo/xóa file `.cs` từ bên ngoài Unity: gọi `AssetDatabase.ImportAsset(path, ForceUpdate)` cho từng file mới rồi `CompilationPipeline.RequestScriptCompilation()`. Nếu Console báo `CS2001 ... could not be found` (Unity còn nhớ file đã xóa) hoặc file mới không vào danh sách biên dịch: tạo lại file trống rồi xóa bằng `AssetDatabase.DeleteAsset`, hoặc `AssetDatabase.MoveAsset` file mới sang thư mục khác. Kiểm tra bằng `CompilationPipeline.GetAssemblies(...).sourceFiles`.
+- Dựng lại scene greybox: menu `KhoaHon/Build/2. Greybox Scene KH_Main` (cần mở `MapKinhDi_Ver1` để chép Player; KHÔNG lưu MapKinhDi). Dữ liệu (văn bản, tài liệu, băng, kỷ vật, item): `KhoaHon/Build/1. Data Assets`.
+- Khi test Play qua MCP: đặt `PlayerController.mouseSensitivity = 0` ở runtime (chuột thật của người dùng làm lệch camera). Tự đi bộ kiểm tra đường: `KhoaHon.DebugTools.KhoaHonAutoWalker.Begin(points, straight)`.
 - Text hiển thị cho người chơi đặt trong ScriptableObject ở `Assets/_KhoaHon/Data/`, không hardcode.
 - Tham số cân chỉnh gameplay đặt trong ScriptableObject config ở `Data/Configs/` (tránh bẫy SerializedField).
 - Thêm `ItemType` mới **chỉ ở cuối enum**: `Recorder, FilmCamera, Crowbar`.

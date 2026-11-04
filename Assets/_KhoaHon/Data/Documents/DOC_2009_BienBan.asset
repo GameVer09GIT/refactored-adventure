@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90e318e617ea7dd4cb2778362dae431d, type: 3}
+  m_Name: DOC_2009_BienBan
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.DocumentData
+  id: DOC_2009_BienBan
+  title: "Bi\xEAn b\u1EA3n ni\xEAm phong"
+  year: 5
+  body: "Bi\xEAn b\u1EA3n ni\xEAm phong hi\u1EC7n tr\u01B0\u1EDDng. S\xE1u c\xF4ng
+    nh\xE2n \u0111\u1ED9i c\u1EA3i t\u1EA1o m\u1EA5t t\xEDch sau khi thi c\xF4ng
+    khoan t\u01B0\u1EDDng t\u1EA7ng h\u1EA7m. C\u1EA5m m\u1ECDi h\xE0nh vi x\xE2m
+    nh\u1EADp."
+  serif: 1
+  flagOnRead: 0

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1db693696d896a44fab4f1242b57fba3, type: 3}
+  m_Name: REL_Moc
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.RelicData
+  id: REL_Moc
+  title: "B\xFAp b\xEA v\u1EA3i c\u1EE7a b\xE9 An"
+  year: 1
+  body: "Con b\xFAp b\xEA v\u1EA3i c\u0169 c\u1EE7a b\xE9 An \u2014 con nu\xF4i nh\xE0
+    h\u1ECD Tr\u1ECBnh, b\u1ECB nh\u1ED1t v\xE0 b\u1ECF \u0111\xF3i trong t\u1EE7
+    \xE1o.\nTrong b\u1EE5ng b\xFAp b\xEA c\xF3 kh\xE2u m\u1ED9t trang b\xF9a."
+  serif: 1
+  hanh: 0
+  talisman: {fileID: 11400000, guid: e002269e9ce23964fae8952a3c679eb7, type: 2}
+  pickupLine: "Ch\xE1u l\u1EA1nh qu\xE1\u2026"
