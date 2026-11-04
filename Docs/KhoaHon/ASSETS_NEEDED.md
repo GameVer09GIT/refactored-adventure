@@ -31,7 +31,7 @@ Mức ưu tiên: **P1** = ảnh hưởng hiểu cốt truyện / gameplay · **P
 | Hồn Quân | Bản bán trong suốt | Kết 1, Kết 2 | P1 | X Bot + material phát sáng |
 | Trịnh Đại Quan | Quý ông trung niên, áo the, khói đen | Sảnh Tế | P1 | X Bot + material khói bán trong suốt |
 | Ghế gỗ mun | Ghế cổ | Sảnh Tế | P3 | `ChairLeather` + material gỗ đen |
-| Bà Quản Gia (áo bà ba đen) | Biến thể visual của Ghost, chùm chìa khóa ở hông | Tầng 2, Kết ẩn | P1 | `Ghost.prefab` variant + material đen + mesh chìa khóa |
+| Bà Quản Gia — model riêng | Hiện dùng `civilian_girl` (cùng model với Vy) + áo bà ba/tóc là mảnh cứng gắn xương. Nên có model nhân vật riêng có áo bà ba may sẵn (skinned) | Tầng 2, Kết ẩn | P1 | civilian_girl + mảnh Blender |
 | Xe tải | Xe tải đêm | Kết ẩn | P2 | `Prop_Car_A` phóng to, đổi màu |
 | Lồng tiếng băng #1–#3 | Giọng Quân | Băng ghi âm | P1 | Chỉ phụ đề |
 | Lồng tiếng Trịnh Đại Quan | Giọng trầm, chậm | Sảnh Tế | P1 | Chỉ phụ đề |
@@ -41,7 +41,7 @@ Mức ưu tiên: **P1** = ảnh hưởng hiểu cốt truyện / gameplay · **P
 | Âm thanh màn trập + flash | One-shot | Máy ảnh | P2 | — |
 | Tiếng rè cassette | Loop | Máy ghi âm | P2 | — |
 
-| Icon hotbar ×3 | Sprite cho Máy ghi âm, Máy ảnh film, Xà beng | HotbarUI | P2 | Ô trống (icon null) |
+| Màn hình "YOU DIED" | Ảnh tiếng Anh của bản demo cũ (`you-died.jpg`). Nên thay bằng ảnh/chữ tiếng Việt | DeathScreenManager | P2 | Ảnh cũ |
 | Pose cầm tay ×3 | Chỉnh IK/offset cầm máy ghi âm, máy ảnh, xà beng (hiện mượn Item_Radar) | Hotbar ô 2–4 | P1 (Phase 3) | Cầm được nhưng xuyên tay |
 
 ## TODO nội dung

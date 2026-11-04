@@ -117,3 +117,22 @@ MonoBehaviour:
       ch\u1EC9 l\xE0 v\u1EBFt b\u1EA9n."
   - key: intro.3
     text: "T\xF4i kh\xF4ng tin."
+  - key: prompt.door_stuck
+    text: "C\u1EEDa k\u1EB9t c\u1EE9ng, kh\xF4ng m\u1EDF \u0111\u01B0\u1EE3c"
+  - key: prompt.locked_outside
+    text: "C\u1EEDa b\u1ECB kh\xF3a t\u1EEB b\xEAn ngo\xE0i"
+  - key: prompt.hide_wardrobe
+    text: "[E] Tr\u1ED1n v\xE0o t\u1EE7"
+  - key: prompt.hide_bed
+    text: "[E] Chui xu\u1ED1ng g\u1EA7m gi\u01B0\u1EDDng"
+  - key: prompt.hide_exit
+    text: "[E] Ra ngo\xE0i"
+  - key: prompt.hold_breath
+    text: "Gi\u1EEF [Space] \u0111\u1EC3 n\xEDn th\u1EDF!"
+  - key: sub.hk_run
+    text: "Ch\u1EA1y \u0111i\u2026"
+  - key: sub.hk_comb
+    text: "Ch\u1EA1y \u0111i\u2026 ta kh\xF4ng ki\u1EC1m ch\u1EBF \u0111\u01B0\u1EE3c\u2026"
+  - key: sub.hk_lullaby
+    text: "\u266A \u1EA6u \u01A1\u2026 ng\u1EE7 \u0111i con, \u0111\xEAm d\xE0i\u2026
+      c\u1EEDa \u0111\xE3 kh\xF3a\u2026 \u0111\xE8n \u0111\xE3 t\xE0n\u2026 \u266A"

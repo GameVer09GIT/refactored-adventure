@@ -23,3 +23,14 @@
 - Dữ liệu: văn bản PROMPT mục 8 (tài liệu 1921–2009, 3 băng của Quân, 5 kỷ vật + 5 trang bùa, ảnh Quân gửi), TextTable tiếng Việt.
 - Code dùng chung bị sửa: chỉ thêm `Recorder, FilmCamera, Crowbar` vào cuối enum `ItemType`.
 - Test EditMode: 10 test (`Assets/_KhoaHon/Tests/Editor/KhoaHonCoreTests.cs`).
+
+## Hướng B — dùng map cũ, AI mới, model Blender (2026-11-05)
+- `KH_Main` giờ là bản sao `MapKinhDi_Ver1`, dựng bằng `KhoaHon/Build/3. Convert MapKinhDi → KH_Main (Hướng B)`. Greybox Phase 1 giữ ở `KH_Greybox.unity`. File map gốc không bị sửa.
+- Bố cục 10 phòng + hầm đặt trong biệt thự Villa1 (xem PLAN.md mục 10). Cửa gốc được chuyển thành cửa tương tác, tầng 2 chia phòng bằng mảnh tường gốc, vá 3 lỗ sàn hư, gỡ rào chắn cầu thang của bản demo, thêm dốc vô hình cho cầu thang chữ U.
+- Bà Quản Gia thay GhostAI demo: `HousekeeperBrain` (thuần, 11 test) + `HousekeeperAI` với tuần tra 16 waypoint, nghi ngờ (tiếng động, đèn pin rọi mặt), truy sát ×1.15 runSpeed, choáng (flash 3 s / lược 20 s), chế độ yếu, bắt → jumpscare → màn hình chết → hồi sinh ở checkpoint. Chỉ hoạt động ở area Floor2.
+- Trốn tủ / gầm giường (`HidingSpot`, 6 chỗ) + nín thở (`BreathHold`) + tiếng bước chân/chạy (`PlayerNoiseEmitter`).
+- Model `civilian_girl` mặc áo bà ba đen (thân, vạt, tay), tóc dài, chùm chìa khóa, da tái, mắt đục; Animator Idle/Walk/Run.
+- Blender (chạy nền): 22 model đạo cụ + icon hotbar + ảnh xem trước (`Tools/Blender/khoahon_props.py`). Vật cầm tay (máy ghi âm, máy ảnh, xà beng) dùng model Blender.
+- Âm thanh tự tổng hợp (`KhoaHonAudioSynth`): chùm chìa khóa kéo lê, hát ru "ầu ơ" (giai điệu tự viết), nhịp truy đuổi, thì thầm "chạy đi".
+- Ánh sáng: nến leo lét ở Phòng Thờ (`CandleFlicker`), đèn chập chờn ở hành lang tầng 2, ánh trăng rọi qua cửa sổ sảnh.
+- Test EditMode: 21/21.

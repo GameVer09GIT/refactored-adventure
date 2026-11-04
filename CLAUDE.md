@@ -30,7 +30,12 @@ Yêu cầu trực tiếp trong chat → `GEMINI.md` + skill unity-mcp-workflow �
 - EditMode test (đã chốt ở Phase 1): đặt trong `Assets/_KhoaHon/Tests/Editor/` (thuộc Assembly-CSharp-Editor, tự thấy Assembly-CSharp và NUnit — **không cần asmdef**). Chạy bằng MCP `run_tests` mode `EditMode`, `group_names: ["KhoaHon.Tests"]`.
 - Mỗi ScriptableObject/MonoBehaviour phải nằm trong file `.cs` cùng tên class (Unity yêu cầu).
 - Sau khi tạo/xóa file `.cs` từ bên ngoài Unity: gọi `AssetDatabase.ImportAsset(path, ForceUpdate)` cho từng file mới rồi `CompilationPipeline.RequestScriptCompilation()`. Nếu Console báo `CS2001 ... could not be found` (Unity còn nhớ file đã xóa) hoặc file mới không vào danh sách biên dịch: tạo lại file trống rồi xóa bằng `AssetDatabase.DeleteAsset`, hoặc `AssetDatabase.MoveAsset` file mới sang thư mục khác. Kiểm tra bằng `CompilationPipeline.GetAssemblies(...).sourceFiles`.
-- Dựng lại scene greybox: menu `KhoaHon/Build/2. Greybox Scene KH_Main` (cần mở `MapKinhDi_Ver1` để chép Player; KHÔNG lưu MapKinhDi). Dữ liệu (văn bản, tài liệu, băng, kỷ vật, item): `KhoaHon/Build/1. Data Assets`.
+- **Scene chính (Hướng B):** `KH_Main` = bản sao MapKinhDi. Dựng lại toàn bộ bằng menu `KhoaHon/Build/3. Convert MapKinhDi → KH_Main (Hướng B)` (`KhoaHonVillaConverter`). Lệnh này ghi đè KH_Main, nên mọi chỉnh sửa scene phải nằm trong công cụ, không sửa tay trong KH_Main.
+- Greybox cũ: `KH_Greybox.unity` (chỉ để tham khảo). Dữ liệu: `KhoaHon/Build/1. Data Assets`.
+- Blender: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" --background --factory-startup --python Tools/Blender/khoahon_props.py -- "D:/refactored-adventure/Tools/Blender/out" [TênModel...] [--preview|--icons]`. Converter tự nhập FBX từ `Tools/Blender/out`.
+- Bake NavMesh trong Editor ngay sau khi vừa tạo collider: phải gọi `Physics.SyncTransforms()` trước `BuildNavMesh()`, nếu không collider mới bị bỏ qua.
+- Ghi nhiều thuộc tính bằng 2 `SerializedObject` trên cùng một object: Apply cái thứ nhất trước rồi mới set mảng bằng cái thứ hai, nếu không sẽ bị ghi đè.
+- Ảnh PNG nhập làm Sprite: đặt `spriteImportMode = Single` (Unity 6 mặc định Multiple, khi đó không có sub-asset Sprite).
 - Khi test Play qua MCP: đặt `PlayerController.mouseSensitivity = 0` ở runtime (chuột thật của người dùng làm lệch camera). Tự đi bộ kiểm tra đường: `KhoaHon.DebugTools.KhoaHonAutoWalker.Begin(points, straight)`.
 - Text hiển thị cho người chơi đặt trong ScriptableObject ở `Assets/_KhoaHon/Data/`, không hardcode.
 - Tham số cân chỉnh gameplay đặt trong ScriptableObject config ở `Data/Configs/` (tránh bẫy SerializedField).

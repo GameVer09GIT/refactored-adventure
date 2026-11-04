@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HorrorGame.Inventory.ItemData
   displayName: "X\xE0 beng"
   itemType: 6
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 050860715aef478489cb0596fd566795, type: 3}
   heldPrefab: {fileID: 8222148178195390099, guid: e2e43b44704cd25469a0dbed231057f7, type: 3}
   gripType: 1
   rightPose: {fileID: 11400000, guid: 2f4e094947781b6428086a8d6223dc3f, type: 2}
