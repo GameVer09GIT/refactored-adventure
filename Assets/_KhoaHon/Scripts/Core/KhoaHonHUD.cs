@@ -72,6 +72,34 @@ namespace KhoaHon.Core
             toastText.outlineWidth = 0.15f; toastText.outlineColor = new Color(0, 0, 0, 0.8f);
         }
 
+        private UnityEngine.UI.RawImage vignette;
+
+        /// <summary>Viền tối quanh màn hình (0 = tắt). Dùng khi trốn trong tủ / gầm giường.</summary>
+        public void SetVignette(float strength)
+        {
+            if (vignette == null)
+            {
+                var rt = UIFactory.Stretch("Vignette", canvas.transform);
+                rt.SetAsFirstSibling();
+                vignette = rt.gameObject.AddComponent<UnityEngine.UI.RawImage>();
+                vignette.raycastTarget = false;
+                const int S = 256;
+                var tex = new Texture2D(S, S, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+                for (int y = 0; y < S; y++)
+                    for (int x = 0; x < S; x++)
+                    {
+                        float dx = (x + 0.5f) / S * 2f - 1f, dy = (y + 0.5f) / S * 2f - 1f;
+                        // Khe nhìn hẹp ngang (giống nhìn qua khe tủ)
+                        float d = Mathf.Sqrt(dx * dx * 0.55f + dy * dy * 1.9f);
+                        tex.SetPixel(x, y, new Color(0, 0, 0, Mathf.SmoothStep(0.15f, 1.0f, d)));
+                    }
+                tex.Apply();
+                vignette.texture = tex;
+            }
+            vignette.color = new Color(1, 1, 1, Mathf.Clamp01(strength));
+            vignette.gameObject.SetActive(strength > 0.001f);
+        }
+
         public void SetPrompt(string text)
         {
             if (promptText != null && promptText.text != text) promptText.text = text ?? "";
