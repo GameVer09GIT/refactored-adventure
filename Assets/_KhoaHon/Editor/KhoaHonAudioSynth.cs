@@ -9,7 +9,7 @@ namespace KhoaHon.EditorTools
     /// Tổng hợp âm thanh gốc (không bản quyền) cho bà Quản Gia: chùm chìa khóa kéo lê, hát ru ngân "ầu ơ"
     /// (giai điệu ngũ cung tự viết), nhịp truy đuổi. Xuất WAV 44.1 kHz mono vào Assets/_KhoaHon/Audio.
     /// </summary>
-    public static class KhoaHonAudioSynth
+    public static partial class KhoaHonAudioSynth
     {
         const int SR = 44100;
         public const string Dir = "Assets/_KhoaHon/Audio";
@@ -22,8 +22,11 @@ namespace KhoaHon.EditorTools
             Write("hk_lullaby_hum", Lullaby());
             Write("hk_hunt_pulse_loop", HuntPulse(8f));
             Write("hk_whisper_run", Whisper(1.6f));
+            var extra = BuildHorror();
             AssetDatabase.Refresh();
-            foreach (var n in new[] { "hk_keys_drag_loop", "hk_lullaby_hum", "hk_hunt_pulse_loop", "hk_whisper_run" })
+            var names = new System.Collections.Generic.List<string> { "hk_keys_drag_loop", "hk_lullaby_hum", "hk_hunt_pulse_loop", "hk_whisper_run" };
+            names.AddRange(extra);
+            foreach (var n in names)
             {
                 var imp = AssetImporter.GetAtPath(Dir + "/" + n + ".wav") as AudioImporter;
                 if (imp == null) continue;
@@ -157,14 +160,14 @@ namespace KhoaHon.EditorTools
         static float Bump(float t, float a, float b) => t < a || t > b ? 0f : Mathf.Sin(Mathf.PI * (t - a) / (b - a));
 
         // ---------------------------------------------------------------- WAV
-        static float[] Normalize(float[] b, float peak)
+        internal static float[] Normalize(float[] b, float peak)
         {
             float m = 1e-6f; foreach (var x in b) m = Mathf.Max(m, Mathf.Abs(x));
             for (int i = 0; i < b.Length; i++) b[i] = b[i] / m * peak;
             return b;
         }
 
-        static float[] LoopFade(float[] b, float sec)
+        internal static float[] LoopFade(float[] b, float sec)
         {
             int f = (int)(sec * SR);
             for (int i = 0; i < f; i++) { float a = (float)i / f; b[i] = b[i] * a + b[b.Length - f + i] * (1 - a); }
@@ -172,7 +175,7 @@ namespace KhoaHon.EditorTools
             return b;
         }
 
-        static void Write(string name, float[] samples)
+        internal static void Write(string name, float[] samples)
         {
             string path = Path.Combine(Application.dataPath, "../" + Dir + "/" + name + ".wav");
             using (var fs = new FileStream(path, FileMode.Create))

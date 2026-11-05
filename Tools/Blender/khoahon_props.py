@@ -540,6 +540,180 @@ def toc_dai(m):
     smooth(o, 70)
 
 
+
+def M_bone():
+    return mat("M_BoneOld", (0.62, 0.55, 0.42), 0.75), mat("M_BloodDried", (0.12, 0.01, 0.01), 0.35)
+
+
+def so_nguoi(m):
+    """Sọ người: hộp sọ + hàm, hốc mắt sâu, răng; vết máu khô."""
+    bone, blood = M_bone()
+    cran = add("sphere", "Cranium", (0, 0, 0.11), (0.075, 0.095, 0.08), segments=32, ring_count=16)
+    face = add("sphere", "Face", (0, -0.06, 0.07), (0.06, 0.05, 0.06), segments=24, ring_count=12)
+    jaw = add("cube", "Jaw", (0, -0.065, 0.015), (0.045, 0.03, 0.018))
+    bevel(jaw, 0.01, 3)
+    parts = [cran, face, jaw]
+    for o in parts:
+        assign(o, bone)
+    for s in (-1, 1):
+        eye = add("sphere", "Eye", (s * 0.028, -0.1, 0.085), (0.02, 0.02, 0.022), segments=12, ring_count=8)
+        assign(eye, mat("M_Void", (0.0, 0.0, 0.0), 1.0))
+        parts.append(eye)
+    nose = add("cone", "Nose", (0, -0.112, 0.055), (0.012, 0.008, 0.015), (math.pi / 2, 0, 0), vertices=3)
+    assign(nose, mat("M_Void", (0.0, 0.0, 0.0), 1.0)); parts.append(nose)
+    for i in range(8):
+        t = add("cube", "Tooth", (-0.026 + i * 0.0075, -0.096, 0.03), (0.003, 0.003, 0.006))
+        assign(t, bone); parts.append(t)
+    st = add("sphere", "Stain", (0.03, -0.05, 0.16), (0.04, 0.05, 0.02), segments=12, ring_count=8)
+    assign(st, blood); parts.append(st)
+    o = join(parts, "KH_SoNguoi")
+    smooth(o, 50)
+
+
+def xuong_dui(m):
+    bone, blood = M_bone()
+    shaft = add("cyl", "Shaft", (0, 0, 0.22), (0.016, 0.016, 0.2), vertices=12)
+    parts = [shaft]
+    for z in (0.02, 0.42):
+        for s in (-1, 1):
+            k = add("sphere", "Knob", (s * 0.014, 0, z), (0.022, 0.02, 0.02), segments=12, ring_count=8)
+            parts.append(k)
+    for o in parts:
+        assign(o, bone)
+    o = join(parts, "KH_XuongDui")
+    smooth(o, 50)
+
+
+def long_nguc(m):
+    bone, blood = M_bone()
+    spine = add("cyl", "Spine", (0, 0.06, 0.15), (0.015, 0.015, 0.17), vertices=10)
+    parts = [spine]
+    for i in range(7):
+        z = 0.27 - i * 0.035
+        r = 0.09 + 0.012 * math.sin(i / 6 * math.pi)
+        rib = add("torus", "Rib", (0, 0, z), (1.0, 0.75, 1.0), major_radius=r, minor_radius=0.006)
+        parts.append(rib)
+    for o in parts:
+        assign(o, bone)
+    o = join(parts, "KH_LongNguc")
+    smooth(o, 60)
+
+
+def dong_xuong(m):
+    """Đống xương vụn trộn sọ (đặt trong vách hầm / quanh vạc)."""
+    bone, blood = M_bone()
+    import random
+    random.seed(5)
+    parts = []
+    for i in range(26):
+        x, y = random.uniform(-0.35, 0.35), random.uniform(-0.25, 0.25)
+        b = add("cyl", "Bone", (x, y, 0.02 + random.uniform(0, 0.1)), (0.012, 0.012, random.uniform(0.08, 0.2)),
+                (random.uniform(1.2, 1.9), 0, random.uniform(0, 6.28)), vertices=8)
+        assign(b, bone if i % 5 else blood)
+        parts.append(b)
+    for i in range(3):
+        s = add("sphere", "Skull", (random.uniform(-0.25, 0.25), random.uniform(-0.15, 0.15), 0.08), (0.07, 0.085, 0.07), segments=16, ring_count=10)
+        assign(s, bone); parts.append(s)
+        for e in (-1, 1):
+            h = add("sphere", "Socket", (s.location.x + e * 0.025, s.location.y - 0.075, 0.09), (0.017, 0.012, 0.018), segments=8, ring_count=6)
+            assign(h, mat("M_Void", (0.0, 0.0, 0.0), 1.0)); parts.append(h)
+    o = join(parts, "KH_DongXuong")
+    smooth(o, 50)
+
+
+def gie_mau(m):
+    """Giẻ rách đẫm máu vứt dưới sàn."""
+    blood = mat("M_RagBlood", (0.22, 0.02, 0.015), 0.6)
+    o = add("cube", "Rag", (0, 0, 0.005), (0.25, 0.18, 0.004))
+    sub = o.modifiers.new("Sub", "SUBSURF"); sub.levels = 2
+    disp = o.modifiers.new("Wave", "WAVE"); disp.height = 0.015; disp.width = 0.12
+    assign(o, blood)
+    o.name = "KH_GieMau"
+
+
+def moc_treo(m):
+    """Móc sắt treo trên xích (trần hầm), dính máu."""
+    _, blood = M_bone()
+    links = []
+    for i in range(10):
+        l = add("torus", "Link", (0, 0, -i * 0.075), (1, 1.6, 1), (math.pi / 2, 0, (i % 2) * math.pi / 2), major_radius=0.028, minor_radius=0.007)
+        assign(l, m["rust"]); links.append(l)
+    curve = bpy.data.curves.new("Hook", "CURVE"); curve.dimensions = "3D"
+    sp = curve.splines.new("BEZIER"); pts = [(0, 0, -0.75), (0, 0, -0.95), (0.08, 0, -1.02), (0.12, 0, -0.92)]
+    sp.bezier_points.add(len(pts) - 1)
+    for bp, p in zip(sp.bezier_points, pts):
+        bp.co = p; bp.handle_left_type = bp.handle_right_type = "AUTO"
+    curve.bevel_depth = 0.012
+    hook = bpy.data.objects.new("HookObj", curve); bpy.context.collection.objects.link(hook)
+    bpy.context.view_layer.objects.active = hook; hook.select_set(True); bpy.ops.object.convert(target="MESH")
+    hook = bpy.context.active_object; assign(hook, m["iron"])
+    drip = add("sphere", "Drip", (0.12, 0, -0.95), (0.02, 0.02, 0.04), segments=10, ring_count=8)
+    assign(drip, blood)
+    join(links + [hook, drip], "KH_MocTreo")
+
+
+def xac_quan(m):
+    """Xác Quân trong xà lim: thi thể nằm co, bọc vải liệm cột dây, máu thấm loang, một bàn tay xám thò ra."""
+    shroud = mat("M_Shroud", (0.30, 0.26, 0.20), 0.93)
+    dirt = mat("M_ShroudDirt", (0.13, 0.09, 0.06), 0.95)
+    soak = mat("M_ShroudBlood", (0.16, 0.006, 0.005), 0.3)
+    rope = mat("M_Rope", (0.18, 0.13, 0.08), 0.95)
+    skin = mat("M_CorpseHand", (0.27, 0.28, 0.27), 0.55)
+    wr = bpy.data.textures.new("Wrinkle", "CLOUDS"); wr.noise_scale = 0.06
+    def wrinkle(o, h=0.012):
+        sub = o.modifiers.new("Sub", "SUBSURF"); sub.levels = 2
+        d = o.modifiers.new("Disp", "DISPLACE"); d.texture = wr; d.strength = h; d.mid_level = 0.5
+    def apply_mods(o):
+        bpy.context.view_layer.objects.active = o
+        for md in list(o.modifiers):
+            bpy.ops.object.modifier_apply(modifier=md.name)
+    def hug(o, target, off):
+        sw = o.modifiers.new("Hug", "SHRINKWRAP"); sw.target = target; sw.wrap_method = "NEAREST_SURFACEPOINT"; sw.offset = off
+        apply_mods(o)
+    # Thân nằm nghiêng (dọc trục Y), lưng còng, chân gập
+    pieces = []
+    torso = add("sphere", "Torso", (0, 0.05, 0.19), (0.17, 0.36, 0.19), segments=32, ring_count=16)
+    head = add("sphere", "Head", (0.02, 0.5, 0.17), (0.11, 0.12, 0.12), segments=24, ring_count=12)
+    neck = add("cyl", "Neck", (0.01, 0.4, 0.18), (0.07, 0.07, 0.07), (math.pi / 2, 0, 0), vertices=16)
+    thigh = add("cyl", "Thigh", (-0.12, -0.28, 0.17), (0.11, 0.11, 0.24), (math.radians(80), 0, math.radians(-55)), vertices=16)
+    shin = add("cyl", "Shin", (-0.3, -0.12, 0.13), (0.085, 0.085, 0.22), (math.radians(90), 0, math.radians(35)), vertices=16)
+    knee = add("sphere", "Knee", (-0.3, -0.38, 0.15), (0.11, 0.11, 0.11), segments=16, ring_count=10)
+    foot = add("sphere", "Feet", (-0.36, 0.08, 0.11), (0.09, 0.12, 0.09), segments=16, ring_count=10)
+    for o in (torso, head, neck, thigh, shin, knee, foot):
+        assign(o, shroud); wrinkle(o); apply_mods(o); pieces.append(o)
+    body = join(pieces, "Body")
+    parts = [body]
+    import random
+    random.seed(11)
+    # Máu thấm và vết bẩn: mảng mỏng "dán" sát mặt vải
+    stains = [(0.12, 0.12, 0.28, 0.13, 0.2, soak), (0.08, 0.52, 0.22, 0.09, 0.09, soak), (0.15, -0.05, 0.14, 0.09, 0.15, soak),
+              (0.0, 0.32, 0.36, 0.1, 0.11, soak), (0.1, 0.55, 0.1, 0.07, 0.07, soak), (-0.22, -0.32, 0.24, 0.1, 0.12, soak),
+              (-0.1, 0.0, 0.36, 0.14, 0.2, dirt), (-0.34, 0.05, 0.16, 0.08, 0.1, dirt), (-0.15, -0.42, 0.1, 0.12, 0.1, dirt)]
+    for (x, y, z, sx, sy, mm) in stains:
+        b = add("sphere", "Stain", (x, y, z), (sx, sy, min(sx, sy)), segments=24, ring_count=12)
+        wrinkle(b, 0.03); apply_mods(b); hug(b, body, 0.003); assign(b, mm); parts.append(b)
+    # Dây cột vải liệm, ôm sát thân
+    for y in (0.3, 0.02, -0.2, 0.56):
+        r = add("torus", "Rope", (0, y, 0.18), (1, 1, 1), (math.pi / 2, 0, 0), major_radius=0.24, minor_radius=0.01, major_segments=48, minor_segments=8)
+        hug(r, body, 0.008); assign(r, rope); parts.append(r)
+    # Bàn tay xám thò ra khỏi vải, đặt sát sàn; đầu ngón dính máu
+    wrist = add("cyl", "Wrist", (0.2, 0.15, 0.07), (0.028, 0.028, 0.055), (0, math.radians(127), 0), vertices=12)
+    palm = add("cube", "Palm", (0.27, 0.15, 0.03), (0.04, 0.038, 0.011))
+    bevel(palm, 0.006, 2); apply_mods(palm)
+    for o in (wrist, palm):
+        assign(o, skin); parts.append(o)
+    for i in range(4):
+        y = 0.15 - 0.027 + i * 0.018
+        ln = 0.024 + (0.004 if i in (1, 2) else 0)
+        f = add("cyl", "Finger", (0.31 + ln, y, 0.024), (0.0075, 0.0075, ln), (0, math.radians(90 + random.uniform(-8, 12)), math.radians(random.uniform(-10, 10))), vertices=8)
+        t = add("sphere", "Tip", (0.31 + ln * 2, y, 0.022), (0.009, 0.009, 0.008), segments=8, ring_count=6)
+        assign(f, skin); assign(t, soak); parts += [f, t]
+    th = add("cyl", "Thumb", (0.28, 0.2, 0.026), (0.008, 0.008, 0.02), (0, math.radians(90), math.radians(55)), vertices=8)
+    assign(th, skin); parts.append(th)
+    o = join(parts, "KH_XacQuan")
+    smooth(o, 60)
+
+
 def render_preview(names, path):
     """Ảnh xem trước toàn bộ model (EEVEE) để soát nhanh."""
     reset()
@@ -588,6 +762,7 @@ BUILDERS = [
     ("KH_MayGhiAm", may_ghi_am), ("KH_MayAnh", may_anh), ("KH_XaBeng", xa_beng), ("KH_KetSat", ket_sat),
     ("KH_Nen", nen), ("KH_Xich", xich), ("KH_NapHam", nap_ham), ("KH_ChumChiaKhoa", chum_chia_khoa),
     ("KH_AoBaBa_Than", ao_ba_ba_than), ("KH_AoBaBa_Vat", ao_ba_ba_vat), ("KH_AoBaBa_Tay", ao_ba_ba_tay), ("KH_TocDai", toc_dai),
+    ("KH_SoNguoi", so_nguoi), ("KH_XuongDui", xuong_dui), ("KH_LongNguc", long_nguc), ("KH_DongXuong", dong_xuong), ("KH_GieMau", gie_mau), ("KH_MocTreo", moc_treo), ("KH_XacQuan", xac_quan),
 ]
 
 def render_icons(names, out_dir):
