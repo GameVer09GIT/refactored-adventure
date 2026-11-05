@@ -12,6 +12,7 @@ Yêu cầu trực tiếp trong chat → `GEMINI.md` + skill unity-mcp-workflow �
 - Bước "`view_file` ảnh" trong GEMINI.md: trong Claude Code dùng tool **Read** để mở file PNG.
 - Ảnh kiểm tra lưu vào `Temp/KhoaHon/` (không commit).
 - Chụp ảnh khi không Play: `manage_camera` action `screenshot` với `view_position`/`view_target`. Khi Play: `MCPVisionCapture.Capture("Temp/KhoaHon/x.png")`.
+  - Khi đang ở menu (camera `KH_MenuCamera`), cả `manage_camera` lẫn `MCPVisionCapture` đều chụp nhầm camera người chơi đang tắt. Dùng `ScreenCapture.CaptureScreenshot("Temp/KhoaHon/x.png")` (ảnh màn hình thật có UI) hoặc dựng camera tạm + `Camera.Render()` vào RenderTexture.
 - Kiểm tra font/UI mà không đụng scene đang mở: dựng `EditorSceneManager.NewPreviewScene()`, render camera vào RenderTexture rồi ghi PNG.
 
 ## Không được làm
@@ -40,6 +41,9 @@ Yêu cầu trực tiếp trong chat → `GEMINI.md` + skill unity-mcp-workflow �
 - Text hiển thị cho người chơi đặt trong ScriptableObject ở `Assets/_KhoaHon/Data/`, không hardcode.
 - Tham số cân chỉnh gameplay đặt trong ScriptableObject config ở `Data/Configs/` (tránh bẫy SerializedField).
 - Thêm `ItemType` mới **chỉ ở cuối enum**: `Recorder, FilmCamera, Crowbar`.
+- Luồng game: `GameFlow.State` (Boot → Menu → Intro → Playing ⇄ Paused). Hệ thống gameplay phải tự dừng khi `!GameFlow.IsPlaying`. Bảng Cài đặt / hộp xác nhận / menu tạm dừng nằm trên `UIKit.TopLayer` (canvas sort 95), không đặt dưới HUD (HUD bị tắt khi ở menu).
+- Font Be Vietnam Pro / Noto Serif **không có** ký tự `▮ ■ █ ● → □`. Thanh/biểu tượng vẽ bằng `Image`; mũi tên viết `>`.
+- Máu/xương/xác/hậu kỳ dựng trong `KhoaHonHorrorBuilder` (gọi từ converter). Không dán quad máu lên nhân vật: nhuộm vào texture (`Soak`).
 
 ## Font tiếng Việt (đã kiểm chứng ở Phase 0)
 - UI: `Assets/_KhoaHon/Fonts/BeVietnamPro-Regular SDF.asset` / `BeVietnamPro-SemiBold SDF.asset`.

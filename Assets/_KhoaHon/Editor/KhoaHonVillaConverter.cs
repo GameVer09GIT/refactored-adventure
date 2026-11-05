@@ -80,6 +80,7 @@ namespace KhoaHon.EditorTools
             BuildStairRamps();
             BakeNavMesh(scene, floor2Area);
             log.Add(KhoaHonHousekeeperBuilder.Build(root, F2));
+            log.Add(KhoaHonHorrorBuilder.Build(root, CellarOrigin));
 
             EditorSceneManager.SaveScene(scene);
             FixBuildSettings();

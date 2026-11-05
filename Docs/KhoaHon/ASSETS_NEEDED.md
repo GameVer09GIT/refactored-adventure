@@ -27,7 +27,7 @@ Mức ưu tiên: **P1** = ảnh hưởng hiểu cốt truyện / gameplay · **P
 | Bảng đồng | Bảng khắc "Khởi công Thanh Vân — 1921" | Phòng Khách | P1 | Quad đồng + TMP serif |
 | Ảnh gia tộc Trịnh | Ảnh khổ lớn | Phòng Khách | P2 | `painting_*` (ZNS3D) / Quad |
 | Xương phu hồ, vách vữa | Mesh/decal xương lộ trong vách | Cầu thang hầm | P2 | Decal tối |
-| Thi thể Quân | Nhân vật nam nằm nghiêng, áo phóng viên | Xà lim | P1 | X Bot, material tối |
+| Thi thể Quân | Nhân vật nam nằm nghiêng, áo phóng viên | Xà lim | P2 | Xác bọc vải liệm (Blender `KH_XacQuan`) |
 | Hồn Quân | Bản bán trong suốt | Kết 1, Kết 2 | P1 | X Bot + material phát sáng |
 | Trịnh Đại Quan | Quý ông trung niên, áo the, khói đen | Sảnh Tế | P1 | X Bot + material khói bán trong suốt |
 | Ghế gỗ mun | Ghế cổ | Sảnh Tế | P3 | `ChairLeather` + material gỗ đen |
@@ -41,7 +41,9 @@ Mức ưu tiên: **P1** = ảnh hưởng hiểu cốt truyện / gameplay · **P
 | Âm thanh màn trập + flash | One-shot | Máy ảnh | P2 | — |
 | Tiếng rè cassette | Loop | Máy ghi âm | P2 | — |
 
-| Màn hình "YOU DIED" | Ảnh tiếng Anh của bản demo cũ (`you-died.jpg`). Nên thay bằng ảnh/chữ tiếng Việt | DeathScreenManager | P2 | Ảnh cũ |
+| Màn hình "YOU DIED" | Đã thay bằng chữ "BẠN ĐÃ CHẾT" (TMP, Noto Serif) | DeathScreenManager | — | Xong |
+| **Ảnh `Assets/Ghost/Textures/anh-ma-kinh-di-30.jpg`** | Ảnh chụp người thật tải từ mạng, không rõ bản quyền/quyền chân dung. Đã ngừng hiển thị trong KH_Main; **không nên đưa vào bản phát hành Steam** (cả trong `Resources` nếu có) | DeathScreenManager (demo cũ) | P1 (pháp lý) | Ẩn |
+| Model người nam (Quân, Trịnh Đại Quan) | Dự án không có mesh nam (X Bot chỉ là file animation) | Xà lim, Sảnh Tế | P1 | Vải liệm / chưa có |
 | Pose cầm tay ×3 | Chỉnh IK/offset cầm máy ghi âm, máy ảnh, xà beng (hiện mượn Item_Radar) | Hotbar ô 2–4 | P1 (Phase 3) | Cầm được nhưng xuyên tay |
 
 ## TODO nội dung
