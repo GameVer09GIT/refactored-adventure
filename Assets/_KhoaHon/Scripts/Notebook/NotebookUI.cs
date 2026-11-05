@@ -173,7 +173,7 @@ namespace KhoaHon.Notebook
             for (int i = 0; i < 5; i++)
             {
                 int unseen = nm != null ? nm.UnseenCount((NotebookTab)i) : 0;
-                tabLabels[i].text = T.Get(TabKeys[i]) + (unseen > 0 ? $" <color=#8B1A1A>●{unseen}</color>" : "");
+                tabLabels[i].text = T.Get(TabKeys[i]) + (unseen > 0 ? $" <color=#8B1A1A>({unseen})</color>" : "");
                 tabBgs[i].color = i == (int)currentTab ? new Color(0.3f, 0.22f, 0.16f, 0.45f) : new Color(0.3f, 0.22f, 0.16f, 0.15f);
             }
 
@@ -205,7 +205,7 @@ namespace KhoaHon.Notebook
                 var rt = UIFactory.Text("Text", row.transform, style, false, 22, ink, TextAlignmentOptions.MidlineLeft);
                 rt.margin = new Vector4(12, 0, 8, 0);
                 bool isNew = nm != null && !nm.IsSeen(s);
-                rt.text = s.Title + (isNew ? $"  <color=#8B1A1A><size=70%>● {T.Get("notebook.new")}</size></color>" : "");
+                rt.text = s.Title + (isNew ? $"  <color=#8B1A1A><size=70%>— {T.Get("notebook.new")}</size></color>" : "");
             }
 
             ShowDetail(selected);

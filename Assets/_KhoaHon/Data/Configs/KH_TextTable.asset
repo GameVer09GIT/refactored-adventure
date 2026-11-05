@@ -82,7 +82,7 @@ MonoBehaviour:
     text: "Ch\u01B0a c\xF3 b\u1EA3n l\u01B0u"
   - key: hint.backpack
     text: "C\xF3 th\u1EC3 nghe cu\u1ED9n b\u0103ng b\u1EB1ng m\xE1y ghi \xE2m (Tab
-      \u2192 B\u0103ng ghi \xE2m)"
+      > B\u0103ng ghi \xE2m)"
   - key: sub.front_door_slam
     text: "(C\u1EEDa ch\xEDnh s\u1EADp l\u1EA1i sau l\u01B0ng. Then c\xE0i r\u01A1i
       xu\u1ED1ng.)"
@@ -136,3 +136,174 @@ MonoBehaviour:
   - key: sub.hk_lullaby
     text: "\u266A \u1EA6u \u01A1\u2026 ng\u1EE7 \u0111i con, \u0111\xEAm d\xE0i\u2026
       c\u1EEDa \u0111\xE3 kh\xF3a\u2026 \u0111\xE8n \u0111\xE3 t\xE0n\u2026 \u266A"
+  - key: ui.title_top
+    text: "L\u1EDCI NGUY\u1EC0N"
+  - key: ui.title_main
+    text: "KH\xD3A H\u1ED2N"
+  - key: ui.continue
+    text: "Ti\u1EBFp t\u1EE5c"
+  - key: ui.new_game
+    text: "Tr\xF2 ch\u01A1i m\u1EDBi"
+  - key: ui.settings
+    text: "C\xE0i \u0111\u1EB7t"
+  - key: ui.credits
+    text: "Th\xF4ng tin"
+  - key: ui.quit
+    text: "Tho\xE1t"
+  - key: ui.version
+    text: "Bi\u1EC7t th\u1EF1 Thanh V\xE2n \xB7 b\u1EA3n th\u1EED nghi\u1EC7m 0.3"
+  - key: ui.menu_hint
+    text: "N\xEAn \u0111eo tai nghe v\xE0 ch\u01A1i trong b\xF3ng t\u1ED1i."
+  - key: ui.confirm_new
+    text: "B\u1EAFt \u0111\u1EA7u l\u1EA1i t\u1EEB \u0111\u1EA7u? Ti\u1EBFn tr\xECnh
+      \u0111\xE3 l\u01B0u s\u1EBD b\u1ECB x\xF3a."
+  - key: ui.confirm_quit
+    text: "Tho\xE1t game?"
+  - key: ui.confirm_menu
+    text: "V\u1EC1 menu ch\xEDnh? Ti\u1EBFn tr\xECnh t\u1EEB \u0111i\u1EC3m l\u01B0u
+      g\u1EA7n nh\u1EA5t s\u1EBD m\u1EA5t."
+  - key: ui.confirm_reload
+    text: "T\u1EA3i l\u1EA1i \u0111i\u1EC3m l\u01B0u g\u1EA7n nh\u1EA5t?"
+  - key: ui.yes
+    text: "\u0110\u1ED3ng \xFD"
+  - key: ui.no
+    text: "H\u1EE7y"
+  - key: ui.confirm
+    text: "X\xE1c nh\u1EADn"
+  - key: ui.back
+    text: "Quay l\u1EA1i"
+  - key: ui.apply
+    text: "\xC1p d\u1EE5ng"
+  - key: ui.defaults
+    text: "M\u1EB7c \u0111\u1ECBnh"
+  - key: ui.applied
+    text: "\u0110\xE3 \xE1p d\u1EE5ng c\xE0i \u0111\u1EB7t"
+  - key: ui.paused
+    text: "T\u1EA0M D\u1EEANG"
+  - key: ui.resume
+    text: "Ti\u1EBFp t\u1EE5c"
+  - key: ui.reload_checkpoint
+    text: "T\u1EA3i l\u1EA1i \u0111i\u1EC3m l\u01B0u"
+  - key: ui.main_menu
+    text: "V\u1EC1 menu ch\xEDnh"
+  - key: ui.pause_tip
+    text: "B\xE0 ta kh\xF4ng ng\u1EE7. B\xE0 ta ch\u1EC9 ch\u1EDD."
+  - key: ui.warning_title
+    text: "C\u1EA2NH B\xC1O"
+  - key: ui.warning_body
+    text: "Tr\xF2 ch\u01A1i ch\u1EE9a h\xECnh \u1EA3nh m\xE1u me, x\xE1c ch\u1EBFt,
+      \xE2m thanh \u0111\u1ED9t ng\u1ED9t v\xE0 \xE1nh s\xE1ng nh\u1EA5p nh\xE1y.\nKh\xF4ng
+      ph\xF9 h\u1EE3p v\u1EDBi ng\u01B0\u1EDDi d\u01B0\u1EDBi 18 tu\u1ED5i, ng\u01B0\u1EDDi
+      c\xF3 b\u1EC7nh tim ho\u1EB7c d\u1EC5 b\u1ECB k\xEDch \u0111\u1ED9ng.\n\nNh\u1EA5n
+      ph\xEDm b\u1EA5t k\u1EF3 \u0111\u1EC3 ti\u1EBFp t\u1EE5c."
+  - key: ui.calib_title
+    text: "\u0110I\u1EC0U CH\u1EC8NH \u0110\u1ED8 S\xC1NG"
+  - key: ui.calib_body
+    text: "K\xE9o thanh tr\u01B0\u1EE3t cho t\u1EDBi khi h\xECnh b\xEAn tr\xE1i th\u1EA5y
+      r\xF5, h\xECnh gi\u1EEFa th\u1EA5y m\u1EDD\nv\xE0 h\xECnh b\xEAn ph\u1EA3i
+      G\u1EA6N NH\u01AF kh\xF4ng nh\xECn th\u1EA5y."
+  - key: ui.credits_body
+    text: "L\u1EDCI NGUY\u1EC0N KH\xD3A H\u1ED2N\n\nK\u1ECBch b\u1EA3n & thi\u1EBFt
+      k\u1EBF: nh\xF3m d\u1EF1 \xE1n refactored-adventure\nL\u1EADp tr\xECnh, d\u1EF1ng
+      c\u1EA3nh, \xE2m thanh t\u1ED5ng h\u1EE3p: Claude (Anthropic) c\xF9ng nh\xF3m\nT\xE0i
+      nguy\xEAn: Flooded Grounds, Abandoned Asylum, Vintage Living Room, civilian_girl,
+      Mixamo\nPh\xF4ng ch\u1EEF: Be Vietnam Pro, Noto Serif (SIL OFL)\n\nC\u1EA3m
+      \u01A1n b\u1EA1n \u0111\xE3 d\xE1m b\u01B0\u1EDBc v\xE0o bi\u1EC7t th\u1EF1
+      Thanh V\xE2n."
+  - key: ui.tab.graphics
+    text: "H\xECnh \u1EA3nh"
+  - key: ui.tab.audio
+    text: "\xC2m thanh"
+  - key: ui.tab.controls
+    text: "\u0110i\u1EC1u khi\u1EC3n"
+  - key: ui.tab.display
+    text: "Hi\u1EC3n th\u1ECB"
+  - key: ui.h.screen
+    text: "M\xE0n h\xECnh"
+  - key: ui.h.quality
+    text: "Ch\u1EA5t l\u01B0\u1EE3ng"
+  - key: ui.h.volume
+    text: "\xC2m l\u01B0\u1EE3ng"
+  - key: ui.h.subtitles
+    text: "Ph\u1EE5 \u0111\u1EC1"
+  - key: ui.h.mouse
+    text: "Chu\u1ED9t"
+  - key: ui.h.keys
+    text: "Ph\xEDm \u0111i\u1EC1u khi\u1EC3n"
+  - key: ui.h.brightness
+    text: "\u0110\u1ED9 s\xE1ng"
+  - key: ui.h.hud
+    text: "Giao di\u1EC7n"
+  - key: ui.screen_mode
+    text: "Ch\u1EBF \u0111\u1ED9 hi\u1EC3n th\u1ECB"
+  - key: ui.fullscreen
+    text: "To\xE0n m\xE0n h\xECnh"
+  - key: ui.borderless
+    text: "C\u1EEDa s\u1ED5 kh\xF4ng vi\u1EC1n"
+  - key: ui.windowed
+    text: "C\u1EEDa s\u1ED5"
+  - key: ui.resolution
+    text: "\u0110\u1ED9 ph\xE2n gi\u1EA3i"
+  - key: ui.vsync
+    text: "\u0110\u1ED3ng b\u1ED9 d\u1ECDc (VSync)"
+  - key: ui.fps_cap
+    text: "Gi\u1EDBi h\u1EA1n FPS"
+  - key: ui.unlimited
+    text: "Kh\xF4ng gi\u1EDBi h\u1EA1n"
+  - key: ui.quality
+    text: "Ch\u1EA5t l\u01B0\u1EE3ng \u0111\u1ED3 h\u1ECDa"
+  - key: ui.fov
+    text: "Tr\u01B0\u1EDDng nh\xECn (FOV)"
+  - key: ui.motion_blur
+    text: "L\xE0m m\u1EDD chuy\u1EC3n \u0111\u1ED9ng"
+  - key: ui.film_grain
+    text: "Nhi\u1EC5u h\u1EA1t phim"
+  - key: ui.vol_master
+    text: "T\u1ED5ng"
+  - key: ui.vol_music
+    text: "Nh\u1EA1c"
+  - key: ui.vol_sfx
+    text: "Hi\u1EC7u \u1EE9ng"
+  - key: ui.vol_amb
+    text: "M\xF4i tr\u01B0\u1EDDng"
+  - key: ui.vol_voice
+    text: "Gi\u1ECDng n\xF3i"
+  - key: ui.subtitles
+    text: "Hi\u1EC7n ph\u1EE5 \u0111\u1EC1"
+  - key: ui.headphones
+    text: "\xC2m thanh 3D \u0111\u01B0\u1EE3c thi\u1EBFt k\u1EBF cho tai nghe: ti\u1EBFng
+      ch\xECa kh\xF3a cho bi\u1EBFt b\xE0 ta \u1EDF b\xEAn n\xE0o."
+  - key: ui.sensitivity
+    text: "\u0110\u1ED9 nh\u1EA1y chu\u1ED9t"
+  - key: ui.brightness
+    text: "\u0110\u1ED9 s\xE1ng"
+  - key: ui.show_fps
+    text: "Hi\u1EC7n FPS"
+  - key: ui.language
+    text: "Ng\xF4n ng\u1EEF"
+  - key: ui.on
+    text: "B\u1EADt"
+  - key: ui.off
+    text: "T\u1EAFt"
+  - key: ui.key.move
+    text: "Di chuy\u1EC3n"
+  - key: ui.key.run
+    text: "Ch\u1EA1y"
+  - key: ui.key.interact
+    text: "T\u01B0\u01A1ng t\xE1c"
+  - key: ui.key.notebook
+    text: "S\u1ED5 tay"
+  - key: ui.key.hotbar
+    text: "\u0110\u1ED5i v\u1EADt ph\u1EA9m"
+  - key: ui.key.use
+    text: "D\xF9ng v\u1EADt ph\u1EA9m"
+  - key: ui.key.breath
+    text: "N\xEDn th\u1EDF (khi tr\u1ED1n)"
+  - key: ui.key.pause
+    text: "T\u1EA1m d\u1EEBng"
+  - key: ui.you_died
+    text: "B\u1EA0N \u0110\xC3 CH\u1EBET"
+  - key: hud.battery
+    text: PIN
+  - key: hud.film
+    text: PHIM
