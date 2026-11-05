@@ -11,6 +11,7 @@ namespace KhoaHon.Core
     public class KhoaHonHUD : MonoBehaviour
     {
         public static KhoaHonHUD Instance { get; private set; }
+        public static bool SubtitlesEnabled = true;
 
         [SerializeField] private UIStyle style;
         [Tooltip("Thời gian hiện thông báo ngắn (giây)")]
@@ -61,6 +62,8 @@ namespace KhoaHon.Core
             promptText.text = "";
 
             var subRect = UIFactory.Rect("Subtitle", canvas.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-760, 230), new Vector2(760, 360));
+            subBg = UIFactory.Panel("Bg", subRect, new Color(0, 0, 0, 0.55f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-10, -6), new Vector2(10, 6));
+            subBg.raycastTarget = false; subBg.gameObject.SetActive(false);
             subtitleText = UIFactory.Text("Text", subRect, style, false, 32, style ? style.textColor : Color.white, TextAlignmentOptions.Bottom);
             subtitleText.outlineWidth = 0.18f; subtitleText.outlineColor = new Color(0, 0, 0, 0.9f);
             subtitleText.text = "";
@@ -137,11 +140,23 @@ namespace KhoaHon.Core
             toastGroup.alpha = 0f;
         }
 
+        private UnityEngine.UI.Image subBg;
+
         private IEnumerator SubtitleRoutine(string text, float duration)
         {
+            if (!SubtitlesEnabled) yield break;
             subtitleText.text = text;
+            subtitleText.ForceMeshUpdate();
+            var size = subtitleText.GetRenderedValues(false);
+            if (subBg != null)
+            {
+                subBg.gameObject.SetActive(true);
+                subBg.rectTransform.sizeDelta = new Vector2(size.x + 48f, size.y + 20f);
+                subBg.rectTransform.anchoredPosition = new Vector2(0, size.y / 2f);
+            }
             yield return new WaitForSeconds(duration);
             subtitleText.text = "";
+            if (subBg != null) subBg.gameObject.SetActive(false);
         }
 
         // Truy cập tĩnh an toàn

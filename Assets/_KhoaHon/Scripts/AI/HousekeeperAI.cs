@@ -35,6 +35,8 @@ namespace KhoaHon.AI
         [SerializeField] private AudioClip screamClip;
         [SerializeField] private AudioClip whisperRunClip;
         [SerializeField] private AudioSource huntMusic;
+        [SerializeField] private AudioClip breathLoop;
+        [SerializeField] private AudioSource breathSource;
 
         public HousekeeperState State => brain != null ? brain.State : HousekeeperState.Patrol;
         public bool Weakened => brain != null && brain.Weakened;
@@ -62,6 +64,14 @@ namespace KhoaHon.AI
         private readonly RaycastHit[] hitBuf = new RaycastHit[16];
 
         public void SetWaypoints(Transform[] w) => waypoints = w;
+
+        /// <summary>Cảnh nền menu: đứng bất động sau cửa sổ tầng 2 nhìn ra sân.</summary>
+        public void PoseAt(Vector3 pos, float yaw)
+        {
+            if (agent == null) agent = GetComponent<NavMeshAgent>();
+            agent.Warp(pos);
+            transform.rotation = Quaternion.Euler(0, yaw, 0);
+        }
 
         private void Awake()
         {
@@ -122,13 +132,23 @@ namespace KhoaHon.AI
             if (keysSource != null && keysLoop != null) { keysSource.clip = keysLoop; keysSource.loop = true; keysSource.Play(); }
             if (voiceSource != null && mumbleLoop != null) { voiceSource.clip = mumbleLoop; voiceSource.loop = true; voiceSource.volume = 0.55f; voiceSource.Play(); }
             if (huntMusic != null) { huntMusic.loop = true; huntMusic.volume = 0f; huntMusic.spatialBlend = 0f; if (huntMusic.clip != null) huntMusic.Play(); }
+            if (breathSource != null && breathLoop != null)
+            {
+                breathSource.clip = breathLoop; breathSource.loop = true; breathSource.spatialBlend = 1f;
+                breathSource.rolloffMode = AudioRolloffMode.Logarithmic; breathSource.minDistance = 1.2f; breathSource.maxDistance = 14f; breathSource.Play();
+            }
         }
 
         // =====================================================================
         private void Update()
         {
             if (brain == null || player == null) return;
-            if (!CheatSettings.AIEnabled) { agent.isStopped = true; UpdateAnim(); return; }
+            if (!CheatSettings.AIEnabled || !GameFlow.IsPlaying)
+            {
+                agent.isStopped = true; UpdateAnim();
+                if (huntMusic != null) huntMusic.volume = 0f;
+                return;
+            }
             if (killing) return;
 
             if (Time.time >= nextDetect)
@@ -371,16 +391,27 @@ namespace KhoaHon.AI
             var start = cam.rotation;
             float t = 0f;
             if (voiceSource != null && screamClip != null) voiceSource.PlayOneShot(screamClip, 1f);
-            while (t < 0.4f)
+            while (t < 0.3f)
             {
                 t += Time.deltaTime;
                 var look = Quaternion.LookRotation((head.position - cam.position).normalized);
-                cam.rotation = Quaternion.Slerp(start, look, t / 0.4f);
-                FaceTowards(player.transform.position, 12f);
+                cam.rotation = Quaternion.Slerp(start, look, t / 0.3f);
+                FaceTowards(player.transform.position, 14f);
                 yield return null;
             }
-            yield return new WaitForSeconds(0.35f);
+            // Mặt bà áp sát ống kính rồi giữ nguyên trong suốt màn jumpscare
+            var camStart = cam.position;
+            var closePos = head.position + transform.forward * 0.32f + Vector3.up * 0.02f;
             GameEvents.RaisePlayerCaught();
+            t = 0f;
+            while (t < 0.18f)
+            {
+                t += Time.deltaTime;
+                cam.position = Vector3.Lerp(camStart, closePos, t / 0.18f);
+                cam.rotation = Quaternion.LookRotation((head.position - cam.position).normalized);
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.25f);
             if (DeathScreenManager.Instance != null) DeathScreenManager.Instance.TriggerJumpscareSequence();
         }
 
@@ -409,8 +440,10 @@ namespace KhoaHon.AI
         // =====================================================================
         private void UpdateAudio()
         {
-            if (keysSource != null) keysSource.volume = Mathf.Lerp(keysSource.volume, agent.velocity.magnitude > 0.2f ? 1f : 0.25f, 4f * Time.deltaTime);
-            if (huntMusic != null) huntMusic.volume = Mathf.MoveTowards(huntMusic.volume, brain.State == HousekeeperState.Hunt ? 0.8f : 0f, Time.deltaTime * 0.8f);
+            if (keysSource != null) keysSource.volume = Mathf.Lerp(keysSource.volume, (agent.velocity.magnitude > 0.2f ? 1f : 0.25f) * AudioMix.Sfx, 4f * Time.deltaTime);
+            if (voiceSource != null) voiceSource.volume = 0.55f * AudioMix.Voice;
+            if (breathSource != null) breathSource.volume = (brain.State == HousekeeperState.Hunt ? 1f : 0.7f) * AudioMix.Sfx;
+            if (huntMusic != null) huntMusic.volume = Mathf.MoveTowards(huntMusic.volume, (brain.State == HousekeeperState.Hunt ? 0.9f : 0f) * AudioMix.Music, Time.deltaTime * (brain.State == HousekeeperState.Hunt ? 2f : 0.5f));
             if (brain.State == HousekeeperState.Patrol && Time.time >= nextLullaby)
             {
                 nextLullaby = Time.time + Random.Range(config.lullabyInterval.x, config.lullabyInterval.y);
