@@ -123,6 +123,7 @@ namespace KhoaHon.Core
             var d = SaveSystem.Read();
             if (d == null) { KhoaHonHUD.Toast(T.Get("toast.no_save")); return; }
             SaveSystem.PendingLoad = d;
+            GameFlow.PendingStart = StartMode.Continue;
             ReloadScene();
         }
 
@@ -130,6 +131,7 @@ namespace KhoaHon.Core
         {
             SaveSystem.Delete();
             SaveSystem.PendingLoad = null;
+            GameFlow.PendingStart = StartMode.NewGame;
             ReloadScene();
         }
 
