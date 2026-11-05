@@ -34,3 +34,15 @@
 - Âm thanh tự tổng hợp (`KhoaHonAudioSynth`): chùm chìa khóa kéo lê, hát ru "ầu ơ" (giai điệu tự viết), nhịp truy đuổi, thì thầm "chạy đi".
 - Ánh sáng: nến leo lét ở Phòng Thờ (`CandleFlicker`), đèn chập chờn ở hành lang tầng 2, ánh trăng rọi qua cửa sổ sảnh.
 - Test EditMode: 21/21.
+
+## Bản kinh dị + giao diện kiểu game Steam (2026-11-05)
+- **Luồng vào game như game thương mại** (`Scripts/UI`): màn cảnh báo nội dung → chỉnh độ sáng (lần đầu) → menu chính điện ảnh (biệt thự gothic trong đêm, cửa sổ đỏ ánh máu, sét chớp, nhạc hộp nhạc, tiêu đề chập chờn) → intro chữ gõ → vào game. Nút: Tiếp tục · Trò chơi mới · Cài đặt · Thông tin · Thoát, hộp xác nhận.
+- **Cài đặt đầy đủ** 4 tab — Hình ảnh (chế độ màn hình, độ phân giải, VSync, giới hạn FPS, chất lượng, FOV, làm mờ chuyển động, nhiễu hạt), Âm thanh (Tổng/Nhạc/Hiệu ứng/Môi trường/Giọng nói, phụ đề), Điều khiển (độ nhạy, bảng phím), Hiển thị (độ sáng, FPS, ngôn ngữ). Lưu PlayerPrefs; nút Mặc định/Áp dụng/Quay lại.
+- **Menu tạm dừng (Esc)**: Tiếp tục · Cài đặt · Tải lại điểm lưu · Về menu chính · Thoát. HUD tối giản: chấm tâm phóng to khi nhắm vật, thanh pin 5 ô, đếm FPS.
+- **Hậu kỳ kinh dị** (`KH_HorrorVolume` + `HorrorPostFX`): vignette, quang sai, nhiễu hạt, méo ống kính tăng khi bà Quản Gia lại gần; nhịp đỏ + tim đập khi bị truy sát.
+- **Máu me**: ~90 vết máu (vũng, vệt kéo, dấu tay, dấu tay trẻ con, máu chảy trên tường) đặt theo cốt truyện từng phòng; máu nhỏ giọt (particle) ở 5 điểm; sọ + xương lòi ra từ vách đường hầm (8 phu hồ), đống xương và móc treo trong sảnh tế; xác Quân bọc vải liệm thấm máu (model Blender `KH_XacQuan`) nằm trong vũng máu ở xà lim.
+- **Bà Quản Gia đáng sợ hơn**: máu thấm vào texture áo bà ba và da (mắt chảy máu, vạt áo đẫm máu), mắt đen ánh đỏ, dáng đi khập khiễng/giật cổ (`HousekeeperCreep`), tiếng thở, tiếng thét, nhạc truy đuổi mới; jumpscare mặt 3D áp sát ống kính + nhiễu đỏ + rung → màn "BẠN ĐÃ CHẾT" tiếng Việt.
+- **Âm thanh tự tổng hợp mới** (15 file): không khí nhà cũ, tiếng gõ/kẽo kẹt/thì thầm/đập cửa ngẫu nhiên sau lưng (dày hơn khi tỉnh táo thấp), stinger khi bị phát hiện, tim đập nhanh, jumpscare, hộp nhạc menu, âm UI.
+- Sửa: ảnh ma chụp người thật của `DeathScreenManager` cũ không còn hiện (tắt RawImage + tắt tiếng hét cũ, không sửa file gốc); ký tự `▮ ● →` không có trong font được thay.
+- Test EditMode: 21/21. Console 0 lỗi.
+

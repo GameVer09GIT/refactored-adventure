@@ -273,6 +273,8 @@ MonoBehaviour:
   screamClip: {fileID: 8300000, guid: 776443bfa4c9f8c4386eda8ab7660445, type: 3}
   whisperRunClip: {fileID: 8300000, guid: 78f2e70f4c98d9344b0aa2f4219747c2, type: 3}
   huntMusic: {fileID: 6829636746587371178}
+  breathLoop: {fileID: 0}
+  breathSource: {fileID: 0}
 --- !u!1 &258282525974353601
 GameObject:
   m_ObjectHideFlags: 0
