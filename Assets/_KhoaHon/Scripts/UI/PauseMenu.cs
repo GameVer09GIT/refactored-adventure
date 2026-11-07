@@ -67,7 +67,7 @@ namespace KhoaHon.UI
             Time.timeScale = 1f; AudioListener.pause = false;
             ModalUI.Reset();
             GameFlow.PendingStart = StartMode.None;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().path);
+            LoadingScreen.Load();
         }
     }
 }

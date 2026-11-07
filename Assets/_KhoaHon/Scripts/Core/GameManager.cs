@@ -44,6 +44,8 @@ namespace KhoaHon.Core
         public Items.ToolsConfig Tools => toolsConfig;
         public float Sanity { get => sanity; set => sanity = Mathf.Clamp(value, 5f, 100f); }
         public bool IsRestoring { get; private set; }
+        /// <summary>Tổng thời gian chơi của lượt này (giây, lưu trong save).</summary>
+        public float PlaySeconds { get; private set; }
         /// <summary>Nhân vật đang chơi.</summary>
         public PlayerCharacter Character { get; private set; } = PlayerCharacter.Evelyn;
         public CharacterProfile Profile => GetProfile(Character);
@@ -63,6 +65,7 @@ namespace KhoaHon.Core
             Instance = this;
             T.Table = textTable;
             Loc.Load();
+            AchievementService.Init();
             // Tiếp tục từ save: nhân vật lấy từ save đang chờ nạp (cần biết trước khi thanh đồ khởi tạo)
             if (SaveSystem.PendingLoad != null) GameFlow.PendingCharacter = SaveSystem.PendingLoad.CharacterValue;
             Character = GameFlow.PendingCharacter;
@@ -86,6 +89,11 @@ namespace KhoaHon.Core
             // Đợi 1 frame để mọi Start() khác chạy xong rồi mới áp dụng
             yield return null;
             ApplySave(pending);
+        }
+
+        private void Update()
+        {
+            if (GameFlow.IsPlaying) PlaySeconds += Time.unscaledDeltaTime;
         }
 
         private void OnFlagChanged(StoryFlag f, bool value)
@@ -113,6 +121,7 @@ namespace KhoaHon.Core
                 flags = Flags.ToNames(),
                 sanity = sanity,
                 character = Character.ToString(),
+                playSeconds = PlaySeconds,
             };
             foreach (var p in FindParticipants()) p.Capture(d);
             return d;
@@ -134,6 +143,7 @@ namespace KhoaHon.Core
                 stage = d.StageValue;
                 sanity = d.sanity;
                 Character = d.CharacterValue;
+                PlaySeconds = d.playSeconds;
                 GameFlow.PendingCharacter = Character;
                 CharacterApplied?.Invoke(Character);
                 foreach (var p in FindParticipants()) p.Restore(d);
@@ -163,7 +173,7 @@ namespace KhoaHon.Core
         {
             ModalUI.Reset();
             // Scene phải có trong Build Settings (KH_Main đã được thêm ở Phase 1)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().path);
+            UI.LoadingScreen.Load();
         }
 
         private static ISaveParticipant[] FindParticipants() =>

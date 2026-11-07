@@ -12,6 +12,8 @@ namespace KhoaHon.Core
     {
         public static KhoaHonHUD Instance { get; private set; }
         public static bool SubtitlesEnabled = true;
+        /// <summary>Hệ số cỡ chữ phụ đề (Cài đặt › Hỗ trợ).</summary>
+        public static float SubtitleScale = 1f;
 
         [SerializeField] private UIStyle style;
         [Tooltip("Thời gian hiện thông báo ngắn (giây)")]
@@ -145,6 +147,7 @@ namespace KhoaHon.Core
         private IEnumerator SubtitleRoutine(string text, float duration)
         {
             if (!SubtitlesEnabled) yield break;
+            subtitleText.fontSize = 32f * SubtitleScale;
             subtitleText.text = text;
             subtitleText.ForceMeshUpdate();
             var size = subtitleText.GetRenderedValues(false);

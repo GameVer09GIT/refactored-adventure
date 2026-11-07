@@ -50,6 +50,7 @@ namespace KhoaHon.Narrative
                 gm.SetStage(GameStage.Ending);
             }
             PlayerPrefs.SetInt("kh_ending_" + (int)id, 1);
+            AchievementService.OnEnding((int)id, gm != null ? gm.Character : PlayerCharacter.Evelyn, PlayerPrefs.GetInt("kh_deaths_run", 0));
             PlayerPrefs.Save();
             GameFlow.Set(FlowState.Intro);
             var pc = FindFirstObjectByType<PlayerController>();
@@ -94,7 +95,7 @@ namespace KhoaHon.Narrative
             SaveSystem.Delete();
             GameFlow.PendingStart = StartMode.None;
             ModalUI.Reset();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().path);
+            UI.LoadingScreen.Load();
         }
 
         private static IEnumerator Guard(IEnumerator inner, System.Action finished)
@@ -106,7 +107,7 @@ namespace KhoaHon.Narrative
         private static string StatsLine()
         {
             int docs = Notebook.NotebookManager.Instance != null ? Notebook.NotebookManager.Instance.Entries.Count : 0;
-            var span = System.TimeSpan.FromSeconds(Time.timeSinceLevelLoad);
+            var span = System.TimeSpan.FromSeconds(GameManager.Instance != null ? GameManager.Instance.PlaySeconds : Time.timeSinceLevelLoad);
             return T.Format("end.stats", $"{(int)span.TotalHours:00}:{span.Minutes:00}:{span.Seconds:00}", PlayerPrefs.GetInt("kh_deaths_run", 0), docs);
         }
 

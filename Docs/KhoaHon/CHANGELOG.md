@@ -108,3 +108,13 @@
 - Âm thanh mới: động cơ, phanh rít, chết máy, radio khóc, tiếng cào, Cổ Vật vỡ.
 - Sửa: camera cutscene là con của xe nên bị xóa theo xe (kết ẩn kẹt màn đen).
 - Test 41/41. Ảnh: `Temp/KhoaHon/f_gate1.png`, `f_gate3.png`, `f_after_gate.png`, `f_lord2.png`, `f_choice.png`, `f_nm1.png`, `f_release_end.png`.
+
+## Blackwood G — Giao diện & hệ thống chuẩn Steam (2026-11-08)
+- **3 ô lưu** (`SaveSystem`): `khoahon_save_{0..2}.json`, ô hiện tại nhớ trong PlayerPrefs, file cũ tự chuyển sang ô 1. Save thêm `savedAtTicks` + `playSeconds` (GameManager đếm giờ chơi).
+- **Menu chính**: Tiếp tục (ô mới nhất) · Trò chơi mới (chọn ô → hỏi ghi đè → chọn nhân vật) · Tải trò chơi (danh sách ô: nhân vật, chương, giờ chơi, ngày lưu) · Cài đặt · Thêm · Thoát.
+- **Thêm**: 3 thẻ kết thúc (khóa/mở), 11 thành tựu (`AchievementService`, có `IAchievementBackend` để gắn Steamworks sau), credits cuộn dọc.
+- **Màn tải** (`LoadingScreen`): nạp scene bất đồng bộ, tên dinh thự, mẹo chơi ngẫu nhiên (9 mẹo), thanh tiến trình, mờ dần — dùng cho Trò chơi mới/Tiếp tục/Tải/Về menu/Kết thúc.
+- **Cài đặt**: thêm Sương thể tích bật/tắt, nhóm Hỗ trợ (cỡ phụ đề 100/125/150%, rung camera bật/tắt).
+- Tên vật phẩm trên thanh đồ theo ngôn ngữ (bản sao ItemData lúc chạy, không ghi asset; đổi ngôn ngữ cập nhật ngay). `HotbarGate.ReplaceItem`.
+- Thống kê màn kết dùng giờ chơi thật. Phiên bản hiển thị 1.0.
+- Test 41/41. Ảnh: `Temp/KhoaHon/g_menu.png`, `g_slots.png`, `g_extras.png`, `g_loading.png`.

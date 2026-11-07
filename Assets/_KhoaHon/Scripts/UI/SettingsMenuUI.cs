@@ -110,6 +110,7 @@ namespace KhoaHon.UI
             UIKit.SliderRow(p, T.Get("ui.fov"), 60, 100, KhoaHonSettings.Fov, x => Mathf.RoundToInt(x) + "°", x => { KhoaHonSettings.Fov = x; KhoaHonSettings.ApplyLive(); });
             UIKit.SelectorRow(p, T.Get("ui.motion_blur"), OnOff(), KhoaHonSettings.MotionBlur ? 0 : 1, v => { KhoaHonSettings.MotionBlur = v == 0; KhoaHonSettings.ApplyLive(); });
             UIKit.SelectorRow(p, T.Get("ui.film_grain"), OnOff(), KhoaHonSettings.FilmGrain ? 0 : 1, v => { KhoaHonSettings.FilmGrain = v == 0; KhoaHonSettings.ApplyLive(); });
+            UIKit.SelectorRow(p, T.Get("ui.volumetric_fog"), OnOff(), KhoaHonSettings.VolumetricFog ? 0 : 1, v => { KhoaHonSettings.VolumetricFog = v == 0; KhoaHonSettings.ApplyLive(); });
             return p.gameObject;
         }
 
@@ -157,6 +158,9 @@ namespace KhoaHon.UI
             UIKit.SliderRow(p, T.Get("ui.brightness"), -1.5f, 1.5f, KhoaHonSettings.Brightness, x => (x >= 0 ? "+" : "") + x.ToString("0.0"), x => { KhoaHonSettings.Brightness = x; KhoaHonSettings.ApplyLive(); });
             UIKit.Header(p, T.Get("ui.h.hud"));
             UIKit.SelectorRow(p, T.Get("ui.show_fps"), OnOff(), KhoaHonSettings.ShowFps ? 0 : 1, v => { KhoaHonSettings.ShowFps = v == 0; KhoaHonSettings.ApplyLive(); });
+            UIKit.Header(p, T.Get("ui.h.access"));
+            UIKit.SelectorRow(p, T.Get("ui.subtitle_size"), new[] { T.Get("ui.size.normal"), T.Get("ui.size.large"), T.Get("ui.size.xlarge") }, KhoaHonSettings.SubtitleSize, v => { KhoaHonSettings.SubtitleSize = v; KhoaHonSettings.ApplyLive(); });
+            UIKit.SelectorRow(p, T.Get("ui.camera_shake"), OnOff(), KhoaHonSettings.CameraShakeOn ? 0 : 1, v => { KhoaHonSettings.CameraShakeOn = v == 0; KhoaHonSettings.ApplyLive(); });
             // Đổi ngôn ngữ: áp dụng ngay và dựng lại bảng Cài đặt bằng ngôn ngữ mới
             UIKit.SelectorRow(p, T.Get("ui.language"), Loc.DisplayNames, (int)Loc.Current, v =>
             {

@@ -59,6 +59,14 @@ namespace KhoaHon.Items
 
         private int[] cached;
 
+        /// <summary>Thay ItemData của ô bị khóa (CharacterLoadout dùng bản sao có tên bản địa hóa).</summary>
+        public void ReplaceItem(ItemData from, ItemData to)
+        {
+            foreach (var g in gated) if (g.item == from) g.item = to;
+        }
+
+        public bool IsSlotLocked(int index) => IsLocked(index);
+
         private bool IsUnlocked(GatedSlot g) =>
             g.unlockFlag == StoryFlag.None || (GameManager.Instance != null && GameManager.Instance.Has(g.unlockFlag));
 

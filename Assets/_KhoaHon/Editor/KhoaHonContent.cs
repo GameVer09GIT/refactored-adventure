@@ -119,7 +119,7 @@ namespace KhoaHon.EditorTools
             ("ui.settings", "Cài đặt", "Settings"),
             ("ui.credits", "Thông tin", "Credits"),
             ("ui.quit", "Thoát", "Quit"),
-            ("ui.version", "Blackwood Manor · phiên bản 0.5", "Blackwood Manor · build 0.5"),
+            ("ui.version", "Blackwood Manor · phiên bản 1.0", "Blackwood Manor · build 1.0"),
             ("ui.menu_hint", "Nên đeo tai nghe và chơi trong bóng tối.", "Best played with headphones, in the dark."),
             ("ui.confirm_new", "Bắt đầu lại từ đầu? Tiến trình đã lưu sẽ bị xóa.", "Start over? Your saved progress will be lost."),
             ("ui.confirm_quit", "Thoát game?", "Quit the game?"),

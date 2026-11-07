@@ -35,6 +35,7 @@ namespace KhoaHon.Notebook
         /// <summary>Thêm mục. Trả về true nếu là mục mới.</summary>
         public bool Add(NotebookSource s)
         {
+            if (s != null && entries.Count >= 22) AchievementService.Unlock("archivist");
             if (!AddInternal(s)) return false;
             Changed?.Invoke();
             return true;
