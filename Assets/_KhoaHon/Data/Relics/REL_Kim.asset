@@ -13,12 +13,20 @@ MonoBehaviour:
   m_Name: REL_Kim
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.RelicData
   id: REL_Kim
-  title: "B\xFAa \u0111\xF3ng \u0111inh c\u1EE7a Th\u1EE3 C\u1EA3"
+  title: "B\xFAa c\u1EE7a Th\u1EE3 C\u1EA3 Thomas"
+  titleEn: Master Builder Thomas's Hammer
   year: 1
-  body: "Chi\u1EBFc b\xFAa \u0111\u1EABm m\xE1u. Th\u1EE3 C\u1EA3 b\u1ECB \u0110\u1EA1i
-    Quan gi\u1EBFt b\u1EB1ng ch\xEDnh chi\u1EBFc b\xFAa n\xE0y ngay khi h\u1EA7m
-    ho\xE0n t\u1EA5t.\nQu\u1EA5n quanh c\xE1n b\xFAa l\xE0 m\u1ED9t trang b\xF9a."
+  body: "Chi\u1EBFc b\xFAa \u0111\xF3ng \u0111inh \u0111\u1EABm m\xE1u. Th\u1EE3
+    C\u1EA3 Thomas b\u1ECB Lord Blackwood gi\u1EBFt b\u1EB1ng ch\xEDnh chi\u1EBFc
+    b\xFAa n\xE0y ngay khi h\u1EA7m ho\xE0n t\u1EA5t.\nQu\u1EA5n quanh c\xE1n b\xFAa
+    l\xE0 m\u1ED9t trang Vademecum."
+  bodyEn: 'A bloodied claw hammer. Lord Blackwood killed Master Builder Thomas with
+    it the night the cellar was finished.
+
+    A page of the Vademecum is wrapped
+    around the handle.'
   serif: 1
   hanh: 3
   talisman: {fileID: 11400000, guid: ff720c2121512c141b492225f750e2a7, type: 2}
-  pickupLine: "(Ti\u1EBFng g\xF5 b\xFAa v\u1ECDng trong t\u01B0\u1EDDng.)"
+  pickupLine: "(Ti\u1EBFng g\xF5 b\xFAa v\u1ECDng ra t\u1EEB trong t\u01B0\u1EDDng.)"
+  pickupLineEn: (Hammering echoes from inside the walls.)

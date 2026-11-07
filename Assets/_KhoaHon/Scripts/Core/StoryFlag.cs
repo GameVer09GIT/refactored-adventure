@@ -68,7 +68,7 @@ namespace KhoaHon.Core
                 case ChronoYear.Y1978: return "1978";
                 case ChronoYear.Y1996: return "1996";
                 case ChronoYear.Y2009: return "2009";
-                default: return "Hiện tại";
+                default: return T.Get("year.present");
             }
         }
     }

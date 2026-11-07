@@ -138,7 +138,7 @@ namespace KhoaHon.UI
             string[,] keys =
             {
                 { "ui.key.move", "W A S D" }, { "ui.key.run", "Shift" }, { "ui.key.interact", "E" }, { "ui.key.notebook", "Tab / J" },
-                { "ui.key.hotbar", "1 – 4 · cuộn chuột" }, { "ui.key.use", "Chuột trái" }, { "ui.key.breath", "Giữ Space" }, { "ui.key.pause", "Esc" },
+                { "ui.key.hotbar", T.Get("ui.keyname.hotbar") }, { "ui.key.use", T.Get("ui.keyname.lmb") }, { "ui.key.breath", T.Get("ui.keyname.hold_space") }, { "ui.key.pause", "Esc" },
             };
             for (int i = 0; i < keys.GetLength(0); i++)
             {
@@ -157,7 +157,12 @@ namespace KhoaHon.UI
             UIKit.SliderRow(p, T.Get("ui.brightness"), -1.5f, 1.5f, KhoaHonSettings.Brightness, x => (x >= 0 ? "+" : "") + x.ToString("0.0"), x => { KhoaHonSettings.Brightness = x; KhoaHonSettings.ApplyLive(); });
             UIKit.Header(p, T.Get("ui.h.hud"));
             UIKit.SelectorRow(p, T.Get("ui.show_fps"), OnOff(), KhoaHonSettings.ShowFps ? 0 : 1, v => { KhoaHonSettings.ShowFps = v == 0; KhoaHonSettings.ApplyLive(); });
-            UIKit.SelectorRow(p, T.Get("ui.language"), new[] { "Tiếng Việt" }, 0, null);
+            // Đổi ngôn ngữ: áp dụng ngay và dựng lại bảng Cài đặt bằng ngôn ngữ mới
+            UIKit.SelectorRow(p, T.Get("ui.language"), Loc.DisplayNames, (int)Loc.Current, v =>
+            {
+                Loc.Set((Language)v);
+                Open(onClose);
+            });
             return p.gameObject;
         }
 

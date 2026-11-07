@@ -13,15 +13,22 @@ MonoBehaviour:
   m_Name: TAL_Thuy
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TalismanData
   id: TAL_Thuy
-  title: "Trang b\xF9a h\xE0nh Th\u1EE7y"
+  title: "Vademecum \u2014 Trang K\u1EBB L\u1EEF Kh\xE1ch"
+  titleEn: "Vademecum \u2014 The Wayfarer's Page"
   year: 1
-  body: "B\xE0i ch\xFA Vy \u0111\xE3 ch\xE9p l\u1EA1i t\u1EEB trang b\xF9a h\xE0nh
-    Th\u1EE7y."
+  body: "B\xE0i ch\xFA b\u1EA1n ch\xE9p l\u1EA1i t\u1EEB trang k\u1EB9p trong l\xE1
+    th\u01B0."
+  bodyEn: The verse you copied from the page inside the letter.
   serif: 1
   hanh: 1
   chantLines:
-  - "[C\xE2u ch\xFA 1 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 2 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 3 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 4 \u2014 ch\u1EDD n\u1ED9i dung]"
+  - "Ng\u01B0\u1EDDi l\u1EA1 \u0111\u1EBFn, ng\u01B0\u1EDDi l\u1EA1 \u1EDF l\u1EA1i."
+  - "R\u01B0\u1EE3u \u0111\u1ECF l\xE0 d\xE2y bu\u1ED9c."
+  - "Th\u01B0 kh\xF4ng bao gi\u1EDD t\u1EDBi n\u01A1i."
+  - "\u1EDE l\u1EA1i \u0111i, M\u1EAFt Tr\u1EADn th\u1EE9 n\u0103m."
+  chantLinesEn:
+  - The stranger came, the stranger stays.
+  - Red wine is the binding cord.
+  - The letter never reaches home.
+  - Stay now, fifth Eye of the circle.
   symbol: {fileID: 0}

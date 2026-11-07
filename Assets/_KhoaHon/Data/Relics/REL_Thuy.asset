@@ -13,14 +13,19 @@ MonoBehaviour:
   m_Name: REL_Thuy
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.RelicData
   id: REL_Thuy
-  title: "Huy\u1EBFt th\u01B0 ch\u01B0a g\u1EEDi"
+  title: "L\xE1 th\u01B0 c\u1EA7u c\u1EE9u ch\u01B0a g\u1EEDi"
+  titleEn: The Unsent Letter
   year: 1
   body: "\"Ai \u0111\u1ECDc \u0111\u01B0\u1EE3c th\u01B0 n\xE0y xin b\xE1o cho gia
-    \u0111\xECnh t\xF4i \u1EDF ph\u01B0\u01A1ng xa: t\xF4i kh\xF4ng b\u1ECF \u0111i.
-    B\u1EEFa t\u1ED1i nay c\xF3 v\u1ECB l\u1EA1. Ch\u1EE7 nh\xE0 m\u1EDDi r\u01B0\u1EE3u
-    m\xE3i kh\xF4ng th\xF4i\u2026\"\n(Ch\u1EEF nh\xF2e m\xE1u \u1EDF cu\u1ED1i.)\nK\u1EB9p
-    trong th\u01B0 l\xE0 m\u1ED9t trang b\xF9a."
+    \u0111\xECnh t\xF4i \u1EDF Bristol: t\xF4i kh\xF4ng b\u1ECF \u0111i. B\u1EEFa
+    t\u1ED1i nay c\xF3 v\u1ECB l\u1EA1. Lord Blackwood r\xF3t r\u01B0\u1EE3u m\xE3i
+    kh\xF4ng th\xF4i\u2026\"\n(Ch\u1EEF nh\xF2e m\xE1u \u1EDF cu\u1ED1i.)\nK\u1EB9p
+    trong th\u01B0 l\xE0 m\u1ED9t trang Vademecum."
+  bodyEn: "\"Whoever finds this, please tell my family in Bristol: I did not run
+    away. Tonight's supper tasted wrong. Lord Blackwood kept filling my glass\u2026\"\n(The
+    ink smears into blood at the end.)\nA page of the Vademecum is folded inside."
   serif: 1
   hanh: 1
   talisman: {fileID: 11400000, guid: 6236f45a2ad0ca749a9818eea29e68f4, type: 2}
-  pickupLine: "(Ti\u1EBFng n\u01B0\u1EDBc nh\u1ECF gi\u1ECDt.)"
+  pickupLine: "(Ti\u1EBFng ly th\u1EE7y tinh v\u1EE1 \u0111\xE2u \u0111\xF3.)"
+  pickupLineEn: (Somewhere, a wine glass shatters.)

@@ -13,12 +13,20 @@ MonoBehaviour:
   m_Name: DOC_1978_ThiepTanGia
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.DocumentData
   id: DOC_1978_ThiepTanGia
-  title: "Thi\u1EC7p t\xE2n gia gia \u0111\xECnh Tr\u1EA7n"
+  title: "Thi\u1EC7p t\xE2n gia nh\xE0 Miller"
+  titleEn: The Millers' Housewarming Invitation
   year: 3
-  body: "Tr\xE2n tr\u1ECDng k\xEDnh m\u1EDDi qu\xFD kh\xE1ch \u0111\u1EBFn d\u1EF1
-    ti\u1EC7c t\xE2n gia c\u1EE7a gia \u0111\xECnh ch\xFAng t\xF4i t\u1EA1i bi\u1EC7t
-    th\u1EF1 Thanh V\xE2n.\n\nM\u1EB7t sau, n\xE9t ch\u1EEF run:\n\"N\u1EEDa cu\u1ED1n
-    s\u1ED5 n\xF3i r\u1EB1ng ta s\u1EBD c\xF3 t\u1EA5t c\u1EA3. Ch\u1EC9 c\u1EA7n
-    m\u1ED9t b\u1EEFa t\u1ED1i.\""
+  body: "Gia \u0111\xECnh Miller tr\xE2n tr\u1ECDng k\xEDnh m\u1EDDi qu\xFD kh\xE1ch
+    \u0111\u1EBFn d\u1EF1 ti\u1EC7c t\xE2n gia t\u1EA1i dinh th\u1EF1 Blackwood.\n\nM\u1EB7t
+    sau, n\xE9t ch\u1EEF run r\u1EA9y:\n\"N\u1EEDa cu\u1ED1n s\xE1ch n\xF3i ta s\u1EBD
+    c\xF3 t\u1EA5t c\u1EA3. Ch\u1EC9 c\u1EA7n m\u1ED9t b\u1EEFa t\u1ED1i.\""
+  bodyEn: 'The Miller family requests the pleasure of your company at a housewarming
+    dinner at Blackwood Manor.
+
+
+    On the back, in a shaking hand:
+
+    "Half a
+    book tells me I can have everything. All it takes is one dinner."'
   serif: 1
   flagOnRead: 0

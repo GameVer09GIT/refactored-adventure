@@ -43,7 +43,7 @@ namespace KhoaHon.Items
             GameManager.Instance.SetFlag(HanhUtil.RelicFlag(relic.hanh));
             NotebookManager.Instance?.Add(relic);
             if (relic.talisman != null) NotebookManager.Instance?.Add(relic.talisman);
-            if (!string.IsNullOrEmpty(relic.pickupLine)) KhoaHonHUD.Subtitle(relic.pickupLine, 4f);
+            if (!string.IsNullOrEmpty(relic.PickupLine)) KhoaHonHUD.Subtitle(relic.PickupLine, 4f);
             RelicAdded?.Invoke(relic.hanh);
         }
 

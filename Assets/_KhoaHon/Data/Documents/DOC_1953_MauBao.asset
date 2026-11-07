@@ -13,11 +13,16 @@ MonoBehaviour:
   m_Name: DOC_1953_MauBao
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.DocumentData
   id: DOC_1953_MauBao
-  title: "M\u1EA9u b\xE1o c\u0169"
+  title: "M\u1EA9u b\xE1o c\u0169 \u2014 The Ashford Herald"
+  titleEn: "Old Clipping \u2014 The Ashford Herald"
   year: 2
-  body: "TH\u1EA2M K\u1ECACH \u1EDE BI\u1EC6T TH\u1EF0 THANH V\xC2N: to\xE0n b\u1ED9
-    gia t\u1ED9c h\u1ECD Tr\u1ECBnh \u0111\u01B0\u1EE3c ph\xE1t hi\u1EC7n t\u1EED
-    vong trong ph\xF2ng ng\u1EE7. Nh\xE0 ch\u1EE9c tr\xE1ch ch\u01B0a x\xE1c \u0111\u1ECBnh
-    nguy\xEAn nh\xE2n."
+  body: "TH\u1EA2M K\u1ECACH \u1EDE DINH TH\u1EF0 BLACKWOOD: to\xE0n b\u1ED9 gia
+    t\u1ED9c Blackwood \u0111\u01B0\u1EE3c ph\xE1t hi\u1EC7n t\u1EED vong trong ph\xF2ng
+    ng\u1EE7 ch\xEDnh. Lord Arthur, khi \u1EA5y \u0111\xE3 79 tu\u1ED5i, \u0111\u01B0\u1EE3c
+    t\xECm th\u1EA5y ng\u1ED3i tr\xEAn gh\u1EBF, m\u1EAFt m\u1EDF tr\u1EEBng. Nh\xE0
+    ch\u1EE9c tr\xE1ch ch\u01B0a x\xE1c \u0111\u1ECBnh nguy\xEAn nh\xE2n."
+  bodyEn: 'TRAGEDY AT BLACKWOOD MANOR: the entire Blackwood family has been found
+    dead in the master bedroom. Lord Arthur, aged 79, was discovered seated upright,
+    eyes wide open. Authorities have not determined a cause.'
   serif: 1
   flagOnRead: 0

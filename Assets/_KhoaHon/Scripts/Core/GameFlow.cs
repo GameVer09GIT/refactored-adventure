@@ -13,6 +13,8 @@ namespace KhoaHon.Core
         public static StartMode PendingStart = StartMode.None;
         /// <summary>Đã qua màn cảnh báo + chỉnh độ sáng trong phiên này.</summary>
         public static bool BootShown;
+        /// <summary>Nhân vật đã chọn ở màn chọn nhân vật, áp dụng khi scene nạp lại cho New Game.</summary>
+        public static PlayerCharacter PendingCharacter = PlayerCharacter.Evelyn;
 
         public static event Action<FlowState> Changed;
 

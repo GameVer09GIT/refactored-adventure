@@ -255,7 +255,7 @@ namespace KhoaHon.UI
                 if (SaveSystem.Exists) Confirm(T.Get("ui.confirm_new"), () => StartCoroutine(NewGame()));
                 else StartCoroutine(NewGame());
             });
-            UIKit.MenuButton(col, T.Get("ui.settings"), () => { menuRoot.SetActive(false); SettingsMenuUI.Instance.Open(() => menuRoot.SetActive(true)); });
+            UIKit.MenuButton(col, T.Get("ui.settings"), () => { menuRoot.SetActive(false); SettingsMenuUI.Instance.Open(BuildMenu); });
             UIKit.MenuButton(col, T.Get("ui.credits"), ShowCredits);
             UIKit.MenuButton(col, T.Get("ui.quit"), () => Confirm(T.Get("ui.confirm_quit"), Quit));
 
@@ -329,7 +329,11 @@ namespace KhoaHon.UI
             var text = UIKit.Label(canvas.transform, "", 40, UIKit.Ink, TextAlignmentOptions.Center, true);
             text.rectTransform.anchorMin = new Vector2(0.15f, 0.3f); text.rectTransform.anchorMax = new Vector2(0.85f, 0.7f);
             text.lineSpacing = 18;
-            foreach (var key in new[] { "intro.1", "intro.2", "intro.3" })
+            // Chữ mở đầu theo nhân vật đã chọn (thiếu hồ sơ thì dùng intro chung)
+            var prof = GameManager.Instance != null ? GameManager.Instance.Profile : null;
+            var keys = prof != null && prof.introKeys != null && prof.introKeys.Count > 0
+                ? prof.introKeys.ToArray() : new[] { "intro.1", "intro.2", "intro.3" };
+            foreach (var key in keys)
             {
                 string s = T.Get(key);
                 for (int i = 0; i <= s.Length; i++) { text.text = s.Substring(0, i); if (AnyKey()) { text.text = s; break; } yield return new WaitForSecondsRealtime(0.035f); }

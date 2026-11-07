@@ -13,15 +13,22 @@ MonoBehaviour:
   m_Name: TAL_Tho
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TalismanData
   id: TAL_Tho
-  title: "Trang b\xF9a h\xE0nh Th\u1ED5"
+  title: "Vademecum \u2014 Trang Ng\u01B0\u1EDDi Gi\u1EEF Ch\xECa"
+  titleEn: "Vademecum \u2014 The Keeper's Page"
   year: 1
-  body: "B\xE0i ch\xFA Vy \u0111\xE3 ch\xE9p l\u1EA1i t\u1EEB trang b\xF9a h\xE0nh
-    Th\u1ED5."
+  body: "B\xE0i ch\xFA b\u1EA1n ch\xE9p l\u1EA1i t\u1EEB trang qu\u1EA5n quanh chi\u1EBFc
+    l\u01B0\u1EE3c."
+  bodyEn: The verse you copied from the page wound around the comb.
   serif: 1
   hanh: 2
   chantLines:
-  - "[C\xE2u ch\xFA 1 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 2 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 3 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 4 \u2014 ch\u1EDD n\u1ED9i dung]"
+  - "K\u1EBB trung th\xE0nh nh\u1EA5t, gi\u1EEF m\u1ECDi ch\xECa kh\xF3a."
+  - "Ng\u01B0\u01A1i canh c\u1EEDa cho \u0111\u1EBFn t\u1EADn c\xF9ng."
+  - "Kh\xF4ng ai ra, kh\xF4ng ai v\xE0o n\u1EBFu ng\u01B0\u01A1i kh\xF4ng cho."
+  - "Canh gi\u1EEF \u0111i, M\u1EAFt Tr\u1EADn th\u1EE9 nh\u1EA5t."
+  chantLinesEn:
+  - The most loyal one, keeper of every key.
+  - You guard the doors until the end of days.
+  - None leave, none enter, without your leave.
+  - Keep watch, first Eye of the circle.
   symbol: {fileID: 0}

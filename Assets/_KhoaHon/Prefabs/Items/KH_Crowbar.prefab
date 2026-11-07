@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 240695823294446006}
+  - {fileID: 9037447199832563614}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &8947780827229809873
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Items.CrowbarItem
   itemData: {fileID: 11400000, guid: ef0f363928ba9dc4696237658b4428fe, type: 2}
   audioSource: {fileID: 0}
---- !u!1001 &350619887286083165
+--- !u!1001 &8854586104383486069
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -206,8 +206,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a3409b724291b445a3c5313e411a327, type: 3}
---- !u!4 &240695823294446006 stripped
+--- !u!4 &9037447199832563614 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4a3409b724291b445a3c5313e411a327, type: 3}
-  m_PrefabInstance: {fileID: 350619887286083165}
+  m_PrefabInstance: {fileID: 8854586104383486069}
   m_PrefabAsset: {fileID: 0}

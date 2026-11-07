@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5c7cb4a051563344b68a1718cd1a801, type: 3}
   m_Name: Item_Recorder
   m_EditorClassIdentifier: Assembly-CSharp::HorrorGame.Inventory.ItemData
-  displayName: "M\xE1y ghi \xE2m"
+  displayName: Cassette Recorder
   itemType: 4
   icon: {fileID: 21300000, guid: 4047a542ace729f499c13866cc386197, type: 3}
   heldPrefab: {fileID: 8998978042470952546, guid: ca1f432bdb8de4c4e8d02b409a3244e7, type: 3}

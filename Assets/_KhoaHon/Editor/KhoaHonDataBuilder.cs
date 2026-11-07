@@ -10,7 +10,7 @@ using UnityEngine;
 namespace KhoaHon.EditorTools
 {
     /// <summary>
-    /// Tạo/cập nhật toàn bộ dữ liệu ScriptableObject của Khóa Hồn (văn bản theo PROMPT mục 8),
+    /// Tạo/cập nhật toàn bộ dữ liệu ScriptableObject (văn bản song ngữ lấy từ KhoaHonContent — kịch bản Blackwood Manor),
     /// config, font style, ItemData + prefab cầm tay placeholder. Chạy lại an toàn (idempotent).
     /// </summary>
     public static class KhoaHonDataBuilder
@@ -27,6 +27,7 @@ namespace KhoaHon.EditorTools
             public Dictionary<string, NotebookSource> sources = new Dictionary<string, NotebookSource>();
             public RelicData[] relics = new RelicData[5];
             public ItemData recorder, filmCamera, crowbar, flashlight;
+            public CharacterProfile evelyn, alex;
             public Material[] mats;
         }
 
@@ -36,7 +37,7 @@ namespace KhoaHon.EditorTools
         public static Result Build()
         {
             foreach (var d in new[] { "Data", "Data/Configs", "Data/Documents", "Data/Tapes", "Data/Talismans", "Data/Relics", "Data/Items",
-                                      "Prefabs", "Prefabs/Items", "Prefabs/Characters", "Materials", "Scenes" })
+                                      "Data/Characters", "Prefabs", "Prefabs/Items", "Prefabs/Characters", "Materials", "Scenes" })
                 EnsureFolder(Root + "/" + d);
 
             var r = new Result();
@@ -63,6 +64,7 @@ namespace KhoaHon.EditorTools
             EditorUtility.SetDirty(r.db);
 
             BuildItems(r);
+            BuildCharacters(r);
             r.mats = BuildMaterials();
 
             AssetDatabase.SaveAssets();
@@ -72,275 +74,106 @@ namespace KhoaHon.EditorTools
         // ---------------------------------------------------------------- Text
         private static void FillText(TextTable t)
         {
-            var e = new (string, string)[]
-            {
-                ("prompt.open_door", "[E] Mở cửa"),
-                ("prompt.close_door", "[E] Đóng cửa"),
-                ("prompt.locked", "Cửa bị khóa"),
-                ("prompt.unlock_with", "[E] Mở khóa bằng {0}"),
-                ("prompt.pickup", "[E] Nhặt {0}"),
-                ("prompt.read", "[E] Đọc: {0}"),
-                ("prompt.inspect", "[E] Xem"),
-                ("prompt.main_door_locked", "Cửa chính đã bị then cài, không mở được"),
-                ("prompt.stair_door_locked", "Cửa lên tầng hai bị khóa"),
-                ("prompt.chains", "Nắp hầm bị khóa bằng 5 sợi xích"),
-                ("prompt.door_stuck", "Cửa kẹt cứng, không mở được"),
-                ("prompt.hide_wardrobe", "[E] Trốn vào tủ"),
-                ("prompt.hide_bed", "[E] Chui xuống gầm giường"),
-                ("prompt.hide_exit", "[E] Ra ngoài"),
-                ("prompt.hold_breath", "Giữ [Space] để nín thở!"),
-                ("sub.hk_run", "Chạy đi…"),
-                ("sub.hk_comb", "Chạy đi… ta không kiềm chế được…"),
-                ("sub.hk_lullaby", "♪ Ầu ơ… ngủ đi con, đêm dài… cửa đã khóa… đèn đã tàn… ♪"),
-                ("prompt.locked_outside", "Cửa bị khóa từ bên ngoài"),
-                ("prompt.altar", "Bàn thờ gia tộc — 13 bài vị, 5 đài sen"),
-                ("prompt.body", "[E] Xem"),
-                ("msg.chains", "Năm sợi xích lớn nối ngầm vào tường. Không có ổ khóa nào cả."),
-                ("msg.altar", "Năm đài sen trống, mỗi đài nằm dưới một bài vị khắc tên một hành."),
-                ("msg.rubble", "Đá sập kín một đường hầm khoan hẹp. Không đi tiếp được."),
-                ("key.upstairs", "chìa khóa cửa cầu thang"),
-                ("item.backpack", "balo của Quân"),
-                ("item.battery", "pin tiểu"),
-                ("item.film", "cuộn phim"),
-                ("item.safe_placeholder", "đồ trong két sắt (tạm)"),
-                ("item.tape", "cuộn băng cassette"),
-                ("item.newspaper", "mẩu báo cũ"),
-                ("item.relic_moc", "búp bê vải"),
-                ("item.relic_thuy", "huyết thư"),
-                ("item.relic_tho", "lược sừng gãy"),
-                ("item.relic_kim", "búa đóng đinh"),
-                ("item.relic_hoa", "đôi hài thêu"),
-                ("item.generic", "vật phẩm"),
-                ("toast.got_item", "Đã nhặt: {0}"),
-                ("toast.notebook_added", "Đã ghi vào Sổ tay: {0}"),
-                ("toast.saved", "Đã lưu tiến trình"),
-                ("toast.no_save", "Chưa có bản lưu"),
-                ("hint.backpack", "Có thể nghe cuộn băng bằng máy ghi âm (Tab > Băng ghi âm)"),
-                ("sub.front_door_slam", "(Cửa chính sập lại sau lưng. Then cài rơi xuống.)"),
-                ("ui.close", "Đóng [E]"),
-                ("notebook.title", "Sổ tay điều tra"),
-                ("notebook.hint", "Tab / J: đóng  ·  Q / E: đổi tab"),
-                ("notebook.tab.documents", "Tài liệu"),
-                ("notebook.tab.tapes", "Băng ghi âm"),
-                ("notebook.tab.photos", "Ảnh"),
-                ("notebook.tab.talismans", "Bùa chú"),
-                ("notebook.tab.relics", "Kỷ vật"),
-                ("notebook.empty", "Chưa có gì."),
-                ("notebook.new", "mới"),
-                ("notebook.tape_hint", "Cầm máy ghi âm để nghe cuộn băng này."),
-                ("intro.1", "Quân mất tích ở biệt thự Thanh Vân đã mười bốn ngày."),
-                ("ui.title_top", "LỜI NGUYỀN"),
-                ("ui.title_main", "KHÓA HỒN"),
-                ("ui.continue", "Tiếp tục"),
-                ("ui.new_game", "Trò chơi mới"),
-                ("ui.settings", "Cài đặt"),
-                ("ui.credits", "Thông tin"),
-                ("ui.quit", "Thoát"),
-                ("ui.version", "Biệt thự Thanh Vân · bản thử nghiệm 0.3"),
-                ("ui.menu_hint", "Nên đeo tai nghe và chơi trong bóng tối."),
-                ("ui.confirm_new", "Bắt đầu lại từ đầu? Tiến trình đã lưu sẽ bị xóa."),
-                ("ui.confirm_quit", "Thoát game?"),
-                ("ui.confirm_menu", "Về menu chính? Tiến trình từ điểm lưu gần nhất sẽ mất."),
-                ("ui.confirm_reload", "Tải lại điểm lưu gần nhất?"),
-                ("ui.yes", "Đồng ý"),
-                ("ui.no", "Hủy"),
-                ("ui.confirm", "Xác nhận"),
-                ("ui.back", "Quay lại"),
-                ("ui.apply", "Áp dụng"),
-                ("ui.defaults", "Mặc định"),
-                ("ui.applied", "Đã áp dụng cài đặt"),
-                ("ui.paused", "TẠM DỪNG"),
-                ("ui.resume", "Tiếp tục"),
-                ("ui.reload_checkpoint", "Tải lại điểm lưu"),
-                ("ui.main_menu", "Về menu chính"),
-                ("ui.pause_tip", "Bà ta không ngủ. Bà ta chỉ chờ."),
-                ("ui.warning_title", "CẢNH BÁO"),
-                ("ui.warning_body", "Trò chơi chứa hình ảnh máu me, xác chết, âm thanh đột ngột và ánh sáng nhấp nháy.\nKhông phù hợp với người dưới 18 tuổi, người có bệnh tim hoặc dễ bị kích động.\n\nNhấn phím bất kỳ để tiếp tục."),
-                ("ui.calib_title", "ĐIỀU CHỈNH ĐỘ SÁNG"),
-                ("ui.calib_body", "Kéo thanh trượt cho tới khi hình bên trái thấy rõ, hình giữa thấy mờ\nvà hình bên phải GẦN NHƯ không nhìn thấy."),
-                ("ui.credits_body", "LỜI NGUYỀN KHÓA HỒN\n\nKịch bản & thiết kế: nhóm dự án refactored-adventure\nLập trình, dựng cảnh, âm thanh tổng hợp: Claude (Anthropic) cùng nhóm\nTài nguyên: Flooded Grounds, Abandoned Asylum, Vintage Living Room, civilian_girl, Mixamo\nPhông chữ: Be Vietnam Pro, Noto Serif (SIL OFL)\n\nCảm ơn bạn đã dám bước vào biệt thự Thanh Vân."),
-                ("ui.tab.graphics", "Hình ảnh"),
-                ("ui.tab.audio", "Âm thanh"),
-                ("ui.tab.controls", "Điều khiển"),
-                ("ui.tab.display", "Hiển thị"),
-                ("ui.h.screen", "Màn hình"),
-                ("ui.h.quality", "Chất lượng"),
-                ("ui.h.volume", "Âm lượng"),
-                ("ui.h.subtitles", "Phụ đề"),
-                ("ui.h.mouse", "Chuột"),
-                ("ui.h.keys", "Phím điều khiển"),
-                ("ui.h.brightness", "Độ sáng"),
-                ("ui.h.hud", "Giao diện"),
-                ("ui.screen_mode", "Chế độ hiển thị"),
-                ("ui.fullscreen", "Toàn màn hình"),
-                ("ui.borderless", "Cửa sổ không viền"),
-                ("ui.windowed", "Cửa sổ"),
-                ("ui.resolution", "Độ phân giải"),
-                ("ui.vsync", "Đồng bộ dọc (VSync)"),
-                ("ui.fps_cap", "Giới hạn FPS"),
-                ("ui.unlimited", "Không giới hạn"),
-                ("ui.quality", "Chất lượng đồ họa"),
-                ("ui.fov", "Trường nhìn (FOV)"),
-                ("ui.motion_blur", "Làm mờ chuyển động"),
-                ("ui.film_grain", "Nhiễu hạt phim"),
-                ("ui.vol_master", "Tổng"),
-                ("ui.vol_music", "Nhạc"),
-                ("ui.vol_sfx", "Hiệu ứng"),
-                ("ui.vol_amb", "Môi trường"),
-                ("ui.vol_voice", "Giọng nói"),
-                ("ui.subtitles", "Hiện phụ đề"),
-                ("ui.headphones", "Âm thanh 3D được thiết kế cho tai nghe: tiếng chìa khóa cho biết bà ta ở bên nào."),
-                ("ui.sensitivity", "Độ nhạy chuột"),
-                ("ui.brightness", "Độ sáng"),
-                ("ui.show_fps", "Hiện FPS"),
-                ("ui.language", "Ngôn ngữ"),
-                ("ui.on", "Bật"),
-                ("ui.off", "Tắt"),
-                ("ui.key.move", "Di chuyển"),
-                ("ui.key.run", "Chạy"),
-                ("ui.key.interact", "Tương tác"),
-                ("ui.key.notebook", "Sổ tay"),
-                ("ui.key.hotbar", "Đổi vật phẩm"),
-                ("ui.key.use", "Dùng vật phẩm"),
-                ("ui.key.breath", "Nín thở (khi trốn)"),
-                ("ui.key.pause", "Tạm dừng"),
-                ("ui.you_died", "BẠN ĐÃ CHẾT"),
-                ("hud.battery", "PIN"),
-                ("hud.film", "PHIM"),
-                ("intro.2", "Đêm cuối cùng, nó gửi cho tôi một tấm ảnh chụp sàn nhà bếp. Cảnh sát nói đó chỉ là vết bẩn."),
-                ("intro.3", "Tôi không tin."),
-            };
-            foreach (var (k, v) in e) t.Set(k, v);
+            var keep = new HashSet<string>();
+            foreach (var (k, vi, en) in KhoaHonContent.Text) { t.Set(k, vi, en); keep.Add(k); }
+            t.RemoveAllExcept(keep);
         }
 
         // ---------------------------------------------------------------- Documents
         private static void BuildDocuments(Result r)
         {
-            Doc(r, "DOC_1921_BangDong", "Bảng đồng", ChronoYear.Y1921,
-                "KHỞI CÔNG THANH VÂN — 1921.\nGia chủ Trịnh Đại Quan.");
-            Doc(r, "DOC_1924_SoKhoaHon", "Sổ Khóa Hồn — tập 1", ChronoYear.Y1924,
-                "Ngũ Hành Khóa Hồn. Lấy năm người thân cận làm Mắt Trận, mỗi người giữ một hành: Mộc, Thủy, Thổ, Kim, Hỏa. " +
-                "Lấy tám phu hồ chôn sống trong vách làm mạch dẫn khí. Mười ba hồn khóa vào Ấn Đồng, kẻ giữ Ấn hưởng phúc lộc không cùng. " +
-                "Năm đài sen là năm cửa của trận. Trận mở thì cửa hầm mở.\n\n(Kèm sơ đồ năm đài sen.)");
-            Doc(r, "DOC_1924_BanThietKeHam", "Bản thiết kế hầm", ChronoYear.Y1924,
-                "Cầu thang đá — sâu năm trượng. Xà lim. Sảnh tế bát giác. Vạc đặt chính giữa.\n\n(Chữ ký Thợ Cả bị gạch xóa bằng mực đỏ.)");
-            Doc(r, "DOC_1953_MauBao", "Mẩu báo cũ", ChronoYear.Y1953,
-                "THẢM KỊCH Ở BIỆT THỰ THANH VÂN: toàn bộ gia tộc họ Trịnh được phát hiện tử vong trong phòng ngủ. " +
-                "Nhà chức trách chưa xác định nguyên nhân.");
-            Doc(r, "DOC_1978_ThiepTanGia", "Thiệp tân gia gia đình Trần", ChronoYear.Y1978,
-                "Trân trọng kính mời quý khách đến dự tiệc tân gia của gia đình chúng tôi tại biệt thự Thanh Vân.\n\n" +
-                "Mặt sau, nét chữ run:\n\"Nửa cuốn sổ nói rằng ta sẽ có tất cả. Chỉ cần một bữa tối.\"");
-            Doc(r, "DOC_1996_DiThuLam", "Di thư Lâm Gia Huy", ChronoYear.Y1996,
-                "Mọi cơ quan của ngôi nhà đều điều khiển từ phòng làm việc và phòng thờ gia tộc. " +
-                "Mật mã két sắt nằm ở năm khai sinh cơ nghiệp này. Ta đã mở được két, nhưng không qua được bàn thờ. " +
-                "Người đàn bà cầm chùm chìa khóa đêm nào cũng đứng ở chân giường ta. Ta không chịu nổi nữa.");
-            Doc(r, "DOC_2009_BienBan", "Biên bản niêm phong", ChronoYear.Y2009,
-                "Biên bản niêm phong hiện trường. Sáu công nhân đội cải tạo mất tích sau khi thi công khoan tường tầng hầm. " +
-                "Cấm mọi hành vi xâm nhập.");
-            Doc(r, "DOC_Now_TheQuan", "Thẻ phóng viên của Quân", ChronoYear.Present,
-                "THẺ PHÓNG VIÊN — Hạ Quân — Phóng viên ảnh.", false);
+            foreach (var d in KhoaHonContent.Documents)
+            {
+                var doc = LoadOrCreate<DocumentData>(DataDir + "/Documents/" + d.id + ".asset");
+                doc.SetBasic(d.id, d.titleVi, d.year, d.bodyVi, d.serif);
+                doc.SetEnglish(d.titleEn, d.bodyEn);
+                EditorUtility.SetDirty(doc);
+                r.sources[d.id] = doc;
+            }
 
-            var photo = LoadOrCreate<PhotoClueData>(DataDir + "/Documents/PHOTO_QuanSent.asset");
-            photo.SetBasic("PHOTO_QuanSent", "Ảnh Quân gửi", ChronoYear.Present,
-                "Ảnh chụp flash sàn nhà bếp, gửi đêm cuối cùng. Trên sàn hiện một ký hiệu Ngũ Hành bằng máu mà mắt thường không thấy.");
+            var p = KhoaHonContent.Photo;
+            var photo = LoadOrCreate<PhotoClueData>(DataDir + "/Documents/" + p.id + ".asset");
+            photo.SetBasic(p.id, p.titleVi, p.year, p.bodyVi, p.serif);
+            photo.SetEnglish(p.titleEn, p.bodyEn);
             EditorUtility.SetDirty(photo);
             r.sources[photo.Id] = photo;
-        }
-
-        private static DocumentData Doc(Result r, string id, string title, ChronoYear y, string body, bool serif = true)
-        {
-            var d = LoadOrCreate<DocumentData>(DataDir + "/Documents/" + id + ".asset");
-            d.SetBasic(id, title, y, body, serif);
-            EditorUtility.SetDirty(d);
-            r.sources[id] = d;
-            return d;
         }
 
         // ---------------------------------------------------------------- Tapes
         private static void BuildTapes(Result r)
         {
-            Tape(r, "TAPE_1", "Băng #1 — balo ở Sảnh", ChronoYear.Present, "Cuộn băng tìm thấy trong balo của Quân.", new[]
+            foreach (var def in KhoaHonContent.Tapes)
             {
-                "Ngày thứ… ba? Chị Vy, nếu chị nghe được cái này thì em xin lỗi vì không nghe máy.",
-                "Em tìm ra rồi — lối xuống hầm nằm dưới nhà bếp, ngay dưới cái bàn tiệc.",
-                "Có năm sợi xích, không có ổ khóa nào cả…",
-                "(tiếng kim loại leng keng xa xa)",
-                "…Chị nghe thấy không? Tiếng chìa khóa.",
-                "Và tiếng bước chân, một bên nặng một bên nhẹ, như người đi khập khiễng.",
-                "Nó ở trên lầu. Em tắt máy đây.",
-            });
-            Tape(r, "TAPE_2", "Băng #2 — cạnh két sắt", ChronoYear.Present, "Cuộn băng để cạnh két sắt trong Phòng Làm Việc.", new[]
-            {
-                "Két khóa số. Ông Lâm viết mã nằm ở năm khai sinh cơ nghiệp…",
-                "Em thử năm xây xong, 1924 — không được.",
-                "(tiếng chìa khóa leng keng trên trần)",
-                "Bà ta ở ngay trên đầu em.",
-                "Đêm qua em thấy bà ta đứng ở chiếu nghỉ cầu thang nhìn xuống, nhưng không bước xuống.",
-                "Hình như bà ta không xuống được dưới này.",
-            });
-            Tape(r, "TAPE_3", "Băng #3 — cầu thang hầm", ChronoYear.Present, "Cuộn băng rơi trên bậc thang đá, cạnh đống đá sập.", new[]
-            {
-                "(giọng yếu, thở gấp)",
-                "Em tìm được cái lỗ đội thợ khoan năm 2009, sau vách bếp…",
-                "chui lọt xuống được thì vách sập. Chân em kẹt dưới đá… chảy máu nhiều quá.",
-                "Có ai đó dưới này, ngồi trên ghế, nói chuyện rất nhẹ nhàng.",
-                "Lão bảo lão có thể cho em mọi thứ.",
-                "Chị ơi… nếu em không ra được — đừng nghe lão.",
-            });
-        }
-
-        private static void Tape(Result r, string id, string title, ChronoYear y, string desc, string[] lines)
-        {
-            var t = LoadOrCreate<TapeData>(DataDir + "/Tapes/" + id + ".asset");
-            t.SetBasic(id, title, y, desc, false);
-            t.lines = new List<TapeData.Line>();
-            float time = 0.5f;
-            foreach (var l in lines)
-            {
-                float dur = Mathf.Clamp(l.Length * 0.065f, 2.2f, 7f);
-                t.lines.Add(new TapeData.Line { time = time, duration = dur, text = l });
-                time += dur + 0.4f;
+                var t = LoadOrCreate<TapeData>(DataDir + "/Tapes/" + def.id + ".asset");
+                t.SetBasic(def.id, def.titleVi, ChronoYear.Present, def.descVi, false);
+                t.SetEnglish(def.titleEn, def.descEn);
+                t.lines = new List<TapeData.Line>();
+                float time = 0.5f;
+                foreach (var (vi, en) in def.lines)
+                {
+                    // Thời lượng theo câu dài hơn trong 2 ngôn ngữ để phụ đề kịp đọc
+                    int len = Mathf.Max(vi.Length, en.Length);
+                    float dur = Mathf.Clamp(len * 0.065f, 2.2f, 7f);
+                    t.lines.Add(new TapeData.Line { time = time, duration = dur, text = vi, textEn = en });
+                    time += dur + 0.4f;
+                }
+                EditorUtility.SetDirty(t);
+                r.sources[def.id] = t;
             }
-            EditorUtility.SetDirty(t);
-            r.sources[id] = t;
         }
 
-        // ---------------------------------------------------------------- Relics & talismans
+        // ---------------------------------------------------------------- Relics & Vademecum pages
         private static void BuildRelics(Result r)
         {
-            string[] hanhName = { "Mộc", "Thủy", "Thổ", "Kim", "Hỏa" };
             string[] ids = { "Moc", "Thuy", "Tho", "Kim", "Hoa" };
-            string[] titles = { "Búp bê vải của bé An", "Huyết thư chưa gửi", "Lược sừng gãy", "Búa đóng đinh của Thợ Cả", "Đôi hài thêu của Nhị nương" };
-            string[] bodies =
-            {
-                "Con búp bê vải cũ của bé An — con nuôi nhà họ Trịnh, bị nhốt và bỏ đói trong tủ áo.\nTrong bụng búp bê có khâu một trang bùa.",
-                "\"Ai đọc được thư này xin báo cho gia đình tôi ở phương xa: tôi không bỏ đi. Bữa tối nay có vị lạ. Chủ nhà mời rượu mãi không thôi…\"\n(Chữ nhòe máu ở cuối.)\nKẹp trong thư là một trang bùa.",
-                "Chiếc lược sừng gãy của bà Quản Gia — người bị trói hồn vào Ấn đầu tiên.\nQuấn quanh lược là một trang bùa.",
-                "Chiếc búa đẫm máu. Thợ Cả bị Đại Quan giết bằng chính chiếc búa này ngay khi hầm hoàn tất.\nQuấn quanh cán búa là một trang bùa.",
-                "Đôi hài thêu của Nhị nương, vợ bé của Đại Quan, bị thiêu sống để cúng sao hạn.\nLót trong hài là một trang bùa.",
-            };
-            string[] lines = { "Cháu lạnh quá…", "(Tiếng nước nhỏ giọt.)", "Chạy đi… ta không kiềm chế được…", "(Tiếng gõ búa vọng trong tường.)", "(Mùi khét thoảng qua.)" };
-
             for (int i = 0; i < 5; i++)
             {
+                var def = KhoaHonContent.Relics[i];
                 var tal = LoadOrCreate<TalismanData>(DataDir + "/Talismans/TAL_" + ids[i] + ".asset");
-                tal.SetBasic("TAL_" + ids[i], "Trang bùa hành " + hanhName[i], ChronoYear.Y1924,
-                    "Bài chú Vy đã chép lại từ trang bùa hành " + hanhName[i] + ".");
+                tal.SetBasic("TAL_" + ids[i], def.pageTitleVi, ChronoYear.Y1924, def.pageBodyVi);
+                tal.SetEnglish(def.pageTitleEn, def.pageBodyEn);
                 tal.hanh = (Hanh)i;
-                // TODO(ASSETS_NEEDED): GDD chưa có nội dung bài chú — để chỗ trống đánh dấu rõ ràng.
-                tal.chantLines = new List<string> { "[Câu chú 1 — chờ nội dung]", "[Câu chú 2 — chờ nội dung]", "[Câu chú 3 — chờ nội dung]", "[Câu chú 4 — chờ nội dung]" };
+                tal.chantLines = new List<string>(def.chantVi);
+                tal.chantLinesEn = new List<string>(def.chantEn);
                 EditorUtility.SetDirty(tal);
                 r.sources[tal.Id] = tal;
 
                 var rel = LoadOrCreate<RelicData>(DataDir + "/Relics/REL_" + ids[i] + ".asset");
-                rel.SetBasic("REL_" + ids[i], titles[i], ChronoYear.Y1924, bodies[i]);
+                rel.SetBasic("REL_" + ids[i], def.titleVi, ChronoYear.Y1924, def.bodyVi);
+                rel.SetEnglish(def.titleEn, def.bodyEn);
                 rel.hanh = (Hanh)i;
                 rel.talisman = tal;
-                rel.pickupLine = lines[i];
+                rel.pickupLine = def.lineVi;
+                rel.pickupLineEn = def.lineEn;
                 EditorUtility.SetDirty(rel);
                 r.sources[rel.Id] = rel;
                 r.relics[i] = rel;
             }
+        }
+
+        // ---------------------------------------------------------------- Characters
+        private static void BuildCharacters(Result r)
+        {
+            r.evelyn = Character("CHAR_Evelyn", PlayerCharacter.Evelyn, "evelyn", new Color(0.72f, 0.55f, 0.32f),
+                new[] { r.recorder, r.filmCamera, r.crowbar });
+            // Alex: slot 2–3 (điện thoại, kính nhìn đêm) được thêm ở Phase D; tạm dùng bộ của Evelyn
+            r.alex = Character("CHAR_Alex", PlayerCharacter.Alex, "alex", new Color(0.35f, 0.75f, 0.95f),
+                new[] { r.recorder, r.filmCamera, r.crowbar });
+        }
+
+        private static CharacterProfile Character(string file, PlayerCharacter c, string key, Color accent, ItemData[] hotbar)
+        {
+            var p = LoadOrCreate<CharacterProfile>(DataDir + "/Characters/" + file + ".asset");
+            p.character = c;
+            p.nameKey = "char." + key + ".name";
+            p.roleKey = "char." + key + ".role";
+            p.motiveKey = "char." + key + ".motive";
+            p.toolsKey = "char." + key + ".tools";
+            p.introKeys = new List<string> { "intro." + key + ".1", "intro." + key + ".2", "intro." + key + ".3" };
+            p.accent = accent;
+            p.hotbar = hotbar;
+            EditorUtility.SetDirty(p);
+            return p;
         }
 
         // ---------------------------------------------------------------- Items
@@ -348,9 +181,10 @@ namespace KhoaHon.EditorTools
         {
             r.flashlight = AssetDatabase.LoadAssetAtPath<ItemData>("Assets/Items/Item_Flashlight.asset");
             var mats = BuildMaterials();
-            r.recorder = Item("Item_Recorder", "Máy ghi âm", ItemType.Recorder, BuildRecorderPrefab(mats));
-            r.filmCamera = Item("Item_FilmCamera", "Máy ảnh film", ItemType.FilmCamera, BuildCameraPrefab(mats));
-            r.crowbar = Item("Item_Crowbar", "Xà beng", ItemType.Crowbar, BuildCrowbarPrefab(mats));
+            // displayName là tên nội bộ (tiếng Anh); UI hiển thị lấy key item.* trong TextTable
+            r.recorder = Item("Item_Recorder", "Cassette Recorder", ItemType.Recorder, BuildRecorderPrefab(mats));
+            r.filmCamera = Item("Item_FilmCamera", "Film Camera", ItemType.FilmCamera, BuildCameraPrefab(mats));
+            r.crowbar = Item("Item_Crowbar", "Crowbar", ItemType.Crowbar, BuildCrowbarPrefab(mats));
         }
 
         private static ItemData Item(string file, string display, ItemType type, GameObject prefab)

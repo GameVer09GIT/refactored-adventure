@@ -13,6 +13,8 @@ namespace KhoaHon.Notebook
         public TalismanData talisman;
         [Tooltip("Lời thì thầm/phụ đề khi nhặt")]
         [TextArea(1, 3)] public string pickupLine;
+        [TextArea(1, 3)] public string pickupLineEn;
+        public string PickupLine => Loc.Pick(pickupLine, pickupLineEn);
         public override NotebookTab Tab => NotebookTab.Relics;
     }
 }

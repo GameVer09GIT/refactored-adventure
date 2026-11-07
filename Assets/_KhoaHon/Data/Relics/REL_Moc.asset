@@ -13,12 +13,17 @@ MonoBehaviour:
   m_Name: REL_Moc
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.RelicData
   id: REL_Moc
-  title: "B\xFAp b\xEA v\u1EA3i c\u1EE7a b\xE9 An"
+  title: "B\xFAp b\xEA v\u1EA3i c\u1EE7a b\xE9 Annabelle"
+  titleEn: Annabelle's Rag Doll
   year: 1
-  body: "Con b\xFAp b\xEA v\u1EA3i c\u0169 c\u1EE7a b\xE9 An \u2014 con nu\xF4i nh\xE0
-    h\u1ECD Tr\u1ECBnh, b\u1ECB nh\u1ED1t v\xE0 b\u1ECF \u0111\xF3i trong t\u1EE7
-    \xE1o.\nTrong b\u1EE5ng b\xFAp b\xEA c\xF3 kh\xE2u m\u1ED9t trang b\xF9a."
+  body: "Con b\xFAp b\xEA v\u1EA3i s\u1EDDn c\u1EE7a b\xE9 Annabelle \u2014 con nu\xF4i
+    nh\xE0 Blackwood, b\u1ECB nh\u1ED1t v\xE0 b\u1ECF \u0111\xF3i trong t\u1EE7 \xE1o
+    n\u0103m 1924.\nTrong b\u1EE5ng b\xFAp b\xEA c\xF3 kh\xE2u m\u1ED9t trang Vademecum."
+  bodyEn: "The threadbare doll of little Annabelle \u2014 the Blackwoods' ward, locked
+    in a wardrobe and starved in 1924.\nA page of the Vademecum is stitched inside
+    it."
   serif: 1
   hanh: 0
   talisman: {fileID: 11400000, guid: e002269e9ce23964fae8952a3c679eb7, type: 2}
-  pickupLine: "Ch\xE1u l\u1EA1nh qu\xE1\u2026"
+  pickupLine: "Con l\u1EA1nh qu\xE1\u2026 m\u1EDF c\u1EEDa cho con\u2026"
+  pickupLineEn: "I'm so cold\u2026 please open the door\u2026"
