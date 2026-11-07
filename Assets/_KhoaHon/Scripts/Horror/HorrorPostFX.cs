@@ -25,6 +25,9 @@ namespace KhoaHon.Horror
         private Volume vol;
         private Vignette vignette; private ChromaticAberration chroma; private FilmGrain grain;
         private LensDistortion lens; private ColorAdjustments color; private MotionBlur blur;
+        private DepthOfField dof;
+        /// <summary>Bật DoF (cutscene). Tài liệu/sổ tay đang mở cũng tự bật.</summary>
+        public static bool CinematicFocus;
         private float prox, hunt, flash;
         private Transform cam;
 
@@ -35,6 +38,7 @@ namespace KhoaHon.Horror
             var p = vol.profile; // bản sao runtime, không sửa asset
             p.TryGet(out vignette); p.TryGet(out chroma); p.TryGet(out grain);
             p.TryGet(out lens); p.TryGet(out color); p.TryGet(out blur);
+            p.TryGet(out dof);
         }
 
         private void OnDestroy() { if (Instance == this) Instance = null; }
@@ -75,6 +79,8 @@ namespace KhoaHon.Horror
                 color.colorFilter.value = Color.Lerp(new Color(0.86f, 0.93f, 0.95f), new Color(1f, 0.55f, 0.52f), Mathf.Clamp01(pulse * 0.55f + flash));
             }
             if (blur != null) blur.active = MotionBlurEnabled && !menu;
+            // Làm mờ nền khi đọc tài liệu / mở sổ tay / cutscene
+            if (dof != null) dof.active = CinematicFocus || (ModalUI.IsAnyOpen && GameFlow.State == FlowState.Playing);
             if (heartbeat != null)
             {
                 float hv = Mathf.Clamp01(prox * 1.3f + hunt * 0.4f) * AudioMix.Sfx;

@@ -669,3 +669,15 @@ MonoBehaviour:
   - key: end.continue
     text: "Nh\u1EA5n ph\xEDm b\u1EA5t k\u1EF3"
     en: Press any key
+  - key: ui.q.low
+    text: "Th\u1EA5p"
+    en: Low
+  - key: ui.q.medium
+    text: "Trung b\xECnh"
+    en: Medium
+  - key: ui.q.high
+    text: Cao
+    en: High
+  - key: ui.q.ultra
+    text: "Si\xEAu cao"
+    en: Ultra

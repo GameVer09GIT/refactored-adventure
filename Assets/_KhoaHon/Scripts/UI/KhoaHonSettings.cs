@@ -22,6 +22,29 @@ namespace KhoaHon.UI
         public static bool BrightnessCalibrated;
 
         public static readonly int[] FpsCaps = { 30, 60, 120, 144, -1 };
+
+        /// <summary>Các mức chất lượng của game (bỏ mức "Mobile"/"PC" cũ của dự án mẫu).</summary>
+        public static readonly string[] GameQualityLevels = { "Low", "Medium", "High", "Ultra" };
+
+        public static int QualityIndexByName(string n)
+        {
+            var names = QualitySettings.names;
+            int i = System.Array.IndexOf(names, n);
+            if (i < 0) i = System.Array.IndexOf(names, "High");
+            return i < 0 ? QualitySettings.GetQualityLevel() : i;
+        }
+
+        /// <summary>Vị trí của mức hiện tại trong GameQualityLevels (0..3).</summary>
+        public static int GameQualitySlot
+        {
+            get
+            {
+                string n = Quality >= 0 && Quality < QualitySettings.names.Length ? QualitySettings.names[Quality] : "High";
+                int i = System.Array.IndexOf(GameQualityLevels, n);
+                return i < 0 ? 2 : i;
+            }
+            set => Quality = QualityIndexByName(GameQualityLevels[Mathf.Clamp(value, 0, GameQualityLevels.Length - 1)]);
+        }
         static bool loaded;
 
         public static List<Resolution> Resolutions()
@@ -39,7 +62,7 @@ namespace KhoaHon.UI
             ResolutionIndex = PlayerPrefs.GetInt("kh_res", ResolutionIndex);
             VSync = PlayerPrefs.GetInt("kh_vsync", VSync ? 1 : 0) == 1;
             FpsCapIndex = PlayerPrefs.GetInt("kh_fps", FpsCapIndex);
-            Quality = PlayerPrefs.GetInt("kh_quality", QualitySettings.GetQualityLevel());
+            Quality = QualityIndexByName(PlayerPrefs.GetString("kh_quality_name", "High"));
             Fov = PlayerPrefs.GetFloat("kh_fov", Fov);
             Brightness = PlayerPrefs.GetFloat("kh_bright", Brightness);
             FilmGrain = PlayerPrefs.GetInt("kh_grain", 1) == 1;
@@ -59,7 +82,7 @@ namespace KhoaHon.UI
         {
             PlayerPrefs.SetInt("kh_screen", ScreenMode); PlayerPrefs.SetInt("kh_res", ResolutionIndex);
             PlayerPrefs.SetInt("kh_vsync", VSync ? 1 : 0); PlayerPrefs.SetInt("kh_fps", FpsCapIndex);
-            PlayerPrefs.SetInt("kh_quality", Quality); PlayerPrefs.SetFloat("kh_fov", Fov); PlayerPrefs.SetFloat("kh_bright", Brightness);
+            if (Quality >= 0 && Quality < QualitySettings.names.Length) PlayerPrefs.SetString("kh_quality_name", QualitySettings.names[Quality]); PlayerPrefs.SetFloat("kh_fov", Fov); PlayerPrefs.SetFloat("kh_bright", Brightness);
             PlayerPrefs.SetInt("kh_grain", FilmGrain ? 1 : 0); PlayerPrefs.SetInt("kh_blur", MotionBlur ? 1 : 0);
             PlayerPrefs.SetInt("kh_showfps", ShowFps ? 1 : 0); PlayerPrefs.SetInt("kh_subs", Subtitles ? 1 : 0);
             PlayerPrefs.SetFloat("kh_vol_master", Master); PlayerPrefs.SetFloat("kh_vol_music", Music); PlayerPrefs.SetFloat("kh_vol_sfx", Sfx);
@@ -70,7 +93,7 @@ namespace KhoaHon.UI
 
         public static void ResetDefaults()
         {
-            ScreenMode = 1; ResolutionIndex = -1; VSync = true; FpsCapIndex = 1; Quality = QualitySettings.names.Length - 1;
+            ScreenMode = 1; ResolutionIndex = -1; VSync = true; FpsCapIndex = 1; Quality = QualityIndexByName("High");
             Fov = 72f; Brightness = 0f; FilmGrain = true; MotionBlur = true; ShowFps = false; Subtitles = true;
             Master = 0.9f; Music = 0.8f; Sfx = 1f; Ambience = 0.85f; Voice = 1f; Sensitivity = 15f;
         }
@@ -98,6 +121,10 @@ namespace KhoaHon.UI
         {
             ApplyLive();
             if (Quality >= 0 && Quality < QualitySettings.names.Length && QualitySettings.GetQualityLevel() != Quality) QualitySettings.SetQualityLevel(Quality, true);
+            // Sương thể tích theo mức chất lượng
+            int slot = GameQualitySlot;
+            KhoaHon.Rendering.KHVolumetricFogFeature.QualityOverride = slot == 0 ? KhoaHon.Rendering.KHVolumetricFogFeature.Quality.Low
+                : slot == 1 ? KhoaHon.Rendering.KHVolumetricFogFeature.Quality.Medium : KhoaHon.Rendering.KHVolumetricFogFeature.Quality.High;
             QualitySettings.vSyncCount = VSync ? 1 : 0;
             Application.targetFrameRate = VSync ? -1 : FpsCaps[Mathf.Clamp(FpsCapIndex, 0, FpsCaps.Length - 1)];
 #if !UNITY_EDITOR

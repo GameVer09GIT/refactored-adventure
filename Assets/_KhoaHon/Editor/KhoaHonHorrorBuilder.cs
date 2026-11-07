@@ -482,17 +482,33 @@ namespace KhoaHon.EditorTools
                 c.active = true; c.SetAllOverridesTo(true);
                 return c;
             }
+            // Tông màu điện ảnh: ACES, bóng lạnh xanh, vùng sáng ấm (nến/đèn dầu), tương phản vừa
             var tm = Add<Tonemapping>(); tm.mode.value = TonemappingMode.ACES;
-            var ca = Add<ColorAdjustments>(); ca.postExposure.value = -0.15f; ca.contrast.value = 18f; ca.saturation.value = -16f; ca.colorFilter.value = new Color(0.86f, 0.93f, 0.95f);
-            var wb = Add<WhiteBalance>(); wb.temperature.value = -18f; wb.tint.value = 6f;
+            var ca = Add<ColorAdjustments>(); ca.postExposure.value = -0.15f; ca.contrast.value = 14f; ca.saturation.value = -14f; ca.colorFilter.value = new Color(0.88f, 0.93f, 0.96f);
+            var wb = Add<WhiteBalance>(); wb.temperature.value = -12f; wb.tint.value = 4f;
+            var lgg = Add<LiftGammaGain>(); lgg.lift.value = new Vector4(0.96f, 0.98f, 1.04f, -0.02f); lgg.gamma.value = new Vector4(1f, 1f, 1.02f, 0f); lgg.gain.value = new Vector4(1.04f, 1.0f, 0.95f, 0.02f);
+            var spl = Add<SplitToning>(); spl.shadows.value = new Color(0.33f, 0.42f, 0.55f); spl.highlights.value = new Color(0.62f, 0.52f, 0.38f); spl.balance.value = -15f;
             var vg = Add<Vignette>(); vg.intensity.value = 0.32f; vg.smoothness.value = 0.45f; vg.color.value = Color.black;
             var chr = Add<ChromaticAberration>(); chr.intensity.value = 0.12f;
-            var fg = Add<FilmGrain>(); fg.type.value = FilmGrainLookup.Medium4; fg.intensity.value = 0.32f; fg.response.value = 0.7f;
+            var fg = Add<FilmGrain>(); fg.type.value = FilmGrainLookup.Medium4; fg.intensity.value = 0.28f; fg.response.value = 0.7f;
             var ld = Add<LensDistortion>(); ld.intensity.value = -0.06f;
-            var bl = Add<Bloom>(); bl.intensity.value = 0.55f; bl.threshold.value = 1.0f; bl.scatter.value = 0.65f;
+            var bl = Add<Bloom>(); bl.intensity.value = 0.7f; bl.threshold.value = 0.9f; bl.scatter.value = 0.7f; bl.highQualityFiltering.value = true;
+            bl.dirtTexture.value = LensDirtTex(); bl.dirtIntensity.value = 2.2f;
             var mb = Add<MotionBlur>(); mb.intensity.value = 0.22f; mb.quality.value = MotionBlurQuality.Medium;
             var sm = Add<ShadowsMidtonesHighlights>(); sm.shadows.value = new Vector4(0.9f, 0.95f, 1.05f, -0.05f);
+            // DoF: tắt mặc định, HorrorPostFX bật khi đọc tài liệu/cutscene
+            var dof = Add<DepthOfField>(); dof.mode.value = DepthOfFieldMode.Bokeh; dof.focusDistance.value = 0.6f; dof.focalLength.value = 60f; dof.aperture.value = 2.8f; dof.active = false;
+            // Sương thể tích (KHVolumetricFogFeature)
+            var vf = Add<KhoaHon.Rendering.KHVolumetricFog>();
+            vf.density.value = 0.08f; vf.startDistance.value = 0.8f; vf.baseHeight.value = 11f; vf.heightFalloff.value = 0.12f; vf.maxDistance.value = 40f;
+            vf.anisotropy.value = 0.6f; vf.mainLightIntensity.value = 2.5f; vf.additionalLightsIntensity.value = 0.9f;
+            vf.tint.value = new Color(0.78f, 0.84f, 0.95f); vf.ambient.value = new Color(0.006f, 0.008f, 0.012f);
+            vf.noiseScale.value = 0.2f; vf.noiseIntensity.value = 0.55f; vf.wind.value = new Vector3(0.2f, 0.03f, 0.12f);
             EditorUtility.SetDirty(prof);
+
+            // Gộp Volume: tắt các Volume toàn cục cũ (của MapKinhDi/greybox) để chỉ còn 1 profile điện ảnh
+            foreach (var old in Object.FindObjectsByType<Volume>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (old.isGlobal && old.sharedProfile != prof) { old.gameObject.SetActive(false); }
 
             var go = new GameObject("KH_HorrorVolume"); go.transform.SetParent(root);
             var vol = go.AddComponent<Volume>(); vol.isGlobal = true; vol.priority = 50; vol.sharedProfile = prof;
@@ -500,6 +516,39 @@ namespace KhoaHon.EditorTools
             hb.clip = Clip("sfx_heartbeat_fast"); hb.loop = true; hb.spatialBlend = 0f; hb.volume = 0f; hb.playOnAwake = false;
             var fx = go.AddComponent<HorrorPostFX>();
             var so = new SerializedObject(fx); so.FindProperty("heartbeat").objectReferenceValue = hb; so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>Vết bẩn ống kính cho Bloom: đốm mờ + vệt nước, sinh thủ tục.</summary>
+        static Texture2D LensDirtTex()
+        {
+            string path = TexDir + "/T_LensDirt.png";
+            const int size = 512;
+            var r = new System.Random(4242);
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var px = new Color[size * size];
+            var blobs = new Vector4[70];
+            for (int i = 0; i < blobs.Length; i++)
+                blobs[i] = new Vector4((float)r.NextDouble(), (float)r.NextDouble(), 0.01f + (float)r.NextDouble() * 0.07f, 0.15f + (float)r.NextDouble() * 0.6f);
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float u = (x + 0.5f) / size, v = (y + 0.5f) / size, a = 0f;
+                    foreach (var b in blobs)
+                    {
+                        float d = Vector2.Distance(new Vector2(u, v), new Vector2(b.x, b.y)) / b.z;
+                        if (d < 1f) a += (1f - d * d) * b.w;
+                    }
+                    // vệt nước chảy dọc
+                    a += Mathf.Pow(Mathf.PerlinNoise(u * 40f, v * 3f), 6f) * 1.5f;
+                    float edge = Mathf.Clamp01(Vector2.Distance(new Vector2(u, v), new Vector2(0.5f, 0.5f)) * 1.6f);
+                    a = Mathf.Clamp01(a * (0.35f + edge * 0.65f));
+                    px[y * size + x] = new Color(a, a * 0.97f, a * 0.92f, 1f);
+                }
+            tex.SetPixels(px); tex.Apply();
+            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + path), tex.EncodeToPNG());
+            Object.DestroyImmediate(tex);
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
         }
 
         // ================================================================== Menu, tạm dừng, cài đặt, HUD, hù dọa

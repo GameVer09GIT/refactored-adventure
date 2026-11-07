@@ -55,3 +55,14 @@
 - `CharacterProfile` (Evelyn, Alex) + `PlayerCharacter`; `GameManager.Character`, `GameFlow.PendingCharacter`; `SaveData` v2 có `character` (v1 tự chuyển, mặc định Evelyn). Intro theo nhân vật.
 - Cài đặt: chọn Tiếng Việt / English, đổi ngay; menu chính và menu tạm dừng dựng lại sau khi đóng Cài đặt.
 - Test: 27/27 (thêm 6 `LocalizationTests`). Ảnh: `Temp/KhoaHon/a_boot.png`, `a_settings_en.png`, `a_menu_en.png`.
+
+## Blackwood B — Nâng đồ họa URP (2026-11-07)
+- Giữ URP (người dùng chọn). Không sửa `Assets/Settings/*`: tạo bản riêng bằng `KhoaHon/Build/4. Graphics (URP + Quality)` (`KhoaHonGraphicsBuilder`).
+  - `Assets/_KhoaHon/Settings/KH_Renderer.asset` (Forward+): SSAO chất lượng cao, Decal, **sương thể tích**.
+  - `KH_URP_Low/Medium/High/Ultra`: bóng 1024→4096 (đèn phụ tới 8192), khoảng cách 25→70 m, 2→4 cascade, soft shadow; STP cho High/Ultra, render scale 0.75/0.85/1/1.
+  - QualitySettings thêm Low/Medium/High/Ultra (Mobile/PC giữ nguyên), mặc định Standalone = High. Cài đặt chỉ hiện 4 mức mới, lưu theo tên (`kh_quality_name`).
+- Sương thể tích tự viết cho Render Graph: `Scripts/Rendering/KHVolumetricFogFeature.cs` + `KHVolumetricFog` (VolumeComponent) + `Shaders/KH_VolumetricFog.shader`. Raymarch nửa độ phân giải, tán xạ ánh trăng có bóng (tia sáng qua cửa sổ) và đèn phụ Forward+ (chùm đèn pin, đèn treo), blur giữ cạnh theo depth, trộn `Blend One SrcAlpha`. Bỏ 0,8 m đầu và kẹp suy giảm gần nguồn để không chói ở tay cầm đèn. Chất lượng theo mức đồ họa.
+- Hậu kỳ `KH_HorrorVolume`: thêm Lift/Gamma/Gain, Split Toning (bóng lạnh, sáng ấm), Bloom chất lượng cao + lens dirt sinh thủ tục, DoF Bokeh (tự bật khi đọc tài liệu/sổ tay hoặc `HorrorPostFX.CinematicFocus`). Các Volume toàn cục cũ của MapKinhDi/greybox bị tắt — chỉ còn 1 profile.
+- Converter: đèn treo tầng 2 có bóng mềm; trăng lạnh bóng mềm; ambient gần đen; LightingSettings riêng `KH_LightingSettings` (không còn trỏ vào Flooded_Grounds); bake 40 reflection probe thành cubemap riêng (`Textures/Probes`, chế độ Custom).
+- Quyết định: máu vẫn là quad URP Lit (giữ độ bóng ướt; Decal Shader Graph mặc định không có smoothness). Decal để dành cho chữ máu/dấu chân night vision (Phase D). Chưa bake GI/APV (scene ~2.300 prefab Flooded_Grounds, bake rất lâu) — ánh sáng trực tiếp realtime phù hợp phong cách "một nguồn sáng".
+- Đo: editor 1080p mức High ~51 fps trên RTX 3050 Laptop. Test 27/27. Ảnh: `Temp/KhoaHon/b2_hall.png`, `b2_f2.png`, `b_fog_dense.png` (thử mật độ cao).

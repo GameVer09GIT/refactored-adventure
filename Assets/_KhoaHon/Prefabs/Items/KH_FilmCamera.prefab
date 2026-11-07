@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 9079989823999379052}
+  - {fileID: 6382395948113614746}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &4778031645028943606
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Items.FilmCameraItem
   itemData: {fileID: 11400000, guid: 66076625274801741b5330f99c144990, type: 2}
   audioSource: {fileID: 0}
---- !u!1001 &8757288913574846855
+--- !u!1001 &6852343595379798129
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -206,8 +206,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7704ddf0b80d41c4a99fd9ae7015d098, type: 3}
---- !u!4 &9079989823999379052 stripped
+--- !u!4 &6382395948113614746 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7704ddf0b80d41c4a99fd9ae7015d098, type: 3}
-  m_PrefabInstance: {fileID: 8757288913574846855}
+  m_PrefabInstance: {fileID: 6852343595379798129}
   m_PrefabAsset: {fileID: 0}

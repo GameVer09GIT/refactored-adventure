@@ -105,8 +105,8 @@ namespace KhoaHon.UI
             UIKit.SelectorRow(p, T.Get("ui.vsync"), OnOff(), KhoaHonSettings.VSync ? 0 : 1, v => KhoaHonSettings.VSync = v == 0);
             UIKit.SelectorRow(p, T.Get("ui.fps_cap"), new[] { "30", "60", "120", "144", T.Get("ui.unlimited") }, KhoaHonSettings.FpsCapIndex, v => KhoaHonSettings.FpsCapIndex = v);
             UIKit.Header(p, T.Get("ui.h.quality"));
-            var qn = QualitySettings.names;
-            UIKit.SelectorRow(p, T.Get("ui.quality"), qn, Mathf.Clamp(KhoaHonSettings.Quality, 0, qn.Length - 1), v => KhoaHonSettings.Quality = v);
+            var qn = KhoaHonSettings.GameQualityLevels.Select(n => T.Get("ui.q." + n.ToLowerInvariant())).ToArray();
+            UIKit.SelectorRow(p, T.Get("ui.quality"), qn, KhoaHonSettings.GameQualitySlot, v => KhoaHonSettings.GameQualitySlot = v);
             UIKit.SliderRow(p, T.Get("ui.fov"), 60, 100, KhoaHonSettings.Fov, x => Mathf.RoundToInt(x) + "°", x => { KhoaHonSettings.Fov = x; KhoaHonSettings.ApplyLive(); });
             UIKit.SelectorRow(p, T.Get("ui.motion_blur"), OnOff(), KhoaHonSettings.MotionBlur ? 0 : 1, v => { KhoaHonSettings.MotionBlur = v == 0; KhoaHonSettings.ApplyLive(); });
             UIKit.SelectorRow(p, T.Get("ui.film_grain"), OnOff(), KhoaHonSettings.FilmGrain ? 0 : 1, v => { KhoaHonSettings.FilmGrain = v == 0; KhoaHonSettings.ApplyLive(); });
