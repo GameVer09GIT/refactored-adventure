@@ -508,11 +508,11 @@ MonoBehaviour:
     en: Nearly a century of sealed murder files. Her partner, Julian Vance, went
       silent right after sending back a coded photograph.
   - key: char.evelyn.tools
-    text: "S\u1ED5 tay trinh th\xE1m t\u1EF1 x\xE2u chu\u1ED7i manh m\u1ED1i \xB7
-      M\xE1y ghi \xE2m b\u1EAFt ti\u1EBFng EVP \u0111\u1EC3 \u0111\u1ECBnh h\u01B0\u1EDBng
-      k\u1EBB s\u0103n \u0111u\u1ED5i \xB7 M\xE1y \u1EA3nh film c\xF3 \u0111\xE8n
-      flash"
-    en: "A detective notebook that links the evidence \xB7 A cassette recorder that
+    text: "S\u01A1 \u0111\u1ED3 trinh th\xE1m x\xE2u chu\u1ED7i manh m\u1ED1i (ph\xEDm
+      M) \xB7 M\xE1y ghi \xE2m b\u1EAFt ti\u1EBFng EVP \u0111\u1EC3 \u0111\u1ECBnh
+      h\u01B0\u1EDBng k\u1EBB s\u0103n \u0111u\u1ED5i \xB7 M\xE1y \u1EA3nh film c\xF3
+      \u0111\xE8n flash"
+    en: "A case board that links the evidence (M key) \xB7 A cassette recorder that
       catches EVP and tracks the hunter \xB7 A film camera with flash"
   - key: char.alex.name
     text: Alex Vance
@@ -781,3 +781,260 @@ MonoBehaviour:
     en: 'Pry the window and run?
 
       Julian is still somewhere in this house.'
+  - key: toast.no_film
+    text: "H\u1EBFt phim"
+    en: Out of film
+  - key: toast.no_battery
+    text: "H\u1EBFt pin"
+    en: Battery empty
+  - key: sub.flash_stun
+    text: "(B\xE0 ta r\xFA l\xEAn, l\u1EA5y tay che m\u1EB7t.)"
+    en: (She shrieks and throws her hands over her face.)
+  - key: chat.viewers
+    text: "{0} ng\u01B0\u1EDDi xem"
+    en: '{0} watching'
+  - key: mind.title
+    text: "S\u01A0 \u0110\u1ED2 TRINH TH\xC1M"
+    en: CASE BOARD
+  - key: mind.hint
+    text: "M / Esc: \u0111\xF3ng  \xB7  Ch\u1EC9 \u0111\u1ECF n\u1ED1i hai manh m\u1ED1i
+      khi b\u1EA1n \u0111\xE3 c\xF3 c\u1EA3 hai"
+    en: "M / Esc: close  \xB7  Red string links two clues once you have both"
+  - key: mind.progress
+    text: "\u0110\xE3 x\xE2u chu\u1ED7i {0}/{1}"
+    en: Connected {0}/{1}
+  - key: chat.s0.1
+    text: "l\u1EA1i fake \xE0 Alex"
+    en: fake again alex lol
+  - key: chat.s0.2
+    text: drive faster bro
+    en: drive faster bro
+  - key: chat.s0.3
+    text: "c\xE1i nh\xE0 kia tr\xF4ng nh\u01B0 set phim"
+    en: that house looks like a film set
+  - key: chat.s0.4
+    text: "hello t\u1EEB Vi\u1EC7t Nam!!"
+    en: hello from Vietnam!!
+  - key: chat.s0.5
+    text: "tu\u1EA7n tr\u01B0\u1EDBc k\xEAnh n\xE0y 3k ng\u01B0\u1EDDi xem \u0111\xF3"
+    en: this channel had 3k viewers last week
+  - key: chat.s0.6
+    text: "ai c\xE1 Alex ch\u1EA1y v\u1EC1 trong 5 ph\xFAt"
+    en: who bets alex bails in 5 min
+  - key: chat.s0.7
+    text: "s\u01B0\u01A1ng m\xF9 fake b\u1EB1ng m\xE1y kh\xF3i \xE0"
+    en: is that a fog machine
+  - key: chat.s0.8
+    text: "t\xECm em trai \u0111i r\u1ED3i h\u1EB5ng di\u1EC5n"
+    en: find your brother first, then act
+  - key: chat.s1.1
+    text: "c\xE1i balo kia l\xE0 c\u1EE7a Julian th\u1EADt \xE0??"
+    en: is that julian's actual backpack??
+  - key: chat.s1.2
+    text: "b\xE0n ti\u1EC7c k\xECa\u2026 v\u1EABn c\xF2n \u0111\u1ED3 \u0103n??"
+    en: "the dinner table\u2026 there's still food??"
+  - key: chat.s1.3
+    text: "ok c\xE1i \u1EA3nh gia t\u1ED9c h\u01A1i gh\xEA"
+    en: ok that family portrait is creepy
+  - key: chat.s1.4
+    text: "nghe th\u1EA5y ti\u1EBFng g\xEC kh\xF4ng"
+    en: anyone else hear that
+  - key: chat.s1.5
+    text: "check k\xE9t s\u1EAFt \u0111i, c\xF3 ghi n\u0103m k\xECa"
+    en: check the safe, there's a year on it
+  - key: chat.s1.6
+    text: "Alex \u0111\u1EEBng \u0111i m\u1ED9t m\xECnh n\u1EEFa"
+    en: alex stop going alone
+  - key: chat.s1.7
+    text: "clip n\xE0y l\xEAn trending ch\u1EAFc lu\xF4n"
+    en: this clip is going viral for sure
+  - key: chat.s1.8
+    text: "mic b\u1ECB r\xE8 hay l\xE0 ti\u1EBFng th\u1EDF v\u1EADy"
+    en: is the mic crackling or is that breathing
+  - key: chat.s2.1
+    text: "ti\u1EBFng ch\xECa kh\xF3a k\xECa ALEX"
+    en: KEYS ALEX THE KEYS
+  - key: chat.s2.2
+    text: "t\u1EAFt \u0111\xE8n pin \u0111i tr\u1EDDi \u01A1i"
+    en: turn off the flashlight omg
+  - key: chat.s2.3
+    text: "ai \u0111\xF3 g\u1ECDi c\u1EA3nh s\xE1t \u0111i"
+    en: someone call the police
+  - key: chat.s2.4
+    text: "t\xF4i kh\xF4ng d\xE1m xem n\u1EEFa"
+    en: i can't watch anymore
+  - key: chat.s2.5
+    text: "tr\u1ED1n v\xE0o t\u1EE7 \u0111i!!!"
+    en: get in the wardrobe!!!
+  - key: chat.s2.6
+    text: "c\xE1i ph\xF2ng tr\u1EBB con kia\u2026"
+    en: "that child's room\u2026"
+  - key: chat.s2.7
+    text: "Alex, n\xEDn th\u1EDF khi tr\u1ED1n"
+    en: alex hold your breath when hiding
+  - key: chat.s2.8
+    text: "c\xE1i g\xEC v\u1EEBa \u0111i qua c\u1EEDa v\u1EADy"
+    en: what just walked past the door
+  - key: chat.s3.1
+    text: "\u0111\u1EEBng xu\u1ED1ng \u0111\xF3"
+    en: don't go down there
+  - key: chat.s3.2
+    text: "x\u01B0\u01A1ng trong t\u01B0\u1EDDng\u2026 th\u1EADt \u0111\u1EA5y \xE0"
+    en: "bones in the wall\u2026 is that real"
+  - key: chat.s3.3
+    text: "chat \u01A1i n\xF3 im l\u1EB7ng qu\xE1"
+    en: chat it's way too quiet
+  - key: chat.s3.4
+    text: "Julian\u2026 kh\xF4ng\u2026"
+    en: "julian\u2026 no\u2026"
+  - key: chat.s3.5
+    text: "\u0111\u1EEBng tin c\xE1i \xF4ng ng\u1ED3i gh\u1EBF"
+    en: don't trust the man in the chair
+  - key: chat.s3.6
+    text: "\u0111\u1EADp v\u1EE1 c\xE1i c\u1EE5c \u0111\xE1 \u0111en \u0111i"
+    en: smash the black stone
+  - key: chat.ghost.near.1
+    text: "b\xE0 \u1EA5y \u1EDF sau c\xE1nh c\u1EEDa"
+    en: she is behind the door
+  - key: chat.ghost.near.2
+    text: "\u0111\u1EEBng th\u1EDF"
+    en: don't breathe
+  - key: chat.ghost.near.3
+    text: "b\xEAn tr\xE1i"
+    en: left side
+  - key: chat.ghost.near.4
+    text: "b\xE0 \u1EA5y nghe th\u1EA5y anh r\u1ED3i"
+    en: she heard you
+  - key: chat.ghost.near.5
+    text: "\u0111\u1EE9ng y\xEAn"
+    en: stand still
+  - key: chat.ghost.near.6
+    text: "ch\xECa kh\xF3a \u0111ang l\u1EA1i g\u1EA7n"
+    en: the keys are coming closer
+  - key: chat.ghost.hunt.1
+    text: "CH\u1EA0Y"
+    en: RUN
+  - key: chat.ghost.hunt.2
+    text: "T\u1EE6 \xC1O. NGAY."
+    en: WARDROBE. NOW.
+  - key: chat.ghost.hunt.3
+    text: "b\xE0 \u1EA5y kh\xF4ng d\u1EEBng l\u1EA1i \u0111\xE2u"
+    en: she won't stop
+  - key: chat.ghost.hunt.4
+    text: "d\u01B0\u1EDBi g\u1EA7m gi\u01B0\u1EDDng"
+    en: under the bed
+  - key: chat.ghost.hunt.5
+    text: "flash v\xE0o m\u1EB7t b\xE0 \u1EA5y"
+    en: flash her face
+  - key: chat.ghost.idle.1
+    text: "ch\xFAng t\xF4i c\xF3 m\u01B0\u1EDDi ba ng\u01B0\u1EDDi"
+    en: there are thirteen of us
+  - key: chat.ghost.idle.2
+    text: "anh t\u1EDBi mu\u1ED9n m\u01B0\u1EDDi b\u1ED1n ng\xE0y"
+    en: you're fourteen days late
+  - key: chat.ghost.idle.3
+    text: "c\u1EADu \u1EA5y v\u1EABn \u1EDF d\u01B0\u1EDBi h\u1EA7m"
+    en: he is still in the cellar
+  - key: chat.ghost.idle.4
+    text: "ng\xF4i nh\xE0 \u0111ang ch\u1ECDn ch\u1EE7 m\u1EDBi"
+    en: the house is choosing a new master
+  - key: chat.ghost.idle.5
+    text: "\u0111\u1EEBng \u0111\u1ECDc ng\u01B0\u1EE3c"
+    en: don't read it backwards
+  - key: chat.ghost.idle.6
+    text: "ch\xFAng t\xF4i \u0111ang xem"
+    en: we are watching
+  - key: chat.flash.1
+    text: "flash \u0111\u1EB9p \u0111\u1EA5y"
+    en: nice flash
+  - key: chat.flash.2
+    text: "ch\u1EE5p h\u1EE5t r\u1ED3i"
+    en: missed
+  - key: chat.flash.3
+    text: "pin c\xF2n kh\xF4ng Alex"
+    en: how's your battery alex
+  - key: chat.flash_hit.1
+    text: "TR\xDANG R\u1ED2I"
+    en: GOT HER
+  - key: chat.flash_hit.2
+    text: "b\xE0 ta kh\u1EF1ng l\u1EA1i k\xECa!!"
+    en: she froze!!
+  - key: chat.flash_hit.3
+    text: "ch\u1EA1y ngay \u0111i"
+    en: run now
+  - key: chat.item.1
+    text: "c\xE1i g\xEC v\u1EADy?"
+    en: what is that?
+  - key: chat.item.2
+    text: "zoom v\xE0o \u0111i"
+    en: zoom in
+  - key: chat.item.3
+    text: "ghi l\u1EA1i h\u1EBFt \u0111i"
+    en: document everything
+  - key: chat.item.4
+    text: "c\xE1i n\xE0y manh m\u1ED1i \u0111\xF3"
+    en: that's a clue
+  - key: chat.caught.1
+    text: ALEXXXX
+    en: ALEXXXX
+  - key: chat.caught.2
+    text: "kh\xF4ng kh\xF4ng kh\xF4ng"
+    en: no no no
+  - key: chat.caught.3
+    text: "stream ch\u1EBFt r\u1ED3i \xE0??"
+    en: did the stream die??
+  - key: evp.1
+    text: "\u2026m\u01B0\u1EDDi ba\u2026"
+    en: "\u2026thirteen\u2026"
+  - key: evp.2
+    text: "\u2026c\u1EEDa h\u1EA7m d\u01B0\u1EDBi b\xE0n\u2026"
+    en: "\u2026the hatch under the table\u2026"
+  - key: evp.3
+    text: "\u2026b\xE0 \u1EA5y kh\xF4ng xu\u1ED1ng \u0111\u01B0\u1EE3c\u2026"
+    en: "\u2026she can't come down\u2026"
+  - key: evp.4
+    text: "\u2026\u0111\u1EEBng nghe l\xE3o\u2026"
+    en: "\u2026don't listen to him\u2026"
+  - key: evp.5
+    text: "\u2026ch\xE1u l\u1EA1nh qu\xE1\u2026"
+    en: "\u2026I'm so cold\u2026"
+  - key: evp.6
+    text: "\u2026ch\u1EA1y \u0111i\u2026"
+    en: "\u2026run\u2026"
+  - key: evp.7
+    text: "\u2026Evelyn\u2026"
+    en: "\u2026Evelyn\u2026"
+  - key: mind.link.1
+    text: "M\xE3 k\xE9t = n\u0103m kh\u1EDFi d\u1EF1ng 1921"
+    en: Safe code = founding year 1921
+  - key: mind.link.2
+    text: "Julian \u0111\xE3 th\u1EED 1924 \u2014 sai"
+    en: "Julian tried 1924 \u2014 wrong"
+  - key: mind.link.3
+    text: "L\u1ED1i xu\u1ED1ng h\u1EA7m n\u1EB1m d\u01B0\u1EDBi s\xE0n b\u1EBFp"
+    en: The way down is beneath the kitchen floor
+  - key: mind.link.4
+    text: "V\xF2ng tr\xF2n 5 c\xE1nh = 5 M\u1EAFt Tr\u1EADn"
+    en: Five-pointed circle = five Eyes
+  - key: mind.link.5
+    text: "Ng\u01B0\u1EDDi \u0111\xE0n b\xE0 c\u1EA7m ch\xECa kh\xF3a = Mrs. Peake"
+    en: The woman with the keys = Mrs. Peake
+  - key: mind.link.6
+    text: "Annabelle l\xE0 \u0110\u1EE9a Tr\u1EBB"
+    en: Annabelle is the Child
+  - key: mind.link.7
+    text: "V\u1ECB kh\xE1ch b\u1ECB chu\u1ED1c \u0111\u1ED9c l\xE0 K\u1EBB L\u1EEF
+      Kh\xE1ch"
+    en: The poisoned guest is the Wayfarer
+  - key: mind.link.8
+    text: "Thomas l\xE0 Ng\u01B0\u1EDDi Th\u1EE3"
+    en: Thomas is the Builder
+  - key: mind.link.9
+    text: "Isabella l\xE0 Qu\xFD B\xE0 \u2014 b\xE0i ch\xFA th\u1EE9 n\u0103m"
+    en: "Isabella is the Lady \u2014 the fifth verse"
+  - key: mind.link.10
+    text: "L\xF2ng tham \u0111\u01B0\u1EE3c thao t\xFAng qua Vademecum"
+    en: Greed spread through the Vademecum
+  - key: mind.link.11
+    text: "L\u1ED7 khoan 2009 sau v\xE1ch b\u1EBFp"
+    en: The 2009 drill hole behind the kitchen wall

@@ -63,6 +63,8 @@ namespace KhoaHon.Core
             Instance = this;
             T.Table = textTable;
             Loc.Load();
+            // Tiếp tục từ save: nhân vật lấy từ save đang chờ nạp (cần biết trước khi thanh đồ khởi tạo)
+            if (SaveSystem.PendingLoad != null) GameFlow.PendingCharacter = SaveSystem.PendingLoad.CharacterValue;
             Character = GameFlow.PendingCharacter;
             ModalUI.Reset();
             Flags.Changed += OnFlagChanged;
