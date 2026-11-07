@@ -23,5 +23,21 @@ namespace KhoaHon.Items
         public int filmPerRoll = 6;
         [Tooltip("Cooldown giữa 2 lần chụp (giây)")]
         public float flashCooldown = 1.5f;
+
+        [Header("Flash làm choáng (máy ảnh Evelyn / điện thoại Alex)")]
+        [Tooltip("Tầm flash làm choáng Mrs. Peake (m)")]
+        public float flashStunRange = 9f;
+        [Tooltip("Nửa góc nón flash (độ)")]
+        public float flashStunHalfAngle = 30f;
+        [Tooltip("% pin mỗi lần flash điện thoại")]
+        public float phoneFlashBatteryCost = 6f;
+
+        [Header("Kính nhìn đêm (Alex)")]
+        [Tooltip("% pin tiêu hao mỗi giây khi bật")]
+        public float nightVisionDrainPerSecond = 1.1f;
+
+        [Header("EVP định hướng (Evelyn)")]
+        [Tooltip("Tầm máy ghi âm bắt được bước chân Mrs. Peake (m)")]
+        public float evpRange = 30f;
     }
 }

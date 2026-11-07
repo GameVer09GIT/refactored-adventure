@@ -7,7 +7,7 @@ namespace KhoaHon.EditorTools
     /// theo kịch bản Kich_Ban_Game.docx. KhoaHonDataBuilder đọc từ đây để ghi vào ScriptableObject.
     /// Id asset giữ nguyên tên cũ để không vỡ file lưu và converter.
     /// </summary>
-    public static class KhoaHonContent
+    public static partial class KhoaHonContent
     {
         // ------------------------------------------------------------------ Bảng chuỗi UI
         public static readonly (string key, string vi, string en)[] Text =
@@ -95,8 +95,8 @@ namespace KhoaHon.EditorTools
             ("char.evelyn.role", "Nhà báo điều tra · The Ashford Herald", "Investigative Journalist · The Ashford Herald"),
             ("char.evelyn.motive", "Gần một thế kỷ án mạng bị niêm phong. Cộng sự của cô, Julian Vance, đã mất liên lạc ngay sau khi gửi về một bức ảnh mật mã.",
                 "Nearly a century of sealed murder files. Her partner, Julian Vance, went silent right after sending back a coded photograph."),
-            ("char.evelyn.tools", "Sổ tay trinh thám tự xâu chuỗi manh mối · Máy ghi âm bắt tiếng EVP để định hướng kẻ săn đuổi · Máy ảnh film có đèn flash",
-                "A detective notebook that links the evidence · A cassette recorder that catches EVP and tracks the hunter · A film camera with flash"),
+            ("char.evelyn.tools", "Sơ đồ trinh thám xâu chuỗi manh mối (phím M) · Máy ghi âm bắt tiếng EVP để định hướng kẻ săn đuổi · Máy ảnh film có đèn flash",
+                "A case board that links the evidence (M key) · A cassette recorder that catches EVP and tracks the hunter · A film camera with flash"),
             ("char.alex.name", "Alex Vance", "Alex Vance"),
             ("char.alex.role", "Streamer tâm linh · kênh VanceAfterDark", "Paranormal Streamer · VanceAfterDark"),
             ("char.alex.motive", "Kênh livestream đang lụi tàn. Em trai anh, kỹ thuật viên Julian, biến mất trong dinh thự 14 ngày trước. Đêm nay anh lên sóng, và đi tìm nó.",

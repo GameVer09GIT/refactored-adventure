@@ -26,7 +26,7 @@ namespace KhoaHon.EditorTools
             public KhoaHonDatabase db;
             public Dictionary<string, NotebookSource> sources = new Dictionary<string, NotebookSource>();
             public RelicData[] relics = new RelicData[5];
-            public ItemData recorder, filmCamera, crowbar, flashlight;
+            public ItemData recorder, filmCamera, crowbar, flashlight, phone, nightVision;
             public CharacterProfile evelyn, alex;
             public Material[] mats;
         }
@@ -76,6 +76,7 @@ namespace KhoaHon.EditorTools
         {
             var keep = new HashSet<string>();
             foreach (var (k, vi, en) in KhoaHonContent.Text) { t.Set(k, vi, en); keep.Add(k); }
+            foreach (var (k, vi, en) in KhoaHonContent.TextCharacters) { t.Set(k, vi, en); keep.Add(k); }
             t.RemoveAllExcept(keep);
         }
 
@@ -156,9 +157,8 @@ namespace KhoaHon.EditorTools
         {
             r.evelyn = Character("CHAR_Evelyn", PlayerCharacter.Evelyn, "evelyn", new Color(0.72f, 0.55f, 0.32f),
                 new[] { r.recorder, r.filmCamera, r.crowbar });
-            // Alex: slot 2–3 (điện thoại, kính nhìn đêm) được thêm ở Phase D; tạm dùng bộ của Evelyn
             r.alex = Character("CHAR_Alex", PlayerCharacter.Alex, "alex", new Color(0.35f, 0.75f, 0.95f),
-                new[] { r.recorder, r.filmCamera, r.crowbar });
+                new[] { r.phone, r.nightVision, r.crowbar });
         }
 
         private static CharacterProfile Character(string file, PlayerCharacter c, string key, Color accent, ItemData[] hotbar)
@@ -185,6 +185,8 @@ namespace KhoaHon.EditorTools
             r.recorder = Item("Item_Recorder", "Cassette Recorder", ItemType.Recorder, BuildRecorderPrefab(mats));
             r.filmCamera = Item("Item_FilmCamera", "Film Camera", ItemType.FilmCamera, BuildCameraPrefab(mats));
             r.crowbar = Item("Item_Crowbar", "Crowbar", ItemType.Crowbar, BuildCrowbarPrefab(mats));
+            r.phone = Item("Item_Phone", "Smartphone", ItemType.Phone, BuildSimplePrefab<KhoaHon.Characters.PhoneItem>("KH_Phone", mats));
+            r.nightVision = Item("Item_NightVision", "Night Vision", ItemType.NightVision, BuildSimplePrefab<KhoaHon.Characters.NightVisionItem>("KH_NightVision", mats));
         }
 
         private static ItemData Item(string file, string display, ItemType type, GameObject prefab)
@@ -249,6 +251,16 @@ namespace KhoaHon.EditorTools
             var hook = Part(root.transform, PrimitiveType.Cube, "Hook", new Vector3(0, 0.33f, 0.03f), new Vector3(0.02f, 0.02f, 0.07f), m[7]);
             hook.transform.localRotation = Quaternion.Euler(-30, 0, 0);
             return SavePrefab(root, Root + "/Prefabs/Items/KH_Crowbar.prefab");
+        }
+
+        /// <summary>Prefab cầm tay tối giản (model Blender được gắn lại bởi converter).</summary>
+        private static GameObject BuildSimplePrefab<TItem>(string name, Material[] m) where TItem : HeldItem
+        {
+            var root = new GameObject(name);
+            root.AddComponent<AudioSource>();
+            root.AddComponent<TItem>();
+            Part(root.transform, PrimitiveType.Cube, "Body", Vector3.zero, new Vector3(0.07f, 0.14f, 0.01f), m[6]);
+            return SavePrefab(root, Root + "/Prefabs/Items/" + name + ".prefab");
         }
 
         private static GameObject Part(Transform parent, PrimitiveType t, string name, Vector3 pos, Vector3 scale, Material mat)

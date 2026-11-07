@@ -483,11 +483,11 @@ namespace KhoaHon.EditorTools
                 return c;
             }
             // Tông màu điện ảnh: ACES, bóng lạnh xanh, vùng sáng ấm (nến/đèn dầu), tương phản vừa
-            var tm = Add<Tonemapping>(); tm.mode.value = TonemappingMode.ACES;
-            var ca = Add<ColorAdjustments>(); ca.postExposure.value = -0.15f; ca.contrast.value = 14f; ca.saturation.value = -14f; ca.colorFilter.value = new Color(0.88f, 0.93f, 0.96f);
-            var wb = Add<WhiteBalance>(); wb.temperature.value = -12f; wb.tint.value = 4f;
-            var lgg = Add<LiftGammaGain>(); lgg.lift.value = new Vector4(0.96f, 0.98f, 1.04f, -0.02f); lgg.gamma.value = new Vector4(1f, 1f, 1.02f, 0f); lgg.gain.value = new Vector4(1.04f, 1.0f, 0.95f, 0.02f);
-            var spl = Add<SplitToning>(); spl.shadows.value = new Color(0.33f, 0.42f, 0.55f); spl.highlights.value = new Color(0.62f, 0.52f, 0.38f); spl.balance.value = -15f;
+            var tm = Add<Tonemapping>(); tm.mode.value = TonemappingMode.Neutral; // ACES làm cảnh tối & ám màu (đã thử)
+            var ca = Add<ColorAdjustments>(); ca.postExposure.value = 0.9f; ca.contrast.value = 8f; ca.saturation.value = -10f; ca.colorFilter.value = new Color(0.88f, 0.93f, 0.96f);
+            var wb = Add<WhiteBalance>(); wb.temperature.value = -4f; wb.tint.value = 0f;
+            var lgg = Add<LiftGammaGain>(); lgg.lift.value = new Vector4(0.97f, 0.99f, 1.04f, 0f); lgg.gamma.value = new Vector4(1f, 1f, 1.02f, 0f); lgg.gain.value = new Vector4(1.04f, 1.0f, 0.95f, 0.02f); lgg.active = false;
+            var spl = Add<SplitToning>(); spl.shadows.value = new Color(0.33f, 0.42f, 0.55f); spl.highlights.value = new Color(0.62f, 0.52f, 0.38f); spl.balance.value = -15f; spl.active = false;
             var vg = Add<Vignette>(); vg.intensity.value = 0.32f; vg.smoothness.value = 0.45f; vg.color.value = Color.black;
             var chr = Add<ChromaticAberration>(); chr.intensity.value = 0.12f;
             var fg = Add<FilmGrain>(); fg.type.value = FilmGrainLookup.Medium4; fg.intensity.value = 0.28f; fg.response.value = 0.7f;
@@ -495,7 +495,7 @@ namespace KhoaHon.EditorTools
             var bl = Add<Bloom>(); bl.intensity.value = 0.7f; bl.threshold.value = 0.9f; bl.scatter.value = 0.7f; bl.highQualityFiltering.value = true;
             bl.dirtTexture.value = LensDirtTex(); bl.dirtIntensity.value = 2.2f;
             var mb = Add<MotionBlur>(); mb.intensity.value = 0.22f; mb.quality.value = MotionBlurQuality.Medium;
-            var sm = Add<ShadowsMidtonesHighlights>(); sm.shadows.value = new Vector4(0.9f, 0.95f, 1.05f, -0.05f);
+            var sm = Add<ShadowsMidtonesHighlights>(); sm.shadows.value = new Vector4(0.95f, 0.98f, 1.05f, 0f); sm.active = false;
             // DoF: tắt mặc định, HorrorPostFX bật khi đọc tài liệu/cutscene
             var dof = Add<DepthOfField>(); dof.mode.value = DepthOfFieldMode.Bokeh; dof.focusDistance.value = 0.6f; dof.focalLength.value = 60f; dof.aperture.value = 2.8f; dof.active = false;
             // Sương thể tích (KHVolumetricFogFeature)

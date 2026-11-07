@@ -252,8 +252,8 @@ namespace KhoaHon.UI
             cont.interactable = SaveSystem.Exists;
             UIKit.MenuButton(col, T.Get("ui.new_game"), () =>
             {
-                if (SaveSystem.Exists) Confirm(T.Get("ui.confirm_new"), () => StartCoroutine(NewGame()));
-                else StartCoroutine(NewGame());
+                if (SaveSystem.Exists) Confirm(T.Get("ui.confirm_new"), ShowCharacterSelect);
+                else ShowCharacterSelect();
             });
             UIKit.MenuButton(col, T.Get("ui.settings"), () => { menuRoot.SetActive(false); SettingsMenuUI.Instance.Open(BuildMenu); });
             UIKit.MenuButton(col, T.Get("ui.credits"), ShowCredits);
@@ -273,6 +273,65 @@ namespace KhoaHon.UI
             t.rectTransform.anchorMin = new Vector2(0.2f, 0.2f); t.rectTransform.anchorMax = new Vector2(0.8f, 0.85f);
             var b = UIKit.Column(root.transform, "Btn", new Vector2(0.44f, 0.08f), new Vector2(0.56f, 0.15f), Vector2.zero, Vector2.zero, 0);
             UIKit.SmallButton(b, T.Get("ui.back"), () => { Destroy(root.gameObject); menuRoot.SetActive(true); });
+        }
+
+        // ------------------------------------------------------------------ Chọn nhân vật
+        private void ShowCharacterSelect()
+        {
+            var gm = GameManager.Instance;
+            if (gm == null || gm.Characters == null || gm.Characters.Length == 0) { StartCoroutine(NewGame()); return; }
+            menuRoot.SetActive(false);
+            var root = UIFactory.Panel("CharacterSelect", canvas.transform, new Color(0, 0, 0, 0.88f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            root.transform.SetSiblingIndex(1);
+            var title = UIKit.Label(root.transform, T.Get("char.choose"), 52, UIKit.Ink, TextAlignmentOptions.Top, true, true);
+            title.rectTransform.offsetMax = new Vector2(0, -70); title.characterSpacing = 10f;
+            int count = Mathf.Min(2, gm.Characters.Length);
+            for (int i = 0; i < count; i++)
+            {
+                var prof = gm.Characters[i];
+                if (prof == null) continue;
+                float x0 = i == 0 ? 0.08f : 0.53f;
+                CharacterCard(root.transform, prof, new Vector2(x0, 0.16f), new Vector2(x0 + 0.39f, 0.84f), () =>
+                {
+                    GameFlow.PendingCharacter = prof.character;
+                    StartCoroutine(NewGame());
+                });
+            }
+            var back = UIKit.Column(root.transform, "Back", new Vector2(0.44f, 0.04f), new Vector2(0.56f, 0.11f), Vector2.zero, Vector2.zero, 0);
+            UIKit.SmallButton(back, T.Get("ui.back"), () => { Destroy(root.gameObject); menuRoot.SetActive(true); });
+        }
+
+        private void CharacterCard(Transform parent, CharacterProfile prof, Vector2 aMin, Vector2 aMax, System.Action pick)
+        {
+            var card = UIFactory.Panel("Card_" + prof.character, parent, new Color(0.04f, 0.035f, 0.035f, 0.92f), aMin, aMax, Vector2.zero, Vector2.zero);
+            UIFactory.Panel("Accent", card.transform, prof.accent, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -5), Vector2.zero);
+            var btn = card.gameObject.AddComponent<Button>(); btn.transition = Selectable.Transition.ColorTint;
+            var cols = btn.colors; cols.highlightedColor = new Color(1.25f, 1.15f, 1.1f, 1f); btn.colors = cols;
+            btn.onClick.AddListener(() => { Horror.AmbientScares.Play2D(UIKit.Click, 0.7f); pick(); });
+            // "Chân dung": chữ cái đầu cỡ lớn trên nền màu nhấn (chưa có ảnh vẽ)
+            var portrait = UIFactory.Panel("Portrait", card.transform, new Color(prof.accent.r * 0.25f, prof.accent.g * 0.25f, prof.accent.b * 0.25f, 1f),
+                new Vector2(0.06f, 0.56f), new Vector2(0.38f, 0.94f), Vector2.zero, Vector2.zero);
+            var initial = UIKit.Label(portrait.transform, prof.DisplayName.Substring(0, 1), 150, prof.accent, TextAlignmentOptions.Center, true, true);
+            var name = UIKit.Label(card.transform, prof.DisplayName, 46, UIKit.Ink, TextAlignmentOptions.TopLeft, true, true);
+            name.rectTransform.anchorMin = new Vector2(0.42f, 0.8f); name.rectTransform.anchorMax = new Vector2(0.96f, 0.94f);
+            var role = UIKit.Label(card.transform, prof.Role, 20, prof.accent, TextAlignmentOptions.TopLeft, false, true);
+            role.rectTransform.anchorMin = new Vector2(0.42f, 0.66f); role.rectTransform.anchorMax = new Vector2(0.96f, 0.79f);
+            var motive = UIKit.Label(card.transform, prof.Motive, 22, UIKit.Ink, TextAlignmentOptions.TopLeft, true);
+            motive.rectTransform.anchorMin = new Vector2(0.06f, 0.26f); motive.rectTransform.anchorMax = new Vector2(0.94f, 0.53f);
+            motive.lineSpacing = 6f;
+            var tools = UIKit.Label(card.transform, prof.Tools, 18, UIKit.Dim, TextAlignmentOptions.TopLeft);
+            tools.rectTransform.anchorMin = new Vector2(0.06f, 0.1f); tools.rectTransform.anchorMax = new Vector2(0.94f, 0.25f);
+            // Biểu tượng công cụ (icon ItemData)
+            if (prof.hotbar != null)
+                for (int k = 0; k < prof.hotbar.Length; k++)
+                {
+                    var it = prof.hotbar[k];
+                    if (it == null || it.Icon == null) continue;
+                    var ic = UIFactory.Rect("Icon" + k, card.transform, new Vector2(0.42f + k * 0.13f, 0.56f), new Vector2(0.53f + k * 0.13f, 0.65f), Vector2.zero, Vector2.zero);
+                    var img = ic.gameObject.AddComponent<Image>(); img.sprite = it.Icon; img.preserveAspect = true;
+                }
+            var start = UIKit.Label(card.transform, T.Get("char.start") + "  >", 26, new Color(0.95f, 0.3f, 0.25f), TextAlignmentOptions.BottomRight, false, true);
+            start.rectTransform.offsetMin = new Vector2(20, 18); start.rectTransform.offsetMax = new Vector2(-24, 0);
         }
 
         /// <summary>Hộp xác nhận dùng chung.</summary>

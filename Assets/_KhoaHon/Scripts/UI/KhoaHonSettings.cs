@@ -110,7 +110,13 @@ namespace KhoaHon.UI
             {
                 pc.mouseSensitivity = Sensitivity;
                 var cam = pc.playerCamera != null ? pc.playerCamera.GetComponent<Camera>() : null;
-                if (cam != null) cam.fieldOfView = Fov;
+                if (cam != null)
+                {
+                    cam.fieldOfView = Fov;
+                    // Khóa cứng: camera người chơi luôn chạy hậu kỳ (Volume, nhìn đêm, DoF)
+                    var acd = cam.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+                    if (acd != null) acd.renderPostProcessing = true;
+                }
             }
             KhoaHonHUD.SubtitlesEnabled = Subtitles;
             HudExtras.ShowFps = ShowFps;

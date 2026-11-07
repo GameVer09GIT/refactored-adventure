@@ -68,8 +68,22 @@ namespace KhoaHon.EditorTools
             var systems = GB.BuildSystems();
             systems.AddComponent<KhoaHon.Narrative.TapePlayer>().Configure(Sfx("sfx_tape_hiss_loop"), Sfx("sfx_tape_click"));
             systems.AddComponent<KhoaHon.Narrative.EndingDirector>();
+            systems.AddComponent<KhoaHon.Characters.LivestreamChat>();
+            var mind = systems.AddComponent<KhoaHon.Characters.DetectiveMindMap>();
+            mind.Configure(
+                System.Array.ConvertAll(KhoaHonContent.MindNodes, n => new KhoaHon.Characters.DetectiveMindMap.Node { id = n.id, pos = n.pos }),
+                System.Array.ConvertAll(KhoaHonContent.MindLinks, l => new KhoaHon.Characters.DetectiveMindMap.Link { from = l.from, to = l.to, captionKey = l.key }));
             var player = GameObject.Find("Player");
             GB.ConfigurePlayer(player, GameObject.Find("Canvas"), GameObject.Find("SpawnPoint"), systems, new Vector3(80.7f, 10f, -6f), 0f, false);
+            if (player.GetComponent<KhoaHon.Characters.CharacterLoadout>() == null) player.AddComponent<KhoaHon.Characters.CharacterLoadout>();
+            // Camera người chơi: bật hậu kỳ (bản MapKinhDi để tắt) + tag MainCamera
+            var pcam = player.GetComponent<PlayerController>().playerCamera.GetComponent<Camera>();
+            pcam.tag = "MainCamera";
+            var acd = pcam.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+            if (acd == null) acd = pcam.gameObject.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+            acd.renderPostProcessing = true;
+            acd.antialiasing = UnityEngine.Rendering.Universal.AntialiasingMode.None;
+            acd.stopNaN = true;
 
             var doors = ConvertDoors();
             BuildFloor2Partitions();
@@ -155,7 +169,7 @@ namespace KhoaHon.EditorTools
             }
             Icon(data.recorder, "KH_MayGhiAm"); Icon(data.filmCamera, "KH_MayAnh"); Icon(data.crowbar, "KH_XaBeng");
 
-            void Held(string prefabPath, string model, Vector3 euler, string ledChild)
+            void Held(string prefabPath, string model, Vector3 euler, string ledChild, float scale = 1f)
             {
                 var root = PrefabUtility.LoadPrefabContents(prefabPath);
                 for (int i = root.transform.childCount - 1; i >= 0; i--) Object.DestroyImmediate(root.transform.GetChild(i).gameObject);
@@ -163,7 +177,7 @@ namespace KhoaHon.EditorTools
                 if (m != null)
                 {
                     var g = (GameObject)PrefabUtility.InstantiatePrefab(m, root.transform);
-                    g.transform.localPosition = Vector3.zero; g.transform.localRotation = Quaternion.Euler(euler);
+                    g.transform.localPosition = Vector3.zero; g.transform.localRotation = Quaternion.Euler(euler); g.transform.localScale = Vector3.one * scale;
                     foreach (var r in g.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                     if (ledChild != null)
                     {
@@ -178,6 +192,22 @@ namespace KhoaHon.EditorTools
             Held("Assets/_KhoaHon/Prefabs/Items/KH_Recorder.prefab", "KH_MayGhiAm", new Vector3(0, 180, 0), "LED");
             Held("Assets/_KhoaHon/Prefabs/Items/KH_FilmCamera.prefab", "KH_MayAnh", new Vector3(0, 180, 0), null);
             Held("Assets/_KhoaHon/Prefabs/Items/KH_Crowbar.prefab", "KH_XaBeng", Vector3.zero, null);
+            Held("Assets/_KhoaHon/Prefabs/Items/KH_Phone.prefab", "KH_BW_Phone", new Vector3(0, 0, 0), null, 0.9f);
+            Held("Assets/_KhoaHon/Prefabs/Items/KH_NightVision.prefab", "KH_BW_Camcorder", new Vector3(0, 180, 0), null, 0.6f);
+            Icon(data.phone, "KH_BW_Phone"); Icon(data.nightVision, "KH_BW_Camcorder");
+            // Âm thanh công cụ (prefab)
+            void Clips(string prefabPath, System.Action<GameObject> f)
+            {
+                var root = PrefabUtility.LoadPrefabContents(prefabPath);
+                f(root);
+                PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+            void SetClip(Component c, string field, string clip) { var so = new SerializedObject(c); so.FindProperty(field).objectReferenceValue = Sfx(clip); so.ApplyModifiedPropertiesWithoutUndo(); }
+            Clips("Assets/_KhoaHon/Prefabs/Items/KH_Recorder.prefab", r => { var c = r.GetComponent<KhoaHon.Items.RecorderItem>(); SetClip(c, "toggleClip", "sfx_tape_click"); SetClip(c, "evpLoop", "hk_keys_drag_loop"); SetClip(c, "staticLoop", "sfx_tape_hiss_loop"); });
+            Clips("Assets/_KhoaHon/Prefabs/Items/KH_FilmCamera.prefab", r => SetClip(r.GetComponent<KhoaHon.Items.FilmCameraItem>(), "shutterClip", "sfx_tape_click"));
+            Clips("Assets/_KhoaHon/Prefabs/Items/KH_Phone.prefab", r => SetClip(r.GetComponent<KhoaHon.Characters.PhoneItem>(), "flashClip", "sfx_safe_tick"));
+            Clips("Assets/_KhoaHon/Prefabs/Items/KH_NightVision.prefab", r => SetClip(r.GetComponent<KhoaHon.Characters.NightVisionItem>(), "toggleClip", "sfx_tape_click"));
             log.Add("Icons + held models updated");
         }
 
@@ -268,6 +298,58 @@ namespace KhoaHon.EditorTools
                 }
             }
             log.Add($"Reflection probes baked: {ok}/{probes.Length}");
+        }
+
+        /// <summary>
+        /// Dấu vết chỉ thấy qua kính nhìn đêm (Alex): dấu chân huỳnh quang từ sảnh tới nắp hầm, chữ máu "1921" cạnh ảnh gia tộc,
+        /// lời cảnh báo của Julian ở cầu thang tầng 2 và cầu thang hầm.
+        /// </summary>
+        static void BuildHiddenInk(Transform c)
+        {
+            var root = new GameObject("KH_HiddenInk").transform;
+            root.SetParent(c);
+            string mp = "Assets/_KhoaHon/Materials/M_HiddenInk.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(mp);
+            if (m == null) { m = new Material(Shader.Find("Universal Render Pipeline/Unlit")); AssetDatabase.CreateAsset(m, mp); }
+            m.SetColor("_BaseColor", new Color(0.75f, 1f, 0.8f, 1f));
+            EditorUtility.SetDirty(m);
+
+            // Dấu chân: quad nhỏ so le dọc đường Sảnh → Nhà Bếp → nắp hầm
+            var path = new[] { new Vector3(86f, GF, 14f), new Vector3(82f, GF, 17.5f), new Vector3(78.5f, GF, 21.5f), new Vector3(75.5f, GF, 24.2f), new Vector3(73.8f, GF, 25.3f) };
+            int k = 0;
+            for (int s = 0; s < path.Length - 1; s++)
+            {
+                var a = path[s]; var b = path[s + 1];
+                int steps = Mathf.CeilToInt(Vector3.Distance(a, b) / 0.45f);
+                var dir = (b - a).normalized; var side = Vector3.Cross(Vector3.up, dir);
+                for (int i = 0; i < steps; i++, k++)
+                {
+                    var p = Vector3.Lerp(a, b, i / (float)steps) + side * ((k % 2 == 0) ? 0.11f : -0.11f) + Vector3.up * 0.012f;
+                    var q = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    Object.DestroyImmediate(q.GetComponent<Collider>());
+                    q.name = "Footprint_" + k; q.transform.SetParent(root);
+                    q.transform.SetPositionAndRotation(p, Quaternion.LookRotation(Vector3.down, dir));
+                    q.transform.localScale = new Vector3(0.1f, 0.24f, 1f);
+                    var mr = q.GetComponent<MeshRenderer>(); mr.sharedMaterial = m; mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                }
+            }
+            InkText(root, "1921", new Vector3(67.05f, GF + 1.9f, 12.6f), Quaternion.Euler(0, -90, 0), 0.8f);
+            InkText(root, "1921 =/= 1924", new Vector3(110.6f, GF + 1.6f, 15.2f), Quaternion.Euler(0, 90, 0), 0.35f);
+            InkText(root, "SHE CANNOT COME DOWN", new Vector3(103.4f, GF + 2.0f, 27.3f), Quaternion.Euler(0, 0, 0), 0.28f);
+            InkText(root, "DO NOT LISTEN TO HIM", CellarOrigin + new Vector3(-6.5f, -8.2f, 2.2f), Quaternion.Euler(0, 90, 0), 0.3f);
+            root.gameObject.AddComponent<KhoaHon.Characters.HiddenInk>();
+        }
+
+        static void InkText(Transform parent, string text, Vector3 pos, Quaternion rot, float size)
+        {
+            var go = new GameObject("Ink_" + text);
+            go.transform.SetParent(parent); go.transform.SetPositionAndRotation(pos, rot);
+            var t = go.AddComponent<TMPro.TextMeshPro>();
+            t.font = data.style.serifBoldFont ?? data.style.serifFont;
+            t.text = text; t.fontSize = size * 10f; t.alignment = TMPro.TextAlignmentOptions.Center;
+            t.color = new Color(0.7f, 1f, 0.75f, 0.9f);
+            t.rectTransform.sizeDelta = new Vector2(6f, 1.5f);
+            t.fontStyle = TMPro.FontStyles.Italic;
         }
 
         static AudioClip Sfx(string n)
@@ -657,7 +739,7 @@ namespace KhoaHon.EditorTools
             SetMat(thiep.gameObject, mPaper);
             var dithu = GB.Readable(c, "Doc_DiThuLam1996", new Vector3(tb.center.x + 0.7f, tableTop + 0.01f, tb.center.z + 0.15f), new Vector3(0.22f, 0.01f, 0.3f), "DOC_1996_DiThuLam");
             SetMat(dithu.gameObject, mPaper);
-            GB.Box(c, "HiddenInk_KyHieu", new Vector3(74.6f, GF + 0.006f, 22.6f), new Vector3(1.4f, 0.01f, 1.4f), data.mats[11], false);
+            BuildHiddenInk(c);
 
             // ---------- Phòng Làm Việc: két sắt + bàn
             var safe = Place(Model("KH_KetSat"), c, new Vector3(109.9f, GF, 13.9f), 270f, 1f, "KetSat");
@@ -716,8 +798,11 @@ namespace KhoaHon.EditorTools
         {
             var g = new GameObject("PhongTho_BanTho").transform;
             g.SetParent(c);
+            // Bàn thờ gia tộc kiểu phương Tây: tủ gỗ sồi tối, khăn trải bàn đỏ thẫm
             var altar = GB.Box(g, "BanTho", new Vector3(67.35f, F2 + 0.45f, 17.5f), new Vector3(0.9f, 0.9f, 3.4f),
-                AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_LacquerRed.mat") ?? GB.mDoor);
+                AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_BW_Oak.mat") ?? GB.mDoor);
+            GB.Box(g, "BanTho_Runner", new Vector3(67.4f, F2 + 0.905f, 17.5f), new Vector3(0.6f, 0.01f, 3.5f),
+                AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_ClothRed.mat") ?? GB.mDoor, false);
             var step = GB.Box(g, "BanTho_Tang2", new Vector3(67.15f, F2 + 1.05f, 17.5f), new Vector3(0.5f, 0.3f, 3.2f),
                 AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_WoodDark.mat") ?? GB.mDoor);
             altar.gameObject.AddComponent<InfoInteractable>().Configure("prompt.altar", "msg.altar");
@@ -726,13 +811,14 @@ namespace KhoaHon.EditorTools
             for (int i = 0; i < 13; i++)
             {
                 bool m = marked.Contains(i);
-                Place(Model(m ? "KH_BaiVi_MatTran" : "KH_BaiVi"), g, new Vector3(67.12f, F2 + 1.2f, 15.95f + i * 0.26f), 90f, 1.1f, (m ? "BaiVi_MatTran_" : "BaiVi_") + i);
+                // 13 bia tưởng niệm treo tường (5 Mắt Trận mạ đồng sáng)
+                Place(Model(m ? "KH_BW_Plaque_Eye" : "KH_BW_Plaque"), g, new Vector3(66.86f, F2 + 1.3f + (i % 2) * 0.42f, 15.95f + i * 0.26f), 90f, 0.9f, (m ? "BaiVi_MatTran_" : "BaiVi_") + i);
             }
             string[] hanh = { "Moc", "Thuy", "Tho", "Kim", "Hoa" };
             var stands = new KhoaHon.Puzzles.CandleStand[5];
             for (int i = 0; i < 5; i++)
             {
-                var ds = Place(Model("KH_DaiSen"), g, new Vector3(67.62f, F2 + 0.9f, 15.95f + marked[i] * 0.26f), 0f, 1f, "DaiSen_" + hanh[i]);
+                var ds = Place(Model("KH_BW_CandleStand"), g, new Vector3(67.62f, F2 + 0.91f, 15.95f + marked[i] * 0.26f), 0f, 1f, "DaiSen_" + hanh[i]);
                 if (ds == null) continue;
                 var bc = ds.AddComponent<BoxCollider>(); var bb = Bounds(ds);
                 bc.center = ds.transform.InverseTransformPoint(bb.center); bc.size = new Vector3(Mathf.Max(0.22f, bb.size.x), Mathf.Max(0.25f, bb.size.y), Mathf.Max(0.22f, bb.size.z));

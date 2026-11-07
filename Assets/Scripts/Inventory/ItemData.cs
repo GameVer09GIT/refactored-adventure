@@ -11,7 +11,10 @@ namespace HorrorGame.Inventory
         // --- Khóa Hồn: chỉ thêm ở cuối để không lệch giá trị đã serialize ---
         Recorder,
         FilmCamera,
-        Crowbar
+        Crowbar,
+        // --- Blackwood Manor: nhân vật Alex ---
+        Phone,
+        NightVision
     }
 
     public enum GripType

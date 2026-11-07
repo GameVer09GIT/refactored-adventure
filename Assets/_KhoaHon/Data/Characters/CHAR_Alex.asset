@@ -24,6 +24,6 @@ MonoBehaviour:
   portrait: {fileID: 0}
   accent: {r: 0.35, g: 0.75, b: 0.95, a: 1}
   hotbar:
-  - {fileID: 11400000, guid: 485721bc0446d4d49b5f8e0ebaeba25c, type: 2}
-  - {fileID: 11400000, guid: 66076625274801741b5330f99c144990, type: 2}
+  - {fileID: 11400000, guid: 736af6205ca26bc44b99e4b9654e2a52, type: 2}
+  - {fileID: 11400000, guid: 89af847df506376448dfafc4aa1af0e5, type: 2}
   - {fileID: 11400000, guid: ef0f363928ba9dc4696237658b4428fe, type: 2}

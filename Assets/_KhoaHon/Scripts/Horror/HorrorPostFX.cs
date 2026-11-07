@@ -19,6 +19,8 @@ namespace KhoaHon.Horror
         [SerializeField] private AudioSource heartbeat;
 
         public float Brightness { get; set; }
+        /// <summary>Phơi sáng nền bù cho ACES tonemapping (cảnh được dựng sáng tối theo kiểu không tonemap).</summary>
+        public const float BaseExposure = 0.9f;
         public bool FilmGrainEnabled { get; set; } = true;
         public bool MotionBlurEnabled { get; set; } = true;
 
@@ -73,9 +75,9 @@ namespace KhoaHon.Horror
             bool menu = GameFlow.State == FlowState.Menu || GameFlow.State == FlowState.Boot;
             if (color != null)
             {
-                color.postExposure.value = Brightness - 0.15f + (menu ? 1.1f : 0f);
-                color.saturation.value = -16f - prox * 25f - (1f - sanity01) * 25f; // giữ màu đỏ của máu
-                color.contrast.value = 18f + prox * 12f;
+                color.postExposure.value = Brightness + BaseExposure + (menu ? 0.1f : 0f);
+                color.saturation.value = -10f - prox * 25f - (1f - sanity01) * 25f; // giữ màu đỏ của máu
+                color.contrast.value = 8f + prox * 12f;
                 color.colorFilter.value = Color.Lerp(new Color(0.86f, 0.93f, 0.95f), new Color(1f, 0.55f, 0.52f), Mathf.Clamp01(pulse * 0.55f + flash));
             }
             if (blur != null) blur.active = MotionBlurEnabled && !menu;
