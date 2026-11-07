@@ -87,3 +87,10 @@
 - **Model Blender mới** (`Tools/Blender/blackwood_props.py`, `KH_BW_*`): bia đồng, giá nến sắt rèn, Vademecum, Khối Cổ Vật, điện thoại, máy quay, xe sedan, biển báo, máy chữ, bóng ma Lord Blackwood. Phòng thờ đổi sang kiểu phương Tây (13 bia đồng treo tường, giá nến sắt, tủ gỗ sồi + khăn đỏ).
 - **Sửa lỗi lớn**: camera người chơi (từ MapKinhDi) tắt `renderPostProcessing` và không có tag MainCamera → mọi hậu kỳ chưa từng hiện khi chơi. Converter bật lại + khóa cứng trong `KhoaHonSettings.ApplyLive`. Cân lại tông màu: Tonemapping Neutral (ACES làm tối/ám xanh), phơi sáng nền +0.9, tắt Split Toning/LGG/SMH.
 - Test 35/35 (thêm `ChatDirectorTests`). Ảnh: `Temp/KhoaHon/d_alex_phone.png`, `d_nv_pp.png`, `d_evelyn_compass.png`, `d_mindmap.png`, `d_grade_test1.png`, `d_bw_preview.png`.
+
+## Blackwood E — Lý trí ẩn & Mrs. Peake (2026-11-08)
+- `Sanity/SanityModel` (thuần, 4 test) + `SanitySystem`: lý trí 5–100 không có thanh hiển thị. Giảm trong bóng tối (0.35/s), nhìn thẳng Mrs. Peake (3.5/s), bị săn (1.2/s); trốn trong tối không giảm; chỗ sáng (đèn pin bật hoặc gần đèn) hồi 0.6/s tới 75. 4 bậc → `GameEvents.SanityTierChanged`.
+- Hiệu ứng: quang sai dao động + nhịp tim to dần khi lý trí thấp (HorrorPostFX), bóng người thoáng qua ở rìa tầm nhìn biến mất khi quay sang nhìn, ảo thanh tiếng chìa khóa một bên tai (bậc 2–3).
+- `NoisyProp` (5 đồ vật ở hành lang tầng 2) + `PlayerPushProps` (người chơi xô ngã đồ, chạy thì mạnh hơn) → tiếng động bán kính 11 m → Mrs. Peake nghi ngờ. Đã kiểm chứng: xô ấm đổ → bà tới và bắt người chơi.
+- Âm thanh mới: `sfx_prop_clatter`, `sfx_prop_thud`.
+- Test 39/39.
