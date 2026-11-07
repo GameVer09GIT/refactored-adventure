@@ -23,6 +23,7 @@ namespace KhoaHon.EditorTools
             Write("hk_hunt_pulse_loop", HuntPulse(8f));
             Write("hk_whisper_run", Whisper(1.6f));
             var extra = BuildHorror();
+            extra.AddRange(BuildPuzzle());
             AssetDatabase.Refresh();
             var names = new System.Collections.Generic.List<string> { "hk_keys_drag_loop", "hk_lullaby_hum", "hk_hunt_pulse_loop", "hk_whisper_run" };
             names.AddRange(extra);

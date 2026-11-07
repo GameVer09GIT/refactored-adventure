@@ -41,6 +41,7 @@ namespace KhoaHon.EditorTools
             if (EditorApplication.isPlaying) return "Đang Play.";
 
             data = KhoaHonDataBuilder.Build();
+            if (AssetDatabase.LoadAssetAtPath<AudioClip>(KhoaHonAudioSynth.Dir + "/sfx_window_pry.wav") == null) KhoaHonAudioSynth.BuildAll();
             GB.Init(data);
             ImportBlenderModels();
             ImportIconsAndHeldModels();
@@ -65,6 +66,8 @@ namespace KhoaHon.EditorTools
 
             RemoveDemo();
             var systems = GB.BuildSystems();
+            systems.AddComponent<KhoaHon.Narrative.TapePlayer>().Configure(Sfx("sfx_tape_hiss_loop"), Sfx("sfx_tape_click"));
+            systems.AddComponent<KhoaHon.Narrative.EndingDirector>();
             var player = GameObject.Find("Player");
             GB.ConfigurePlayer(player, GameObject.Find("Canvas"), GameObject.Find("SpawnPoint"), systems, new Vector3(80.7f, 10f, -6f), 0f, false);
 
@@ -265,6 +268,13 @@ namespace KhoaHon.EditorTools
                 }
             }
             log.Add($"Reflection probes baked: {ok}/{probes.Length}");
+        }
+
+        static AudioClip Sfx(string n)
+        {
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(KhoaHonAudioSynth.Dir + "/" + n + ".wav");
+            if (clip == null) log.Add("WARN missing audio " + n);
+            return clip;
         }
 
         static GameObject Model(string name) => AssetDatabase.LoadAssetAtPath<GameObject>(ModelsDir + "/" + name + ".fbx");
@@ -604,6 +614,18 @@ namespace KhoaHon.EditorTools
             SetMat(bp.gameObject, AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_ClothBeige.mat"));
             var bb = GB.Readable(c, "Doc_BienBan2009", new Vector3(80.0f, GF + 1.7f, 7.95f), new Vector3(0.32f, 0.42f, 0.01f), "DOC_2009_BienBan");
             SetMat(bb.gameObject, mPaper);
+            // Cửa sổ sảnh bị đóng đinh (Kết ẩn: nạy bằng xà beng)
+            var win = new GameObject("HallWindow_Pryable").transform;
+            win.SetParent(c); win.position = new Vector3(92.7f, GF + 2.4f, 7.72f);
+            var wood = AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_WoodDark.mat") ?? GB.mDoor;
+            for (int i = 0; i < 4; i++)
+            {
+                var plank = GB.Box(win, "Plank_" + i, win.position + new Vector3(0, -0.9f + i * 0.6f, 0), new Vector3(1.9f, 0.18f, 0.04f), wood, false);
+                plank.localRotation = Quaternion.Euler(0, 0, (i % 2 == 0 ? 1 : -1) * Random.Range(3f, 9f));
+            }
+            var wcol = win.gameObject.AddComponent<BoxCollider>(); wcol.size = new Vector3(1.8f, 2.4f, 0.2f);
+            win.gameObject.AddComponent<KhoaHon.Puzzles.PryableWindow>().Configure(Sfx("sfx_window_pry"));
+
             GB.PickupBox(c, "Pickup_Battery_Hall", new Vector3(84.2f, GF + 0.05f, 9.0f), new Vector3(0.05f, 0.1f, 0.05f), "item.battery", battery: 50f);
 
             // ---------- Phòng Khách: ảnh gia tộc + bảng đồng
@@ -640,9 +662,18 @@ namespace KhoaHon.EditorTools
             // ---------- Phòng Làm Việc: két sắt + bàn
             var safe = Place(Model("KH_KetSat"), c, new Vector3(109.9f, GF, 13.9f), 270f, 1f, "KetSat");
             if (safe != null) { var bc = safe.AddComponent<BoxCollider>(); var sb = Bounds(safe); bc.center = safe.transform.InverseTransformPoint(sb.center); bc.size = new Vector3(0.75f, 0.92f, 0.7f); }
-            GB.PickupBox(c, "Placeholder_SafeContents", new Vector3(109.6f, GF + 0.95f, 13.9f), new Vector3(0.3f, 0.12f, 0.22f), "item.safe_placeholder",
-                key: "key_upstairs", rewards: new[] { StoryFlag.SafeOpened, StoryFlag.HasUpstairsKey },
-                sources: new NotebookSource[] { data.sources["DOC_1924_SoKhoaHon"], data.sources["DOC_1924_BanThietKeHam"] });
+            if (safe != null)
+            {
+                // Đồ trong két: Pickup không hình, két gọi Interact() khi người chơi lấy (SafeKeypad)
+                var inside = new GameObject("SafeContents");
+                inside.transform.SetParent(safe.transform, false);
+                var pk = inside.AddComponent<Pickup>();
+                pk.Configure("Pickup_SafeContents", "item.safe_placeholder");
+                pk.SetRewards("key_upstairs", 0f, 0, new[] { StoryFlag.HasUpstairsKey },
+                    new NotebookSource[] { data.sources["DOC_1924_SoKhoaHon"], data.sources["DOC_1924_BanThietKeHam"] }, true, "");
+                var kp = safe.AddComponent<KhoaHon.Puzzles.SafeKeypad>();
+                kp.Configure("1921", null, pk, Sfx("sfx_safe_tick"), Sfx("sfx_safe_open"), Sfx("sfx_safe_wrong"));
+            }
             var desk = Place(P("Assets/Abandoned_Asylum/Prefabs/TableKitchen.prefab"), c, new Vector3(101.5f, GF, 9.6f), 0f, 1f, "BanLamViec");
             float deskTop = desk != null ? Bounds(desk).max.y : GF + 0.8f;
             GB.PickupBox(c, "Pickup_MauBao1953", new Vector3(101.2f, deskTop + 0.01f, 9.6f), new Vector3(0.3f, 0.01f, 0.22f), "item.newspaper",
@@ -698,10 +729,31 @@ namespace KhoaHon.EditorTools
                 Place(Model(m ? "KH_BaiVi_MatTran" : "KH_BaiVi"), g, new Vector3(67.12f, F2 + 1.2f, 15.95f + i * 0.26f), 90f, 1.1f, (m ? "BaiVi_MatTran_" : "BaiVi_") + i);
             }
             string[] hanh = { "Moc", "Thuy", "Tho", "Kim", "Hoa" };
+            var stands = new KhoaHon.Puzzles.CandleStand[5];
             for (int i = 0; i < 5; i++)
             {
                 var ds = Place(Model("KH_DaiSen"), g, new Vector3(67.62f, F2 + 0.9f, 15.95f + marked[i] * 0.26f), 0f, 1f, "DaiSen_" + hanh[i]);
+                if (ds == null) continue;
+                var bc = ds.AddComponent<BoxCollider>(); var bb = Bounds(ds);
+                bc.center = ds.transform.InverseTransformPoint(bb.center); bc.size = new Vector3(Mathf.Max(0.22f, bb.size.x), Mathf.Max(0.25f, bb.size.y), Mathf.Max(0.22f, bb.size.z));
+                // Ngọn lửa: nến + đèn, tắt tới khi đặt đúng trang
+                var flame = new GameObject("Flame");
+                flame.transform.SetParent(ds.transform, false);
+                flame.transform.position = new Vector3(bb.center.x, bb.max.y, bb.center.z);
+                var candle = Place(Model("KH_Nen"), flame.transform, flame.transform.position, 0f, 0.8f, "Candle");
+                var fl = new GameObject("FlameLight").AddComponent<Light>();
+                fl.transform.SetParent(flame.transform, false); fl.transform.localPosition = new Vector3(0, 0.22f, 0);
+                fl.type = LightType.Point; fl.range = 2.6f; fl.intensity = 0.55f; fl.color = new Color(1f, 0.58f, 0.25f); fl.shadows = LightShadows.None;
+                fl.gameObject.AddComponent<KhoaHon.Lighting.CandleFlicker>();
+                flame.SetActive(false);
+                var st = ds.AddComponent<KhoaHon.Puzzles.CandleStand>();
+                st.Configure((Hanh)i, "plaque." + hanh[i].ToLowerInvariant(), flame);
+                stands[i] = st;
             }
+            var altarCtl = g.gameObject.AddComponent<KhoaHon.Puzzles.CandleAltar>();
+            var chainObjs = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                .Where(t => t.name.StartsWith("Chain_") && t.parent != null && t.parent.name == "CellarHatch_Closed").ToArray();
+            altarCtl.Configure(stands, chainObjs, Sfx("sfx_candle_ignite"), Sfx("sfx_candle_out"), Sfx("sfx_rumble"), Sfx("sfx_chains_break"));
             for (int i = 0; i < 6; i++)
             {
                 var nen = Place(Model("KH_Nen"), g, new Vector3(67.7f, F2 + 0.9f, 16.0f + i * 0.6f), 0f, 1f, "Nen_" + i);
