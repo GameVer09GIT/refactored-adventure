@@ -81,6 +81,7 @@ namespace KhoaHon.EditorTools
             BakeNavMesh(scene, floor2Area);
             log.Add(KhoaHonHousekeeperBuilder.Build(root, F2));
             log.Add(KhoaHonHorrorBuilder.Build(root, CellarOrigin));
+            BakeReflectionProbes();
 
             EditorSceneManager.SaveScene(scene);
             FixBuildSettings();
@@ -186,7 +187,9 @@ namespace KhoaHon.EditorTools
             {
                 var l = new GameObject("Flicker_F2").AddComponent<Light>();
                 l.transform.SetParent(g); l.transform.position = p;
-                l.type = LightType.Point; l.range = 8.5f; l.intensity = 0.75f; l.color = new Color(1f, 0.72f, 0.45f); l.shadows = LightShadows.None;
+                // Đèn treo tầng 2: bóng đổ mềm để hành lang có khối, tán xạ trong sương
+                l.type = LightType.Point; l.range = 8.5f; l.intensity = 0.9f; l.color = new Color(1f, 0.70f, 0.42f);
+                l.shadows = LightShadows.Soft; l.shadowStrength = 0.9f; l.shadowNearPlane = 0.2f;
                 l.gameObject.AddComponent<HorrorGame.Lighting.PeriodicFlickerLight>();
             }
             foreach (var p in new[] { new Vector3(88.7f, 16f, 5.5f), new Vector3(72.7f, 16f, 5.5f), new Vector3(100.7f, 16f, 5.5f) })
@@ -197,7 +200,71 @@ namespace KhoaHon.EditorTools
                 l.type = LightType.Spot; l.spotAngle = 38f; l.innerSpotAngle = 12f; l.range = 16f; l.intensity = 1.6f;
                 l.color = new Color(0.55f, 0.66f, 0.95f); l.shadows = LightShadows.Soft; l.shadowStrength = 0.85f;
             }
+            TuneSceneLighting();
             log.Add("Atmosphere lights added");
+        }
+
+        /// <summary>
+        /// Ánh sáng tổng thể kiểu "một nguồn sáng": trăng lạnh có bóng mềm (tạo tia sáng qua cửa sổ trong sương),
+        /// môi trường gần như đen, phản chiếu thấp. Gỡ LightingSettings/LightingData cũ trỏ vào asset pack.
+        /// </summary>
+        static void TuneSceneLighting()
+        {
+            foreach (var l in Object.FindObjectsByType<Light>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                if (l.type != LightType.Directional) continue;
+                l.color = new Color(0.52f, 0.62f, 0.86f);
+                l.intensity = Mathf.Clamp(l.intensity, 0.18f, 0.35f);
+                l.shadows = LightShadows.Soft; l.shadowStrength = 1f;
+                l.lightmapBakeType = LightmapBakeType.Realtime;
+            }
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(0.010f, 0.013f, 0.02f);
+            RenderSettings.reflectionIntensity = 0.25f;
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogDensity = 0.012f; // sương thể tích lo phần chính, fog chuẩn chỉ làm xa mờ
+            RenderSettings.fogColor = new Color(0.02f, 0.028f, 0.04f);
+
+            // Không ghi vào LightingSettings/LightingData của Flooded_Grounds
+            string lsPath = "Assets/_KhoaHon/Settings/KH_LightingSettings.lighting";
+            KhoaHonDataBuilder.EnsureFolder("Assets/_KhoaHon/Settings");
+            var ls = AssetDatabase.LoadAssetAtPath<LightingSettings>(lsPath);
+            if (ls == null) { ls = new LightingSettings { name = "KH_LightingSettings" }; AssetDatabase.CreateAsset(ls, lsPath); }
+            ls.bakedGI = false; ls.realtimeGI = false;
+            Lightmapping.lightingSettings = ls;
+            Lightmapping.lightingDataAsset = null;
+            log.Add("Scene lighting tuned (moon soft shadows, own LightingSettings)");
+        }
+
+        /// <summary>
+        /// Bake từng reflection probe thành cubemap riêng (chế độ Custom) trong Assets/_KhoaHon/Textures/Probes,
+        /// không cần LightingData và không ghi vào asset pack.
+        /// </summary>
+        static void BakeReflectionProbes()
+        {
+            const string dir = "Assets/_KhoaHon/Textures/Probes";
+            KhoaHonDataBuilder.EnsureFolder(dir);
+            var probes = Object.FindObjectsByType<ReflectionProbe>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
+            int ok = 0;
+            for (int i = 0; i < probes.Length; i++)
+            {
+                var p = probes[i];
+                p.resolution = 128;
+                p.hdr = true;
+                p.boxProjection = true;
+                p.mode = UnityEngine.Rendering.ReflectionProbeMode.Baked;
+                string path = $"{dir}/KH_Probe_{i:00}.exr";
+                if (Lightmapping.BakeReflectionProbe(p, path))
+                {
+                    AssetDatabase.ImportAsset(path);
+                    var cube = AssetDatabase.LoadAssetAtPath<Texture>(path);
+                    p.mode = UnityEngine.Rendering.ReflectionProbeMode.Custom;
+                    p.customBakedTexture = cube;
+                    ok++;
+                }
+            }
+            log.Add($"Reflection probes baked: {ok}/{probes.Length}");
         }
 
         static GameObject Model(string name) => AssetDatabase.LoadAssetAtPath<GameObject>(ModelsDir + "/" + name + ".fbx");

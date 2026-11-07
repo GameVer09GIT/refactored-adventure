@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1200825255962783503}
+  - {fileID: 8131271097222259281}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &9195149001699998883
@@ -145,10 +145,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Items.RecorderItem
   itemData: {fileID: 11400000, guid: 485721bc0446d4d49b5f8e0ebaeba25c, type: 2}
   audioSource: {fileID: 0}
-  ledRenderer: {fileID: 8289380476027956293}
+  ledRenderer: {fileID: 1403971146417414427}
   ledOn: {r: 1.6, g: 0.1, b: 0.05, a: 1}
   toggleClip: {fileID: 0}
---- !u!1001 &1666482805469071588
+--- !u!1001 &8598122131993658810
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -213,13 +213,13 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a43bded02985a9849b3b2f3c872aa2a1, type: 3}
---- !u!4 &1200825255962783503 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a43bded02985a9849b3b2f3c872aa2a1, type: 3}
-  m_PrefabInstance: {fileID: 1666482805469071588}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &8289380476027956293 stripped
+--- !u!23 &1403971146417414427 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -2005998665584106335, guid: a43bded02985a9849b3b2f3c872aa2a1, type: 3}
-  m_PrefabInstance: {fileID: 1666482805469071588}
+  m_PrefabInstance: {fileID: 8598122131993658810}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8131271097222259281 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a43bded02985a9849b3b2f3c872aa2a1, type: 3}
+  m_PrefabInstance: {fileID: 8598122131993658810}
   m_PrefabAsset: {fileID: 0}
