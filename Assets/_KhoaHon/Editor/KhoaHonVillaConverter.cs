@@ -69,6 +69,7 @@ namespace KhoaHon.EditorTools
             systems.AddComponent<KhoaHon.Narrative.TapePlayer>().Configure(Sfx("sfx_tape_hiss_loop"), Sfx("sfx_tape_click"));
             systems.AddComponent<KhoaHon.Narrative.EndingDirector>();
             systems.AddComponent<KhoaHon.Characters.LivestreamChat>();
+            systems.AddComponent<KhoaHon.Sanity.SanitySystem>().Configure(Sfx("sfx_scare_whispers"), Sfx("hk_keys_drag_loop"));
             var mind = systems.AddComponent<KhoaHon.Characters.DetectiveMindMap>();
             mind.Configure(
                 System.Array.ConvertAll(KhoaHonContent.MindNodes, n => new KhoaHon.Characters.DetectiveMindMap.Node { id = n.id, pos = n.pos }),
@@ -76,6 +77,7 @@ namespace KhoaHon.EditorTools
             var player = GameObject.Find("Player");
             GB.ConfigurePlayer(player, GameObject.Find("Canvas"), GameObject.Find("SpawnPoint"), systems, new Vector3(80.7f, 10f, -6f), 0f, false);
             if (player.GetComponent<KhoaHon.Characters.CharacterLoadout>() == null) player.AddComponent<KhoaHon.Characters.CharacterLoadout>();
+            if (player.GetComponent<KhoaHon.Interaction.PlayerPushProps>() == null) player.AddComponent<KhoaHon.Interaction.PlayerPushProps>();
             // Camera người chơi: bật hậu kỳ (bản MapKinhDi để tắt) + tag MainCamera
             var pcam = player.GetComponent<PlayerController>().playerCamera.GetComponent<Camera>();
             pcam.tag = "MainCamera";
@@ -778,6 +780,22 @@ namespace KhoaHon.EditorTools
             Relic(c, 2, "KH_Luoc", new Vector3(67.6f, nsTop + 0.01f, 14.4f), 30f, "item.relic_tho");
             // Phòng Thờ: bàn thờ dọc tường tây, 13 bài vị, 5 đài sen, nến
             BuildShrine(c);
+            // Đồ vật dễ đổ ở hành lang tầng 2: xô ngã → tiếng động → Mrs. Peake nghi ngờ
+            var noisy = new (string, Vector3)[] { ("Kettle", new Vector3(79.4f, F2 + 0.05f, 16.2f)), ("Mug", new Vector3(97.9f, F2 + 0.05f, 12.4f)),
+                ("Plate", new Vector3(86.2f, F2 + 0.05f, 9.1f)), ("Mug", new Vector3(92.3f, F2 + 0.05f, 25.9f)), ("Kettle", new Vector3(97.8f, F2 + 0.05f, 22.6f)) };
+            var clatter = new[] { Sfx("sfx_prop_clatter"), Sfx("sfx_prop_thud") };
+            for (int i = 0; i < noisy.Length; i++)
+            {
+                var np = Place(P("Assets/Abandoned_Asylum/Prefabs/" + noisy[i].Item1 + ".prefab"), c, noisy[i].Item2, Random.Range(0f, 360f), 1f, "Noisy_" + i);
+                if (np == null) continue;
+                np.isStatic = false;
+                foreach (var t in np.GetComponentsInChildren<Transform>()) t.gameObject.isStatic = false;
+                foreach (var col in np.GetComponentsInChildren<Collider>()) Object.DestroyImmediate(col);
+                var nb = Bounds(np); var bcol = np.AddComponent<BoxCollider>();
+                bcol.center = np.transform.InverseTransformPoint(nb.center); bcol.size = Vector3.Max(nb.size, Vector3.one * 0.08f);
+                var rb = np.AddComponent<Rigidbody>(); rb.mass = 0.6f; rb.interpolation = RigidbodyInterpolation.Interpolate;
+                np.AddComponent<KhoaHon.Interaction.NoisyProp>().Configure(clatter, 11f);
+            }
             // Ngủ Chủ Nhân (Hỏa): giường + gương + tủ + hài thêu
             Anchor(Place(P("Assets/Flooded_Grounds/Prefabs/Props/Prop_Bed_B.prefab"), c, new Vector3(107.6f, F2, 9.4f), 270f, 1f, "HidingSpot_Bed_NguChuNhan"), maxX: 110.45f, minZ: 7.8f);
             Place(P("Assets/Abandoned_Asylum/Prefabs/MirrorShelf.prefab"), c, new Vector3(103.3f, F2, 8.0f), 0f, 1f, "Guong_NguChuNhan");

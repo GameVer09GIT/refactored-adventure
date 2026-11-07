@@ -22,6 +22,8 @@ namespace KhoaHon.EditorTools
             W("sfx_candle_ignite", CandleIgnite());
             W("sfx_candle_out", CandleOut());
             W("sfx_window_pry", WoodCrack());
+            W("sfx_prop_clatter", MechClick(0.35f, 2100f, 29));
+            W("sfx_prop_thud", WrongThud());
             return made;
         }
 

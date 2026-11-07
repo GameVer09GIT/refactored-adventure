@@ -68,7 +68,7 @@ namespace KhoaHon.Horror
             float jitter = prox * prox * (Mathf.PerlinNoise(Time.time * 9f, 0.3f) - 0.5f);
 
             if (vignette != null) { vignette.intensity.value = 0.32f + prox * 0.22f + hunt * 0.08f + flash * 0.2f; vignette.color.value = Color.Lerp(Color.black, new Color(0.35f, 0f, 0f), hunt * 0.6f + flash); }
-            if (chroma != null) chroma.intensity.value = 0.12f + prox * 0.75f + flash * 0.5f;
+            if (chroma != null) chroma.intensity.value = 0.12f + prox * 0.75f + flash * 0.5f + (1f - sanity01) * 0.35f * (0.6f + 0.4f * Mathf.Sin(Time.time * 1.7f));
             if (grain != null) { grain.active = FilmGrainEnabled; grain.intensity.value = 0.32f + prox * 0.5f + (1f - sanity01) * 0.3f; }
             if (lens != null) lens.intensity.value = -0.06f - prox * 0.3f + jitter * 0.25f - flash * 0.2f;
             // Cảnh nền menu: camera đứng xa trong đêm → sáng hơn, không nhòe chuyển động
@@ -85,7 +85,7 @@ namespace KhoaHon.Horror
             if (dof != null) dof.active = CinematicFocus || (ModalUI.IsAnyOpen && GameFlow.State == FlowState.Playing);
             if (heartbeat != null)
             {
-                float hv = Mathf.Clamp01(prox * 1.3f + hunt * 0.4f) * AudioMix.Sfx;
+                float hv = Mathf.Clamp01(prox * 1.3f + hunt * 0.4f + Mathf.Clamp01(0.55f - sanity01) * 0.8f) * AudioMix.Sfx;
                 heartbeat.volume = Mathf.MoveTowards(heartbeat.volume, hv, Time.unscaledDeltaTime);
                 heartbeat.pitch = 0.9f + hunt * 0.35f;
                 if (heartbeat.volume > 0.01f && !heartbeat.isPlaying) heartbeat.Play();
