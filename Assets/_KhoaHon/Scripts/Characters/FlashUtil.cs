@@ -30,6 +30,7 @@ namespace KhoaHon.Characters
             if (Physics.Raycast(cam.position, to.normalized, out var hit, to.magnitude, ~0, QueryTriggerInteraction.Ignore)
                 && hit.transform.root != hk.transform.root) return false;
             hk.OnFlashed();
+            AchievementService.Unlock("first_flash");
             return true;
         }
 

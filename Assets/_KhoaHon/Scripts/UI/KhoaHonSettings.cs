@@ -20,6 +20,9 @@ namespace KhoaHon.UI
         public static float Master = 0.9f, Music = 0.8f, Sfx = 1f, Ambience = 0.85f, Voice = 1f;
         public static float Sensitivity = 15f;
         public static bool BrightnessCalibrated;
+        public static bool VolumetricFog = true, CameraShakeOn = true;
+        public static int SubtitleSize = 0; // 0 thường, 1 lớn, 2 rất lớn
+        public static readonly float[] SubtitleScales = { 1f, 1.25f, 1.5f };
 
         public static readonly int[] FpsCaps = { 30, 60, 120, 144, -1 };
 
@@ -76,6 +79,9 @@ namespace KhoaHon.UI
             Voice = PlayerPrefs.GetFloat("kh_vol_voice", Voice);
             Sensitivity = PlayerPrefs.GetFloat("kh_sens", Sensitivity);
             BrightnessCalibrated = PlayerPrefs.GetInt("kh_bright_set", 0) == 1;
+            VolumetricFog = PlayerPrefs.GetInt("kh_vfog", 1) == 1;
+            CameraShakeOn = PlayerPrefs.GetInt("kh_shake", 1) == 1;
+            SubtitleSize = Mathf.Clamp(PlayerPrefs.GetInt("kh_subsize", 0), 0, 2);
         }
 
         public static void Save()
@@ -88,6 +94,7 @@ namespace KhoaHon.UI
             PlayerPrefs.SetFloat("kh_vol_master", Master); PlayerPrefs.SetFloat("kh_vol_music", Music); PlayerPrefs.SetFloat("kh_vol_sfx", Sfx);
             PlayerPrefs.SetFloat("kh_vol_amb", Ambience); PlayerPrefs.SetFloat("kh_vol_voice", Voice);
             PlayerPrefs.SetFloat("kh_sens", Sensitivity); PlayerPrefs.SetInt("kh_bright_set", BrightnessCalibrated ? 1 : 0);
+            PlayerPrefs.SetInt("kh_vfog", VolumetricFog ? 1 : 0); PlayerPrefs.SetInt("kh_shake", CameraShakeOn ? 1 : 0); PlayerPrefs.SetInt("kh_subsize", SubtitleSize);
             PlayerPrefs.Save();
         }
 
@@ -96,6 +103,7 @@ namespace KhoaHon.UI
             ScreenMode = 1; ResolutionIndex = -1; VSync = true; FpsCapIndex = 1; Quality = QualityIndexByName("High");
             Fov = 72f; Brightness = 0f; FilmGrain = true; MotionBlur = true; ShowFps = false; Subtitles = true;
             Master = 0.9f; Music = 0.8f; Sfx = 1f; Ambience = 0.85f; Voice = 1f; Sensitivity = 15f;
+            VolumetricFog = true; CameraShakeOn = true; SubtitleSize = 0;
         }
 
         /// <summary>Áp dụng cài đặt âm thanh/hiển thị nhẹ (gọi liên tục khi kéo slider).</summary>
@@ -119,7 +127,19 @@ namespace KhoaHon.UI
                 }
             }
             KhoaHonHUD.SubtitlesEnabled = Subtitles;
+            KhoaHonHUD.SubtitleScale = SubtitleScales[Mathf.Clamp(SubtitleSize, 0, 2)];
+            KhoaHon.Horror.CameraShake.Strength = CameraShakeOn ? 1f : 0f;
+            ApplyFog();
             HudExtras.ShowFps = ShowFps;
+        }
+
+        /// <summary>Sương thể tích: tắt hẳn hoặc theo mức chất lượng.</summary>
+        public static void ApplyFog()
+        {
+            int slot = GameQualitySlot;
+            KhoaHon.Rendering.KHVolumetricFogFeature.QualityOverride = !VolumetricFog ? KhoaHon.Rendering.KHVolumetricFogFeature.Quality.Off
+                : slot == 0 ? KhoaHon.Rendering.KHVolumetricFogFeature.Quality.Low
+                : slot == 1 ? KhoaHon.Rendering.KHVolumetricFogFeature.Quality.Medium : KhoaHon.Rendering.KHVolumetricFogFeature.Quality.High;
         }
 
         /// <summary>Áp dụng toàn bộ (cả màn hình/chất lượng — có thể gây nháy).</summary>
@@ -127,10 +147,7 @@ namespace KhoaHon.UI
         {
             ApplyLive();
             if (Quality >= 0 && Quality < QualitySettings.names.Length && QualitySettings.GetQualityLevel() != Quality) QualitySettings.SetQualityLevel(Quality, true);
-            // Sương thể tích theo mức chất lượng
-            int slot = GameQualitySlot;
-            KhoaHon.Rendering.KHVolumetricFogFeature.QualityOverride = slot == 0 ? KhoaHon.Rendering.KHVolumetricFogFeature.Quality.Low
-                : slot == 1 ? KhoaHon.Rendering.KHVolumetricFogFeature.Quality.Medium : KhoaHon.Rendering.KHVolumetricFogFeature.Quality.High;
+            ApplyFog();
             QualitySettings.vSyncCount = VSync ? 1 : 0;
             Application.targetFrameRate = VSync ? -1 : FpsCaps[Mathf.Clamp(FpsCapIndex, 0, FpsCaps.Length - 1)];
 #if !UNITY_EDITOR

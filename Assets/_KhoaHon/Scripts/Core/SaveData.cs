@@ -15,6 +15,10 @@ namespace KhoaHon.Core
         public int version = CurrentVersion;
         /// <summary>Tên enum PlayerCharacter.</summary>
         public string character = PlayerCharacter.Evelyn.ToString();
+        /// <summary>Thời điểm lưu (DateTime.Ticks giờ máy) — hiển thị trong danh sách ô lưu.</summary>
+        public long savedAtTicks;
+        /// <summary>Tổng thời gian chơi (giây).</summary>
+        public float playSeconds;
         public string stage = GameStage.Stage0_Gate.ToString();
         public string checkpointId = "";
         public List<string> flags = new List<string>();

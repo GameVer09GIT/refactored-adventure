@@ -248,15 +248,14 @@ namespace KhoaHon.UI
             titleMain.fontMaterial.SetFloat("_UnderlayOffsetY", -1f); titleMain.fontMaterial.SetFloat("_UnderlaySoftness", 0.6f);
 
             var col = UIKit.Column(root, "Buttons", new Vector2(0, 0), new Vector2(0.4f, 1), new Vector2(120, 170), new Vector2(0, -430), 4);
-            var cont = UIKit.MenuButton(col, T.Get("ui.continue"), () => StartCoroutine(Continue()));
-            cont.interactable = SaveSystem.Exists;
-            UIKit.MenuButton(col, T.Get("ui.new_game"), () =>
-            {
-                if (SaveSystem.Exists) Confirm(T.Get("ui.confirm_new"), ShowCharacterSelect);
-                else ShowCharacterSelect();
-            });
+            int recent = SaveSystem.MostRecentSlot();
+            var cont = UIKit.MenuButton(col, T.Get("ui.continue"), () => { SaveSystem.CurrentSlot = recent; StartCoroutine(Continue()); });
+            cont.interactable = recent >= 0;
+            UIKit.MenuButton(col, T.Get("ui.new_game"), () => ShowSlots(true));
+            var load = UIKit.MenuButton(col, T.Get("ui.load_game"), () => ShowSlots(false));
+            load.interactable = recent >= 0;
             UIKit.MenuButton(col, T.Get("ui.settings"), () => { menuRoot.SetActive(false); SettingsMenuUI.Instance.Open(BuildMenu); });
-            UIKit.MenuButton(col, T.Get("ui.credits"), ShowCredits);
+            UIKit.MenuButton(col, T.Get("ui.extras"), ShowExtras);
             UIKit.MenuButton(col, T.Get("ui.quit"), () => Confirm(T.Get("ui.confirm_quit"), Quit));
 
             var ver = UIKit.Label(root, T.Get("ui.version"), 18, new Color(0.45f, 0.42f, 0.4f), TextAlignmentOptions.BottomRight);
@@ -265,14 +264,119 @@ namespace KhoaHon.UI
             hint.rectTransform.offsetMin = new Vector2(120, 30);
         }
 
-        private void ShowCredits()
+        // ------------------------------------------------------------------ Ô lưu
+        /// <summary>Danh sách 3 ô lưu. newGame: chọn ô để bắt đầu (ô có dữ liệu thì hỏi ghi đè); ngược lại: chọn ô để tải.</summary>
+        private void ShowSlots(bool newGame)
         {
             menuRoot.SetActive(false);
-            var root = UIFactory.Panel("Credits", canvas.transform, new Color(0, 0, 0, 0.9f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            var t = UIKit.Label(root.transform, T.Get("ui.credits_body"), 28, UIKit.Ink, TextAlignmentOptions.Center, true);
-            t.rectTransform.anchorMin = new Vector2(0.2f, 0.2f); t.rectTransform.anchorMax = new Vector2(0.8f, 0.85f);
-            var b = UIKit.Column(root.transform, "Btn", new Vector2(0.44f, 0.08f), new Vector2(0.56f, 0.15f), Vector2.zero, Vector2.zero, 0);
+            var root = UIFactory.Panel("Slots", canvas.transform, new Color(0, 0, 0, 0.88f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            root.transform.SetSiblingIndex(1);
+            var title = UIKit.Label(root.transform, T.Get(newGame ? "ui.choose_slot_new" : "ui.choose_slot_load"), 48, UIKit.Ink, TextAlignmentOptions.Top, true, true);
+            title.rectTransform.offsetMax = new Vector2(0, -90); title.characterSpacing = 6f;
+            for (int i = 0; i < SaveSystem.SlotCount; i++)
+            {
+                int slot = i;
+                var d = SaveSystem.ReadSlot(i);
+                float y0 = 0.62f - i * 0.17f;
+                var card = UIFactory.Panel("Slot" + i, root.transform, new Color(0.05f, 0.04f, 0.04f, 0.95f), new Vector2(0.22f, y0), new Vector2(0.78f, y0 + 0.14f), Vector2.zero, Vector2.zero);
+                UIFactory.Panel("Edge", card.transform, d != null ? UIKit.Blood : new Color(0.3f, 0.28f, 0.26f), new Vector2(0, 0), new Vector2(0, 1), Vector2.zero, new Vector2(5, 0));
+                var head = UIKit.Label(card.transform, T.Format("ui.slot", i + 1), 30, UIKit.Ink, TextAlignmentOptions.TopLeft, true, true);
+                head.rectTransform.offsetMin = new Vector2(30, 0); head.rectTransform.offsetMax = new Vector2(-30, -16);
+                string info;
+                if (d == null) info = T.Get("ui.slot_empty");
+                else
+                {
+                    var prof = GameManager.Instance != null ? GameManager.Instance.GetProfile(d.CharacterValue) : null;
+                    var span = System.TimeSpan.FromSeconds(d.playSeconds);
+                    string when = d.savedAtTicks > 0 ? new System.DateTime(d.savedAtTicks).ToString("dd/MM/yyyy  HH:mm") : "";
+                    info = (prof != null ? prof.DisplayName : d.character) + "  ·  " + T.Get("stage." + (int)d.StageValue)
+                           + "  ·  " + $"{(int)span.TotalHours:00}:{span.Minutes:00}" + (when.Length > 0 ? "  ·  " + when : "");
+                }
+                var line = UIKit.Label(card.transform, info, 22, UIKit.Dim, TextAlignmentOptions.BottomLeft);
+                line.rectTransform.offsetMin = new Vector2(30, 16);
+                var btn = card.gameObject.AddComponent<Button>(); btn.transition = Selectable.Transition.ColorTint;
+                var cols = btn.colors; cols.highlightedColor = new Color(1.5f, 1.3f, 1.3f, 1f); btn.colors = cols;
+                btn.interactable = newGame || d != null;
+                btn.onClick.AddListener(() =>
+                {
+                    Horror.AmbientScares.Play2D(UIKit.Click, 0.6f);
+                    if (newGame)
+                    {
+                        void Go() { SaveSystem.CurrentSlot = slot; Destroy(root.gameObject); ShowCharacterSelect(); }
+                        if (d != null) Confirm(T.Get("ui.confirm_new"), Go); else Go();
+                    }
+                    else { SaveSystem.CurrentSlot = slot; StartCoroutine(Continue()); }
+                });
+            }
+            var b = UIKit.Column(root.transform, "Btn", new Vector2(0.44f, 0.06f), new Vector2(0.56f, 0.13f), Vector2.zero, Vector2.zero, 0);
             UIKit.SmallButton(b, T.Get("ui.back"), () => { Destroy(root.gameObject); menuRoot.SetActive(true); });
+        }
+
+        // ------------------------------------------------------------------ Thêm: kết thúc, thành tựu, credits
+        private void ShowExtras()
+        {
+            menuRoot.SetActive(false);
+            var root = UIFactory.Panel("Extras", canvas.transform, new Color(0, 0, 0, 0.9f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            root.transform.SetSiblingIndex(1);
+            var title = UIKit.Label(root.transform, T.Get("ui.extras"), 52, UIKit.Ink, TextAlignmentOptions.TopLeft, true, true);
+            title.rectTransform.offsetMin = new Vector2(140, 0); title.rectTransform.offsetMax = new Vector2(-140, -60);
+
+            // Kết thúc
+            var endHead = UIKit.Label(root.transform, T.Get("ui.endings").ToUpperInvariant(), 22, UIKit.Blood, TextAlignmentOptions.TopLeft, false, true);
+            endHead.rectTransform.offsetMin = new Vector2(140, 0); endHead.rectTransform.offsetMax = new Vector2(-140, -170); endHead.characterSpacing = 6f;
+            for (int i = 0; i < 3; i++)
+            {
+                bool got = PlayerPrefs.GetInt("kh_ending_" + i, 0) == 1;
+                float x0 = 0.073f + i * 0.29f;
+                var card = UIFactory.Panel("End" + i, root.transform, got ? new Color(0.12f, 0.04f, 0.04f, 0.95f) : new Color(0.06f, 0.06f, 0.06f, 0.9f),
+                    new Vector2(x0, 0.6f), new Vector2(x0 + 0.27f, 0.78f), Vector2.zero, Vector2.zero);
+                var t = UIKit.Label(card.transform, got ? T.Get(Narrative.EndingDirector.EndingKeys[i] + ".title") : T.Get("ui.ending_locked"), 24, got ? UIKit.Ink : UIKit.Dim, TextAlignmentOptions.Center, true, true);
+                t.rectTransform.offsetMin = new Vector2(16, 10); t.rectTransform.offsetMax = new Vector2(-16, -10);
+            }
+
+            // Thành tựu
+            var achHead = UIKit.Label(root.transform, T.Format("ui.achievements", AchievementService.UnlockedCount, AchievementService.All.Length).ToUpperInvariant(), 22, UIKit.Blood, TextAlignmentOptions.TopLeft, false, true);
+            achHead.rectTransform.anchorMin = new Vector2(0, 0); achHead.rectTransform.anchorMax = new Vector2(1, 0.56f);
+            achHead.rectTransform.offsetMin = new Vector2(140, 0); achHead.rectTransform.offsetMax = new Vector2(-140, 0); achHead.characterSpacing = 6f;
+            for (int i = 0; i < AchievementService.All.Length; i++)
+            {
+                string id = AchievementService.All[i];
+                bool got = AchievementService.IsUnlocked(id);
+                int colI = i % 2, row = i / 2;
+                float x0 = 0.073f + colI * 0.43f, y1 = 0.5f - row * 0.065f;
+                var r = UIFactory.Rect("Ach" + i, root.transform, new Vector2(x0, y1 - 0.06f), new Vector2(x0 + 0.41f, y1), Vector2.zero, Vector2.zero);
+                UIFactory.Panel("Dot", r, got ? UIKit.Blood : new Color(0.25f, 0.24f, 0.23f), new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(0, -7), new Vector2(14, 7));
+                var l = UIKit.Label(r, "<b>" + T.Get("ach." + id + ".title") + "</b>  <size=80%>" + (got ? T.Get("ach." + id + ".desc") : "???") + "</size>", 20, got ? UIKit.Ink : UIKit.Dim, TextAlignmentOptions.MidlineLeft);
+                l.rectTransform.offsetMin = new Vector2(26, 0);
+            }
+            var b = UIFactory.Rect("Btns", root.transform, new Vector2(0, 0), new Vector2(1, 0), new Vector2(140, 40), new Vector2(-140, 100));
+            var hl = b.gameObject.AddComponent<HorizontalLayoutGroup>(); hl.spacing = 24; hl.childAlignment = TextAnchor.MiddleRight; hl.childForceExpandWidth = false;
+            UIKit.SmallButton(b, T.Get("ui.credits"), () => { Destroy(root.gameObject); StartCoroutine(RollCredits()); });
+            UIKit.SmallButton(b, T.Get("ui.back"), () => { Destroy(root.gameObject); menuRoot.SetActive(true); });
+        }
+
+        /// <summary>Credits cuộn dọc; phím bất kỳ để thoát.</summary>
+        private IEnumerator RollCredits()
+        {
+            menuRoot.SetActive(false);
+            var root = UIFactory.Panel("Credits", canvas.transform, new Color(0, 0, 0, 0.95f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            root.transform.SetSiblingIndex(1);
+            var t = UIKit.Label(root.transform, T.Get("ui.credits_body") + "\n\n\n" + T.Get("ui.credits_more"), 30, UIKit.Ink, TextAlignmentOptions.Top, true);
+            t.rectTransform.anchorMin = new Vector2(0.2f, 0f); t.rectTransform.anchorMax = new Vector2(0.8f, 0f);
+            t.rectTransform.pivot = new Vector2(0.5f, 1f);
+            t.rectTransform.sizeDelta = new Vector2(0, 2200);
+            t.lineSpacing = 18f;
+            float y = 0f, w = 0f;
+            yield return null;
+            while (y < 2200f + 1100f)
+            {
+                y += Time.unscaledDeltaTime * 70f; w += Time.unscaledDeltaTime;
+                t.rectTransform.anchoredPosition = new Vector2(0, y);
+                if (w > 0.5f && AnyKey()) break;
+                yield return null;
+            }
+            Destroy(root.gameObject);
+            menuRoot.SetActive(true);
         }
 
         // ------------------------------------------------------------------ Chọn nhân vật
@@ -358,7 +462,7 @@ namespace KhoaHon.UI
             PlayerPrefs.SetInt("kh_deaths_run", 0);
             GameFlow.PendingStart = StartMode.NewGame;
             ModalUI.Reset();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().path);
+            LoadingScreen.Load();
         }
 
         private IEnumerator Continue()
@@ -367,7 +471,7 @@ namespace KhoaHon.UI
             SaveSystem.PendingLoad = SaveSystem.Read();
             GameFlow.PendingStart = StartMode.Continue;
             ModalUI.Reset();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().path);
+            LoadingScreen.Load();
         }
 
         public static void Quit()

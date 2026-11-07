@@ -220,8 +220,8 @@ MonoBehaviour:
     text: "Tho\xE1t"
     en: Quit
   - key: ui.version
-    text: "Blackwood Manor \xB7 phi\xEAn b\u1EA3n 0.5"
-    en: "Blackwood Manor \xB7 build 0.5"
+    text: "Blackwood Manor \xB7 phi\xEAn b\u1EA3n 1.0"
+    en: "Blackwood Manor \xB7 build 1.0"
   - key: ui.menu_hint
     text: "N\xEAn \u0111eo tai nghe v\xE0 ch\u01A1i trong b\xF3ng t\u1ED1i."
     en: Best played with headphones, in the dark.
@@ -1148,3 +1148,189 @@ MonoBehaviour:
       s\u1EADp. Anh s\u1EBD ch\u1EB3ng c\xF2n g\xEC \u2014 k\u1EC3 c\u1EA3 n\xF3."
     en: "Or will you break it? The house will fall. You'll have nothing \u2014 not
       even him."
+  - key: ui.load_game
+    text: "T\u1EA3i tr\xF2 ch\u01A1i"
+    en: Load Game
+  - key: ui.extras
+    text: "Th\xEAm"
+    en: Extras
+  - key: ui.choose_slot_new
+    text: "CH\u1ECCN \xD4 L\u01AFU"
+    en: CHOOSE A SAVE SLOT
+  - key: ui.choose_slot_load
+    text: "T\u1EA2I TR\xD2 CH\u01A0I"
+    en: LOAD GAME
+  - key: ui.slot
+    text: "\xD4 l\u01B0u {0}"
+    en: Slot {0}
+  - key: ui.slot_empty
+    text: "Tr\u1ED1ng"
+    en: Empty
+  - key: ui.loading
+    text: "\u0110ang t\u1EA3i\u2026"
+    en: "Loading\u2026"
+  - key: ui.endings
+    text: "K\u1EBFt th\xFAc"
+    en: Endings
+  - key: ui.ending_locked
+    text: "???  (ch\u01B0a m\u1EDF kh\xF3a)"
+    en: ???  (locked)
+  - key: ui.achievements
+    text: "Th\xE0nh t\u1EF1u  {0}/{1}"
+    en: Achievements  {0}/{1}
+  - key: ui.credits_more
+    text: "\xC2M THANH\nT\u1ED5ng h\u1EE3p th\u1EE7 t\u1EE5c b\u1EB1ng code \u2014
+      kh\xF4ng d\xF9ng m\u1EABu c\xF3 b\u1EA3n quy\u1EC1n\n\nM\xD4 H\xCCNH \u0110\u1EA0O
+      C\u1EE4\nBlender 5.2 (d\u1EF1ng b\u1EB1ng script)\n\nC\xD4NG C\u1EE4\nUnity
+      6 \xB7 URP \xB7 MCP for Unity\n\nG\u1EEDi Julian.\nV\xE0 g\u1EEDi b\u1EA1n
+      \u2014 ng\u01B0\u1EDDi \u0111\xE3 d\xE1m b\u01B0\u1EDBc qua c\xE1nh c\u1ED5ng
+      \u1EA5y."
+    en: "AUDIO\nProcedurally synthesized in code \u2014 no licensed samples\n\nPROP
+      MODELS\nBlender 5.2 (scripted)\n\nTOOLS\nUnity 6 \xB7 URP \xB7 MCP for Unity\n\nFor
+      Julian.\nAnd for you \u2014 who dared to walk through that gate."
+  - key: stage.0
+    text: "Ch\u01B0\u01A1ng 0 \u2014 C\u1ED5ng s\u01B0\u01A1ng m\xF9"
+    en: "Chapter 0 \u2014 The Fog Gate"
+  - key: stage.1
+    text: "Ch\u01B0\u01A1ng 1 \u2014 T\u1EA7ng tr\u1EC7t"
+    en: "Chapter 1 \u2014 Ground Floor"
+  - key: stage.2
+    text: "Ch\u01B0\u01A1ng 2 \u2014 L\xE3nh \u0111\u1ECBa Mrs. Peake"
+    en: "Chapter 2 \u2014 Mrs. Peake's Domain"
+  - key: stage.3
+    text: "Ch\u01B0\u01A1ng 3 \u2014 M\xEA \u0111\u1EA1o h\u1EA7m ng\u1EA7m"
+    en: "Chapter 3 \u2014 The Cellar"
+  - key: stage.4
+    text: "Ch\u01B0\u01A1ng 4 \u2014 S\u1EA3nh T\u1EBF"
+    en: "Chapter 4 \u2014 The Ritual Hall"
+  - key: stage.5
+    text: "K\u1EBFt th\xFAc"
+    en: Finale
+  - key: ui.volumetric_fog
+    text: "S\u01B0\u01A1ng th\u1EC3 t\xEDch"
+    en: Volumetric fog
+  - key: ui.h.access
+    text: "H\u1ED7 tr\u1EE3"
+    en: Accessibility
+  - key: ui.subtitle_size
+    text: "C\u1EE1 ph\u1EE5 \u0111\u1EC1"
+    en: Subtitle size
+  - key: ui.size.normal
+    text: "Th\u01B0\u1EDDng"
+    en: Normal
+  - key: ui.size.large
+    text: "L\u1EDBn"
+    en: Large
+  - key: ui.size.xlarge
+    text: "R\u1EA5t l\u1EDBn"
+    en: Extra large
+  - key: ui.camera_shake
+    text: Rung camera
+    en: Camera shake
+  - key: tip.1
+    text: "Mrs. Peake kh\xF4ng xu\u1ED1ng \u0111\u01B0\u1EE3c t\u1EA7ng tr\u1EC7t.
+      C\u1EA7u thang l\xE0 ranh gi\u1EDBi c\u1EE7a b\xE0 ta."
+    en: Mrs. Peake cannot come down to the ground floor. The stairs are her border.
+  - key: tip.2
+    text: "Tr\u1ED1n trong t\u1EE7 ho\u1EB7c d\u01B0\u1EDBi g\u1EA7m gi\u01B0\u1EDDng,
+      gi\u1EEF Space \u0111\u1EC3 n\xEDn th\u1EDF khi b\xE0 ta l\u1EA1i g\u1EA7n."
+    en: "Hide in a wardrobe or under a bed \u2014 hold Space to hold your breath
+      when she comes close."
+  - key: tip.3
+    text: "Ti\u1EBFng ch\xECa kh\xF3a leng keng cho bi\u1EBFt b\xE0 ta \u1EDF b\xEAn
+      n\xE0o. H\xE3y \u0111eo tai nghe."
+    en: The jingle of keys tells you which side she's on. Wear headphones.
+  - key: tip.4
+    text: "\u0110\xE8n pin gi\u1EEF cho b\u1EA1n t\u1EC9nh t\xE1o \u2014 nh\u01B0ng
+      c\u0169ng cho b\xE0 ta th\u1EA5y b\u1EA1n."
+    en: "Your flashlight keeps you sane \u2014 and shows her where you are."
+  - key: tip.5
+    text: "M\u1ED7i t\u1EA5m bia trong ph\xF2ng th\u1EDD kh\u1EAFc t\xEAn m\u1ED9t
+      M\u1EAFt Tr\u1EADn. \u0110\u1ECDc k\u1EF9 c\xE1c k\u1EF7 v\u1EADt."
+    en: Each plaque in the shrine names an Eye of the circle. Read the relics carefully.
+  - key: tip.6
+    text: "\u0110\u1ED3 v\u1EADt \u0111\u1ED5 v\u1EE1 g\xE2y ti\u1EBFng \u0111\u1ED9ng.
+      \u0110i ch\u1EADm qua h\xE0nh lang t\u1EA7ng 2."
+    en: Things that fall make noise. Walk slowly through the upstairs halls.
+  - key: tip.7
+    text: "Flash m\xE1y \u1EA3nh ho\u1EB7c \u0111i\u1EC7n tho\u1EA1i c\xF3 th\u1EC3
+      l\xE0m b\xE0 ta kh\u1EF1ng l\u1EA1i v\xE0i gi\xE2y."
+    en: A camera or phone flash can stun her for a few seconds.
+  - key: tip.8
+    text: "\u1EDE trong b\xF3ng t\u1ED1i qu\xE1 l\xE2u, b\u1EA1n s\u1EBD b\u1EAFt
+      \u0111\u1EA7u th\u1EA5y nh\u1EEFng th\u1EE9 kh\xF4ng c\xF3 th\u1EADt."
+    en: Stay in the dark too long and you'll start seeing things that aren't there.
+  - key: tip.9
+    text: "N\u0103m x\xE2y xong ch\u01B0a ch\u1EAFc l\xE0 n\u0103m c\u01A1 nghi\u1EC7p
+      b\u1EAFt \u0111\u1EA7u."
+    en: The year it was finished isn't always the year it began.
+  - key: ach.unlocked
+    text: "Th\xE0nh t\u1EF1u: {0}"
+    en: 'Achievement: {0}'
+  - key: ach.end_release.title
+    text: "B\xECnh minh"
+    en: Daybreak
+  - key: ach.end_release.desc
+    text: "Gi\u1EA3i tho\xE1t m\u01B0\u1EDDi ba linh h\u1ED3n."
+    en: Free the thirteen souls.
+  - key: ach.end_master.title
+    text: "T\xE2n Ch\u1EE7 Nh\xE2n"
+    en: The New Master
+  - key: ach.end_master.desc
+    text: "Nh\u1EADn l\u1EA5y Kh\u1ED1i C\u1ED5 V\u1EADt."
+    en: Claim the Obsidian Relic.
+  - key: ach.end_coward.title
+    text: "K\u1EBB H\xE8n Nh\xE1t"
+    en: The Coward
+  - key: ach.end_coward.desc
+    text: "B\u1ECF ch\u1EA1y qua c\u1EEDa s\u1ED5 s\u1EA3nh."
+    en: Flee through the hall window.
+  - key: ach.both_characters.title
+    text: "Hai g\xF3c nh\xECn"
+    en: Two Perspectives
+  - key: ach.both_characters.desc
+    text: "Ho\xE0n th\xE0nh game v\u1EDBi c\u1EA3 Evelyn v\xE0 Alex."
+    en: Finish the game as both Evelyn and Alex.
+  - key: ach.no_death.title
+    text: "Kh\xF4ng m\u1ED9t v\u1EBFt x\u01B0\u1EDBc"
+    en: Untouched
+  - key: ach.no_death.desc
+    text: "\u0110\u1EA1t k\u1EBFt th\xFAc ch\xEDnh m\xE0 kh\xF4ng ch\u1EBFt l\u1EA7n
+      n\xE0o."
+    en: Reach a main ending without dying.
+  - key: ach.safe_cracked.title
+    text: "N\u0103m khai sinh"
+    en: Year of Founding
+  - key: ach.safe_cracked.desc
+    text: "M\u1EDF k\xE9t s\u1EAFt c\u1EE7a Lord Blackwood."
+    en: Open Lord Blackwood's safe.
+  - key: ach.found_julian.title
+    text: "M\u01B0\u1EDDi b\u1ED1n ng\xE0y"
+    en: Fourteen Days
+  - key: ach.found_julian.desc
+    text: "T\xECm th\u1EA5y Julian."
+    en: Find Julian.
+  - key: ach.first_flash.title
+    text: "N\u1EE5 c\u01B0\u1EDDi tr\u01B0\u1EDBc \u1ED1ng k\xEDnh"
+    en: Say Cheese
+  - key: ach.first_flash.desc
+    text: "L\xE0m cho\xE1ng Mrs. Peake b\u1EB1ng \u0111\xE8n flash."
+    en: Stun Mrs. Peake with a flash.
+  - key: ach.all_relics.title
+    text: "N\u0103m M\u1EAFt Tr\u1EADn"
+    en: Five Eyes
+  - key: ach.all_relics.desc
+    text: "Thu th\u1EADp \u0111\u1EE7 5 k\u1EF7 v\u1EADt."
+    en: Collect all five relics.
+  - key: ach.cellar_open.title
+    text: "X\xEDch \u0111\u1EE9t"
+    en: Broken Chains
+  - key: ach.cellar_open.desc
+    text: "M\u1EDF n\u1EAFp h\u1EA7m d\u01B0\u1EDBi nh\xE0 b\u1EBFp."
+    en: Open the cellar hatch.
+  - key: ach.archivist.title
+    text: "Ng\u01B0\u1EDDi l\u01B0u tr\u1EEF"
+    en: Archivist
+  - key: ach.archivist.desc
+    text: "Ghi \u0111\u1EA7y s\u1ED5 tay \u0111i\u1EC1u tra."
+    en: Fill the case notebook.
