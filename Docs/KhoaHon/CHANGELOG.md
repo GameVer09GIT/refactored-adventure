@@ -66,3 +66,15 @@
 - Converter: đèn treo tầng 2 có bóng mềm; trăng lạnh bóng mềm; ambient gần đen; LightingSettings riêng `KH_LightingSettings` (không còn trỏ vào Flooded_Grounds); bake 40 reflection probe thành cubemap riêng (`Textures/Probes`, chế độ Custom).
 - Quyết định: máu vẫn là quad URP Lit (giữ độ bóng ướt; Decal Shader Graph mặc định không có smoothness). Decal để dành cho chữ máu/dấu chân night vision (Phase D). Chưa bake GI/APV (scene ~2.300 prefab Flooded_Grounds, bake rất lâu) — ánh sáng trực tiếp realtime phù hợp phong cách "một nguồn sáng".
 - Đo: editor 1080p mức High ~51 fps trên RTX 3050 Laptop. Test 27/27. Ảnh: `Temp/KhoaHon/b2_hall.png`, `b2_f2.png`, `b_fog_dense.png` (thử mật độ cao).
+
+## Blackwood C — Lớp giải đố (2026-11-08)
+- Logic thuần + test: `Scripts/Puzzles/PuzzleLogic.cs` (`SafeLock`, `AltarPuzzle`); `Tests/Editor/PuzzleTests.cs` (5 test).
+- `SafeKeypad`: két 4 vòng số ở Phòng Làm Việc, mã 1921 (ảnh gia tộc). UI lớp trên cùng: A/D chọn vòng, W/S/cuộn chuột/gõ số, Enter thử; sai 3 lần hiện gợi ý "năm cơ nghiệp bắt đầu". Mở xong nhấn E lấy đồ (Pickup không hình: chìa khóa cầu thang + Vademecum tập I + bản thiết kế hầm, tự mở tài liệu). Cờ `SafeOpened`.
+- `CandleStand` ×5 + `CandleAltar` ở Phòng Thờ: mỗi bệ dưới một tấm bia tên Mắt Trận (Annabelle, Vị khách không tên, Eleanor Peake, Thomas Hale, Isabella). Chọn trang Vademecum trong túi; đúng → nến bùng sáng; sai → nến tắt, −8 lý trí, tiếng động bán kính 14 m (Mrs. Peake nghe được). Đủ 5 → nhà rung (`CameraShake`), 5 xích rơi bằng vật lý, `CellarOpened` + Stage3 + lưu tại CP_Shrine.
+- `TapePlayer`: phát băng (rè + clip nếu có + phụ đề "Julian:" theo thời gian), vẫn đi lại được, dừng khi chết/tạm dừng, nghe hết hồi lý trí. Sổ tay: chọn băng + [Space]/Enter để phát.
+- `PryableWindow` ở cửa sổ sảnh (đóng ván): cần xà beng → hỏi xác nhận → `EndingDirector.Play(Coward)`.
+- `EndingDirector` (bản đầu): đặt cờ kết, lưu thành tích `kh_ending_*`, hook cutscene cho Phase F, màn chữ kết (tiêu đề, lời kể, thống kê thời gian/số lần chết/tài liệu), xóa save rồi về menu.
+- Âm thanh tổng hợp mới (`KhoaHonAudioSynthPuzzle.cs`): rè băng, click, núm két, mở két, sai mã, rung nhà, xích đứt, nến bùng/tắt, nạy cửa sổ.
+- Sửa: lỗi `GetComponent<Rigidbody>() ?? AddComponent` (null giả của Unity) khiến xích không rơi.
+- Ghi nhận cho Phase D: bàn thờ còn dáng Á Đông (bài vị sơn đỏ, đài sen) và các vệt máu nhỏ giọt trên cửa sổ trông như thanh nhựa → thay bằng bia đồng + giá nến sắt kiểu phương Tây, làm lại vệt máu.
+- Test 32/32. Ảnh: `Temp/KhoaHon/c_safe_wrong.png`, `c_altar_choice.png`, `c_altar_lit.png`, `c_tape2.png`, `c_flee_confirm.png`, `c_ending_coward.png`.

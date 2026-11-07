@@ -64,6 +64,12 @@ namespace KhoaHon.Notebook
                 if (toggle || Keyboard.current.escapeKey.wasPressedThisFrame) Close();
                 else if (Keyboard.current.qKey.wasPressedThisFrame) SelectTab((NotebookTab)(((int)currentTab + 4) % 5));
                 else if (Keyboard.current.eKey.wasPressedThisFrame) SelectTab((NotebookTab)(((int)currentTab + 1) % 5));
+                else if (selected is TapeData tape && (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame))
+                {
+                    // Phát băng đang chọn rồi đóng sổ để vừa đi vừa nghe
+                    Close();
+                    Narrative.TapePlayer.Instance?.Play(tape);
+                }
             }
             else if (toggle && !ModalUI.IsAnyOpen)
             {

@@ -40,7 +40,6 @@ namespace KhoaHon.EditorTools
 
             // Thông điệp
             ("msg.chains", "Năm sợi xích lớn nối ngầm vào tường. Không có ổ khóa nào cả.", "Five heavy chains run into the walls. There is no lock anywhere."),
-            ("msg.altar", "Năm bệ nến trống, mỗi bệ đặt dưới một tấm bia khắc một cái tên.", "Five empty candle stands, each beneath a plaque engraved with a name."),
             ("msg.rubble", "Đá sập kín một đường hầm khoan hẹp. Không đi tiếp được.", "Collapsed stone blocks a narrow drilled tunnel. No way through."),
 
             // Vật phẩm
@@ -83,7 +82,7 @@ namespace KhoaHon.EditorTools
             ("notebook.tab.relics", "Kỷ vật", "Relics"),
             ("notebook.empty", "Chưa có gì.", "Nothing yet."),
             ("notebook.new", "mới", "new"),
-            ("notebook.tape_hint", "Cầm máy ghi âm hoặc điện thoại để nghe cuộn băng này.", "Hold the recorder or phone to play this tape."),
+            ("notebook.tape_hint", "[Space] Phát băng này (vừa đi vừa nghe được).", "[Space] Play this tape (you can keep walking)."),
 
             // Intro (mặc định = Evelyn; mỗi nhân vật có intro riêng bên dưới)
             ("intro.1", "Julian Vance mất tích ở dinh thự Blackwood đã mười bốn ngày.", "Julian Vance has been missing inside Blackwood Manor for fourteen days."),
@@ -203,6 +202,41 @@ namespace KhoaHon.EditorTools
             ("ui.you_died", "BẠN ĐÃ CHẾT", "YOU DIED"),
             ("hud.battery", "PIN", "BATTERY"),
             ("hud.film", "PHIM", "FILM"),
+
+            // Két sắt
+            ("prompt.safe", "[E] Xoay mã két sắt", "[E] Try the safe's combination"),
+            ("prompt.safe_take", "[E] Lấy đồ trong két", "[E] Take what's inside"),
+            ("safe.title", "KÉT SẮT BLACKWOOD", "BLACKWOOD SAFE"),
+            ("safe.hint", "A/D chọn vòng · W/S hoặc cuộn chuột đổi số · gõ số trực tiếp · Enter thử · Esc đóng",
+                "A/D select dial · W/S or mouse wheel change digit · type digits · Enter try · Esc close"),
+            ("safe.wrong", "Chốt không nhúc nhích.", "The bolt doesn't move."),
+            ("safe.wrong_hint", "Không phải năm xây xong… mà là năm cơ nghiệp này bắt đầu.", "Not the year it was finished… the year this fortune began."),
+            ("safe.opened", "(Chốt thép bật ra. Cửa két nặng nề hé mở.)", "(The steel bolt snaps back. The heavy door swings open.)"),
+            // Bàn thờ & bệ nến
+            ("prompt.stand", "[E] Bệ nến — bia khắc: {0}", "[E] Candle stand — plaque: {0}"),
+            ("prompt.stand_lit", "Ngọn nến đã cháy — {0}", "The candle burns — {0}"),
+            ("plaque.moc", "Annabelle Blackwood · 1916–1924", "Annabelle Blackwood · 1916–1924"),
+            ("plaque.thuy", "Vị khách không tên · 1924", "The Nameless Guest · 1924"),
+            ("plaque.tho", "Eleanor Peake · 1879–1924", "Eleanor Peake · 1879–1924"),
+            ("plaque.kim", "Thomas Hale · 1881–1924", "Thomas Hale · 1881–1924"),
+            ("plaque.hoa", "Isabella Blackwood · 1895–1924", "Isabella Blackwood · 1895–1924"),
+            ("altar.no_pages", "Bệ nến dưới bia \"{0}\" còn trống. Cần một trang Vademecum.", "The stand beneath \"{0}\" is empty. It needs a page of the Vademecum."),
+            ("altar.choose", "Đặt trang nào lên bệ của\n{0}?", "Which page belongs to\n{0}?"),
+            ("altar.hint", "Mỗi tấm bia là một Mắt Trận. Đọc lại kỷ vật trong Sổ tay nếu chưa chắc. · Esc để hủy",
+                "Each plaque names an Eye of the circle. Re-read the relics in your notebook if unsure. · Esc to cancel"),
+            ("altar.correct", "(Ngọn nến tự bùng cháy. {0}/5)", "(The candle flares to life by itself. {0}/5)"),
+            ("altar.wrong", "(Ngọn nến phụt tắt. Trang giấy nóng rực trên tay. Có thứ gì đó đã nghe thấy.)", "(The flame gutters out. The page burns hot in your hand. Something heard that.)"),
+            ("altar.rumble", "(Cả dinh thự rung chuyển…)", "(The whole manor shudders…)"),
+            ("altar.opened", "(Dưới nhà bếp vọng lên tiếng xích sắt đứt tung. Nắp hầm đã mở.)", "(From the kitchen below comes the scream of snapping chains. The cellar is open.)"),
+            ("msg.altar", "Mười ba tấm bia tưởng niệm. Năm tấm mạ vàng, dưới mỗi tấm là một bệ nến trống.", "Thirteen memorial plaques. Five are gilded, each above an empty candle stand."),
+            // Băng
+            ("tape.playing", "Đang phát: {0}", "Playing: {0}"),
+            ("tape.speaker", "Julian", "Julian"),
+            // Cửa sổ sảnh
+            ("prompt.window_pry", "[E] Nạy cửa sổ bằng xà beng", "[E] Pry the window open with the crowbar"),
+            ("prompt.window_nailed", "[E] Cửa sổ bị đóng đinh", "[E] The window is nailed shut"),
+            ("msg.window_nailed", "Ván gỗ đóng đinh chặt. Cần thứ gì đó để nạy.", "The boards are nailed tight. You'd need something to pry them."),
+            ("ui.confirm_flee", "Nạy cửa sổ và bỏ chạy?\nJulian vẫn còn ở đâu đó trong ngôi nhà này.", "Pry the window and run?\nJulian is still somewhere in this house."),
 
             // Hội thoại Lord Blackwood (Phase F dùng)
             ("lord.1", "À… vị khách thứ mười bốn. Mời ngồi. Đừng để ý những bộ xương — họ là người nhà cả thôi.", "Ah… the fourteenth guest. Do sit. Pay no mind to the bones — they're family, after all."),
