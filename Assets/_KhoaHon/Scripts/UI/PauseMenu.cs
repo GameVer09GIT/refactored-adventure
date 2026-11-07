@@ -27,6 +27,12 @@ namespace KhoaHon.UI
             Time.timeScale = 0f;
             AudioListener.pause = true;
             ModalUI.Open(this);
+            BuildUI();
+        }
+
+        private void BuildUI()
+        {
+            if (root != null) Destroy(root);
             // Canvas trên cùng để che cả thanh đồ (hotbar dùng canvas riêng)
             var bg = UIFactory.Panel("KH_Pause", UIKit.TopLayer, new Color(0, 0, 0, 0.8f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             root = bg.gameObject;
@@ -37,7 +43,7 @@ namespace KhoaHon.UI
             title.characterSpacing = 10f;
             var col = UIKit.Column(bg.transform, "Buttons", new Vector2(0, 0), new Vector2(0.38f, 1), new Vector2(120, 200), new Vector2(0, -300), 4);
             UIKit.MenuButton(col, T.Get("ui.resume"), Resume, 38, 60);
-            UIKit.MenuButton(col, T.Get("ui.settings"), () => { root.SetActive(false); SettingsMenuUI.Instance.Open(() => { if (root != null) root.SetActive(true); }); }, 38, 60);
+            UIKit.MenuButton(col, T.Get("ui.settings"), () => { root.SetActive(false); SettingsMenuUI.Instance.Open(() => { if (root != null) BuildUI(); }); }, 38, 60);
             var reload = UIKit.MenuButton(col, T.Get("ui.reload_checkpoint"), () => MainMenuController.Confirm(T.Get("ui.confirm_reload"), () => { Resume(); GameManager.Instance.LoadFromDisk(); }), 38, 60);
             reload.interactable = SaveSystem.Exists;
             UIKit.MenuButton(col, T.Get("ui.main_menu"), () => MainMenuController.Confirm(T.Get("ui.confirm_menu"), ToMenu), 38, 60);

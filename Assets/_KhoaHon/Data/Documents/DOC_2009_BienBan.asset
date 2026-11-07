@@ -14,10 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.DocumentData
   id: DOC_2009_BienBan
   title: "Bi\xEAn b\u1EA3n ni\xEAm phong"
+  titleEn: Police Seal Notice
   year: 5
-  body: "Bi\xEAn b\u1EA3n ni\xEAm phong hi\u1EC7n tr\u01B0\u1EDDng. S\xE1u c\xF4ng
-    nh\xE2n \u0111\u1ED9i c\u1EA3i t\u1EA1o m\u1EA5t t\xEDch sau khi thi c\xF4ng
-    khoan t\u01B0\u1EDDng t\u1EA7ng h\u1EA7m. C\u1EA5m m\u1ECDi h\xE0nh vi x\xE2m
-    nh\u1EADp."
+  body: "S\u1EDE C\u1EA2NH S\xC1T H\u1EA0T ASHFORD \u2014 BI\xCAN B\u1EA2N NI\xCAM
+    PHONG.\nS\xE1u c\xF4ng nh\xE2n \u0111\u1ED9i c\u1EA3i t\u1EA1o m\u1EA5t t\xEDch
+    sau khi khoan xuy\xEAn v\xE1ch t\u1EA7ng h\u1EA7m. Hi\u1EC7n tr\u01B0\u1EDDng
+    ni\xEAm phong v\u0129nh vi\u1EC5n. C\u1EA5m m\u1ECDi h\xE0nh vi x\xE2m nh\u1EADp."
+  bodyEn: "ASHFORD COUNTY POLICE \u2014 NOTICE OF SEAL.\nSix members of a renovation
+    crew went missing after drilling through a cellar wall. The premises are sealed
+    permanently. Trespassers will be prosecuted."
   serif: 1
   flagOnRead: 0

@@ -426,6 +426,10 @@ namespace KhoaHon.EditorTools
             so.FindProperty("uiStyle").objectReferenceValue = data.style;
             so.FindProperty("database").objectReferenceValue = data.db;
             so.FindProperty("toolsConfig").objectReferenceValue = data.tools;
+            var chars = so.FindProperty("characters");
+            chars.arraySize = 2;
+            chars.GetArrayElementAtIndex(0).objectReferenceValue = data.evelyn;
+            chars.GetArrayElementAtIndex(1).objectReferenceValue = data.alex;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             sys.AddComponent<CheckpointManager>();

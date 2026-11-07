@@ -26,6 +26,8 @@ namespace KhoaHon.Core
         [SerializeField] private UIStyle uiStyle;
         [SerializeField] private KhoaHonDatabase database;
         [SerializeField] private Items.ToolsConfig toolsConfig;
+        [Tooltip("Hồ sơ nhân vật: Evelyn, Alex (theo thứ tự enum PlayerCharacter)")]
+        [SerializeField] private CharacterProfile[] characters = new CharacterProfile[2];
 
         [Header("Trạng thái")]
         [SerializeField] private GameStage stage = GameStage.Stage0_Gate;
@@ -42,11 +44,26 @@ namespace KhoaHon.Core
         public Items.ToolsConfig Tools => toolsConfig;
         public float Sanity { get => sanity; set => sanity = Mathf.Clamp(value, 5f, 100f); }
         public bool IsRestoring { get; private set; }
+        /// <summary>Nhân vật đang chơi.</summary>
+        public PlayerCharacter Character { get; private set; } = PlayerCharacter.Evelyn;
+        public CharacterProfile Profile => GetProfile(Character);
+        public CharacterProfile[] Characters => characters;
+        /// <summary>Phát khi nhân vật được áp dụng (lúc vào game hoặc nạp save) để đổi bộ công cụ/HUD.</summary>
+        public static event System.Action<PlayerCharacter> CharacterApplied;
+
+        public CharacterProfile GetProfile(PlayerCharacter c)
+        {
+            if (characters == null) return null;
+            foreach (var p in characters) if (p != null && p.character == c) return p;
+            return null;
+        }
 
         private void Awake()
         {
             Instance = this;
             T.Table = textTable;
+            Loc.Load();
+            Character = GameFlow.PendingCharacter;
             ModalUI.Reset();
             Flags.Changed += OnFlagChanged;
         }
@@ -59,6 +76,7 @@ namespace KhoaHon.Core
 
         private IEnumerator Start()
         {
+            CharacterApplied?.Invoke(Character);
             var pending = SaveSystem.PendingLoad;
             if (pending == null && loadSaveOnStart) pending = SaveSystem.Read();
             SaveSystem.PendingLoad = null;
@@ -92,6 +110,7 @@ namespace KhoaHon.Core
                 stage = stage.ToString(),
                 flags = Flags.ToNames(),
                 sanity = sanity,
+                character = Character.ToString(),
             };
             foreach (var p in FindParticipants()) p.Capture(d);
             return d;
@@ -112,6 +131,9 @@ namespace KhoaHon.Core
                 Flags.LoadNames(d.flags);
                 stage = d.StageValue;
                 sanity = d.sanity;
+                Character = d.CharacterValue;
+                GameFlow.PendingCharacter = Character;
+                CharacterApplied?.Invoke(Character);
                 foreach (var p in FindParticipants()) p.Restore(d);
             }
             finally { IsRestoring = false; }

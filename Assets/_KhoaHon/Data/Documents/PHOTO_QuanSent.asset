@@ -13,10 +13,15 @@ MonoBehaviour:
   m_Name: PHOTO_QuanSent
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.PhotoClueData
   id: PHOTO_QuanSent
-  title: "\u1EA2nh Qu\xE2n g\u1EEDi"
+  title: "B\u1EE9c \u1EA3nh cu\u1ED1i c\u1EE7a Julian"
+  titleEn: Julian's Last Photograph
   year: 6
   body: "\u1EA2nh ch\u1EE5p flash s\xE0n nh\xE0 b\u1EBFp, g\u1EEDi \u0111\xEAm cu\u1ED1i
-    c\xF9ng. Tr\xEAn s\xE0n hi\u1EC7n m\u1ED9t k\xFD hi\u1EC7u Ng\u0169 H\xE0nh b\u1EB1ng
-    m\xE1u m\xE0 m\u1EAFt th\u01B0\u1EDDng kh\xF4ng th\u1EA5y."
-  serif: 1
+    c\xF9ng. Gi\u1EEFa v\u1EBFt b\u1EA9n hi\u1EC7n l\u1EDD m\u1EDD m\u1ED9t v\xF2ng
+    tr\xF2n n\u0103m c\xE1nh b\u1EB1ng m\xE1u m\xE0 m\u1EAFt th\u01B0\u1EDDng kh\xF4ng
+    th\u1EA5y."
+  bodyEn: "A flash photo of the kitchen floor, sent on his last night. Inside the
+    stain, faintly, a five-pointed circle drawn in blood \u2014 invisible to the
+    naked eye."
+  serif: 0
   flagOnCapture: 0

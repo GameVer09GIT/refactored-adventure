@@ -46,3 +46,12 @@
 - Sửa: ảnh ma chụp người thật của `DeathScreenManager` cũ không còn hiện (tắt RawImage + tắt tiếng hét cũ, không sửa file gốc); ký tự `▮ ● →` không có trong font được thay.
 - Test EditMode: 21/21. Console 0 lỗi.
 
+
+## Blackwood A — Đa ngôn ngữ + nội dung kịch bản mới (2026-11-07)
+- Kịch bản mới `Kich_Ban_Game.docx` (Blackwood Manor: The Soul-Lock Curse). Định danh nội bộ giữ nguyên (`StoryFlag`, `Hanh`, id asset) để không vỡ save/test; chỉ đổi nội dung hiển thị. Ánh xạ kỷ vật: Moc → búp bê Annabelle, Thuy → thư khách trọ, Tho → lược Mrs. Peake (giữ choáng 20 s), Kim → búa Thomas, Hoa → giày Isabella (bài chú thứ 5).
+- `Loc` (Core/Localization.cs): ngôn ngữ Việt/Anh, mặc định Việt, lưu PlayerPrefs `kh_lang`, sự kiện `Changed`.
+- `TextTable` có cột `en`; `NotebookSource` có `titleEn/bodyEn`; `TapeData.Line.textEn`, `RelicData.pickupLineEn`, `TalismanData.chantLinesEn`.
+- Toàn bộ chữ song ngữ nằm ở `Editor/KhoaHonContent.cs`; `KhoaHonDataBuilder` đọc từ đó (175 key, 9 tài liệu, 3 băng, 5 kỷ vật + 5 trang Vademecum, thoại Lord Blackwood, 3 kết).
+- `CharacterProfile` (Evelyn, Alex) + `PlayerCharacter`; `GameManager.Character`, `GameFlow.PendingCharacter`; `SaveData` v2 có `character` (v1 tự chuyển, mặc định Evelyn). Intro theo nhân vật.
+- Cài đặt: chọn Tiếng Việt / English, đổi ngay; menu chính và menu tạm dừng dựng lại sau khi đóng Cài đặt.
+- Test: 27/27 (thêm 6 `LocalizationTests`). Ảnh: `Temp/KhoaHon/a_boot.png`, `a_settings_en.png`, `a_menu_en.png`.

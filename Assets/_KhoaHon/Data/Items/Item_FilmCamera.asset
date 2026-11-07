@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5c7cb4a051563344b68a1718cd1a801, type: 3}
   m_Name: Item_FilmCamera
   m_EditorClassIdentifier: Assembly-CSharp::HorrorGame.Inventory.ItemData
-  displayName: "M\xE1y \u1EA3nh film"
+  displayName: Film Camera
   itemType: 5
   icon: {fileID: 21300000, guid: 757093e7ad418cb449662d47f990f6cd, type: 3}
   heldPrefab: {fileID: 2752398419020380537, guid: 2ed1431fedb8d8d40a6ed71479b059d6, type: 3}

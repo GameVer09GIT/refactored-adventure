@@ -14,34 +14,46 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TapeData
   id: TAPE_1
   title: "B\u0103ng #1 \u2014 balo \u1EDF S\u1EA3nh"
+  titleEn: "Tape #1 \u2014 Backpack in the Hall"
   year: 6
-  body: "Cu\u1ED9n b\u0103ng t\xECm th\u1EA5y trong balo c\u1EE7a Qu\xE2n."
+  body: "Cu\u1ED9n b\u0103ng t\xECm th\u1EA5y trong balo c\u1EE7a Julian."
+  bodyEn: Found in Julian's backpack.
   serif: 0
   clip: {fileID: 0}
   lines:
   - time: 0.5
-    duration: 5.265
-    text: "Ng\xE0y th\u1EE9\u2026 ba? Ch\u1ECB Vy, n\u1EBFu ch\u1ECB nghe \u0111\u01B0\u1EE3c
-      c\xE1i n\xE0y th\xEC em xin l\u1ED7i v\xEC kh\xF4ng nghe m\xE1y."
-  - time: 6.165
-    duration: 4.615
-    text: "Em t\xECm ra r\u1ED3i \u2014 l\u1ED1i xu\u1ED1ng h\u1EA7m n\u1EB1m d\u01B0\u1EDBi
+    duration: 5.85
+    text: "Ng\xE0y th\u1EE9\u2026 ba? Alex, Evelyn \u2014 n\u1EBFu ai \u0111\xF3
+      nghe \u0111\u01B0\u1EE3c c\xE1i n\xE0y th\xEC em xin l\u1ED7i v\xEC kh\xF4ng
+      nghe m\xE1y."
+    textEn: "Day\u2026 three? Alex, Evelyn \u2014 if either of you hears this, I'm
+      sorry I stopped answering."
+  - time: 6.75
+    duration: 5.1349998
+    text: "Em t\xECm ra r\u1ED3i. L\u1ED1i xu\u1ED1ng h\u1EA7m n\u1EB1m d\u01B0\u1EDBi
       nh\xE0 b\u1EBFp, ngay d\u01B0\u1EDBi c\xE1i b\xE0n ti\u1EC7c."
-  - time: 11.179999
+    textEn: "I found it. The way down is under the kitchen \u2014 right beneath the
+      dinner table."
+  - time: 12.285
     duration: 2.6
-    text: "C\xF3 n\u0103m s\u1EE3i x\xEDch, kh\xF4ng c\xF3 \u1ED5 kh\xF3a n\xE0o
+    text: "C\xF3 n\u0103m s\u1EE3i x\xEDch. Kh\xF4ng c\xF3 \u1ED5 kh\xF3a n\xE0o
       c\u1EA3\u2026"
-  - time: 14.179999
+    textEn: "Five chains. And not a single lock\u2026"
+  - time: 15.285
     duration: 2.2
     text: "(ti\u1EBFng kim lo\u1EA1i leng keng xa xa)"
-  - time: 16.779999
-    duration: 2.4699998
-    text: "\u2026Ch\u1ECB nghe th\u1EA5y kh\xF4ng? Ti\u1EBFng ch\xECa kh\xF3a."
-  - time: 19.649998
+    textEn: (distant jingling of metal)
+  - time: 17.885
+    duration: 2.21
+    text: "\u2026Nghe th\u1EA5y kh\xF4ng? Ti\u1EBFng ch\xECa kh\xF3a."
+    textEn: "\u2026Hear that? Keys."
+  - time: 20.495
     duration: 4.615
     text: "V\xE0 ti\u1EBFng b\u01B0\u1EDBc ch\xE2n, m\u1ED9t b\xEAn n\u1EB7ng m\u1ED9t
-      b\xEAn nh\u1EB9, nh\u01B0 ng\u01B0\u1EDDi \u0111i kh\u1EADp khi\u1EC5ng."
-  - time: 24.664997
+      b\xEAn nh\u1EB9. Nh\u01B0 ng\u01B0\u1EDDi \u0111i kh\u1EADp khi\u1EC5ng."
+    textEn: "And footsteps \u2014 one heavy, one light. Like someone with a limp."
+  - time: 25.51
     duration: 2.2
     text: "N\xF3 \u1EDF tr\xEAn l\u1EA7u. Em t\u1EAFt m\xE1y \u0111\xE2y."
+    textEn: It's upstairs. I'm switching off.
   sanityRestore: 5

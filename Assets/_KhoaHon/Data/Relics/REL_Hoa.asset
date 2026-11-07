@@ -13,12 +13,18 @@ MonoBehaviour:
   m_Name: REL_Hoa
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.RelicData
   id: REL_Hoa
-  title: "\u0110\xF4i h\xE0i th\xEAu c\u1EE7a Nh\u1ECB n\u01B0\u01A1ng"
+  title: "\u0110\xF4i gi\xE0y l\u1EE5a th\xEAu c\u1EE7a Qu\xFD b\xE0 Isabella"
+  titleEn: Lady Isabella's Silk Slippers
   year: 1
-  body: "\u0110\xF4i h\xE0i th\xEAu c\u1EE7a Nh\u1ECB n\u01B0\u01A1ng, v\u1EE3 b\xE9
-    c\u1EE7a \u0110\u1EA1i Quan, b\u1ECB thi\xEAu s\u1ED1ng \u0111\u1EC3 c\xFAng
-    sao h\u1EA1n.\nL\xF3t trong h\xE0i l\xE0 m\u1ED9t trang b\xF9a."
+  body: "\u0110\xF4i gi\xE0y l\u1EE5a th\xEAu ch\u1EC9 b\u1EA1c c\u1EE7a Qu\xFD b\xE0
+    Isabella Blackwood, ng\u01B0\u1EDDi v\u1EE3 b\u1ECB ch\u1ED3ng \u0111em l\xE0m
+    M\u1EAFt Tr\u1EADn khi \u0111ang mang thai.\nL\xF3t trong gi\xE0y l\xE0 m\u1ED9t
+    trang Vademecum \u2014 trang th\u1EE9 n\u0103m."
+  bodyEn: "Silver-embroidered silk slippers of Lady Isabella Blackwood, made an Eye
+    of the circle by her own husband while she was with child.\nTucked inside is
+    a page of the Vademecum \u2014 the fifth page."
   serif: 1
   hanh: 4
   talisman: {fileID: 11400000, guid: c3ea8c551d4afc345a31cbbc12e18510, type: 2}
-  pickupLine: "(M\xF9i kh\xE9t tho\u1EA3ng qua.)"
+  pickupLine: "(M\xF9i hoa o\u1EA3i h\u01B0\u01A1ng h\xE9o tho\u1EA3ng qua.)"
+  pickupLineEn: (A scent of withered lavender drifts by.)

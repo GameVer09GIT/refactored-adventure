@@ -15,6 +15,8 @@ namespace KhoaHon.Notebook
             [Tooltip("Thời điểm hiện (giây)")] public float time;
             [Tooltip("Thời lượng hiện (giây)")] public float duration = 4f;
             [TextArea(1, 4)] public string text;
+            [TextArea(1, 4)] public string textEn;
+            public string Text => Loc.Pick(text, textEn);
         }
 
         public AudioClip clip;

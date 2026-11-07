@@ -14,32 +14,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TapeData
   id: TAPE_2
   title: "B\u0103ng #2 \u2014 c\u1EA1nh k\xE9t s\u1EAFt"
+  titleEn: "Tape #2 \u2014 Beside the Safe"
   year: 6
   body: "Cu\u1ED9n b\u0103ng \u0111\u1EC3 c\u1EA1nh k\xE9t s\u1EAFt trong Ph\xF2ng
     L\xE0m Vi\u1EC7c."
+  bodyEn: Left next to the safe in the study.
   serif: 0
   clip: {fileID: 0}
   lines:
   - time: 0.5
-    duration: 3.8349998
-    text: "K\xE9t kh\xF3a s\u1ED1. \xD4ng L\xE2m vi\u1EBFt m\xE3 n\u1EB1m \u1EDF
+    duration: 4.875
+    text: "K\xE9t kh\xF3a s\u1ED1. \xD4ng Sterling vi\u1EBFt m\xE3 n\u1EB1m \u1EDF
       n\u0103m khai sinh c\u01A1 nghi\u1EC7p\u2026"
-  - time: 4.7349997
-    duration: 2.5349998
-    text: "Em th\u1EED n\u0103m x\xE2y xong, 1924 \u2014 kh\xF4ng \u0111\u01B0\u1EE3c."
-  - time: 7.6699996
+    textEn: "Combination safe. Sterling wrote the code is the year the fortune was
+      born\u2026"
+  - time: 5.775
+    duration: 3.12
+    text: "Em th\u1EED n\u0103m x\xE2y xong, 1924. Kh\xF4ng \u0111\u01B0\u1EE3c."
+    textEn: I tried the year it was finished, 1924. Nothing.
+  - time: 9.295
     duration: 2.405
     text: "(ti\u1EBFng ch\xECa kh\xF3a leng keng tr\xEAn tr\u1EA7n)"
-  - time: 10.474999
+    textEn: (keys jingling on the ceiling above)
+  - time: 12.1
     duration: 2.2
     text: "B\xE0 ta \u1EDF ngay tr\xEAn \u0111\u1EA7u em."
-  - time: 13.075
+    textEn: She's right above me.
+  - time: 14.700001
     duration: 5.5249996
     text: "\u0110\xEAm qua em th\u1EA5y b\xE0 ta \u0111\u1EE9ng \u1EDF chi\u1EBFu
       ngh\u1EC9 c\u1EA7u thang nh\xECn xu\u1ED1ng, nh\u01B0ng kh\xF4ng b\u01B0\u1EDBc
       xu\u1ED1ng."
-  - time: 19
+    textEn: Last night I saw her on the landing, looking down. She didn't come down.
+  - time: 20.625
     duration: 2.665
     text: "H\xECnh nh\u01B0 b\xE0 ta kh\xF4ng xu\u1ED1ng \u0111\u01B0\u1EE3c d\u01B0\u1EDBi
       n\xE0y."
+    textEn: I don't think she can come down here.
   sanityRestore: 5

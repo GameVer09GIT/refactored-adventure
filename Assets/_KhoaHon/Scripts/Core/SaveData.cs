@@ -10,7 +10,11 @@ namespace KhoaHon.Core
     [Serializable]
     public class SaveData
     {
-        public int version = 1;
+        /// <summary>v1: bản Khóa Hồn gốc. v2: thêm nhân vật.</summary>
+        public const int CurrentVersion = 2;
+        public int version = CurrentVersion;
+        /// <summary>Tên enum PlayerCharacter.</summary>
+        public string character = PlayerCharacter.Evelyn.ToString();
         public string stage = GameStage.Stage0_Gate.ToString();
         public string checkpointId = "";
         public List<string> flags = new List<string>();
@@ -43,6 +47,9 @@ namespace KhoaHon.Core
                 d.notebookEntries ??= new List<string>();
                 d.notebookSeen ??= new List<string>();
                 d.photoClues ??= new List<string>();
+                // v1 → v2: chưa có nhân vật thì mặc định Evelyn
+                if (d.version < 2 || string.IsNullOrEmpty(d.character)) d.character = PlayerCharacter.Evelyn.ToString();
+                d.version = CurrentVersion;
                 return d;
             }
             catch (Exception)
@@ -50,6 +57,9 @@ namespace KhoaHon.Core
                 return null;
             }
         }
+
+        public PlayerCharacter CharacterValue =>
+            Enum.TryParse(character, out PlayerCharacter c) ? c : PlayerCharacter.Evelyn;
 
         public GameStage StageValue =>
             Enum.TryParse(stage, out GameStage s) ? s : GameStage.Stage0_Gate;

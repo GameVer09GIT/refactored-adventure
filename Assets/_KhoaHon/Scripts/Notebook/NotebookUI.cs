@@ -221,8 +221,8 @@ namespace KhoaHon.Notebook
             detailTitle.text = s.Title;
             detailYear.text = HanhUtil.YearLabel(s.Year);
             string body = s.Body;
-            if (s is TalismanData t && t.chantLines != null && t.chantLines.Count > 0)
-                body += "\n\n<i>" + string.Join("\n", t.chantLines) + "</i>";
+            if (s is TalismanData t && t.ChantLines != null && t.ChantLines.Count > 0)
+                body += "\n\n<i>" + string.Join("\n", t.ChantLines) + "</i>";
             if (s is TapeData tape && tape.lines != null && tape.lines.Count > 0)
                 body += "\n\n<size=85%>" + T.Get("notebook.tape_hint") + "</size>";
             detailBody.text = body;

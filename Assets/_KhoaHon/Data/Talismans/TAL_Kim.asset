@@ -13,15 +13,22 @@ MonoBehaviour:
   m_Name: TAL_Kim
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TalismanData
   id: TAL_Kim
-  title: "Trang b\xF9a h\xE0nh Kim"
+  title: "Vademecum \u2014 Trang Ng\u01B0\u1EDDi Th\u1EE3"
+  titleEn: "Vademecum \u2014 The Builder's Page"
   year: 1
-  body: "B\xE0i ch\xFA Vy \u0111\xE3 ch\xE9p l\u1EA1i t\u1EEB trang b\xF9a h\xE0nh
-    Kim."
+  body: "B\xE0i ch\xFA b\u1EA1n ch\xE9p l\u1EA1i t\u1EEB trang qu\u1EA5n quanh c\xE1n
+    b\xFAa."
+  bodyEn: The verse you copied from the page around the hammer.
   serif: 1
   hanh: 3
   chantLines:
-  - "[C\xE2u ch\xFA 1 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 2 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 3 \u2014 ch\u1EDD n\u1ED9i dung]"
-  - "[C\xE2u ch\xFA 4 \u2014 ch\u1EDD n\u1ED9i dung]"
+  - "B\xE0n tay d\u1EF1ng n\xEAn ng\xF4i nh\xE0."
+  - "\u0110\xE1 v\xE0 v\u1EEFa l\xE0 x\u01B0\u01A1ng th\u1ECBt ng\u01B0\u01A1i."
+  - "T\xE1m ng\u01B0\u1EDDi theo ng\u01B0\u01A1i v\xE0o v\xE1ch."
+  - "\u0110\u1EE9ng v\u1EEFng \u0111i, M\u1EAFt Tr\u1EADn th\u1EE9 hai."
+  chantLinesEn:
+  - The hands that raised this house.
+  - Stone and mortar are your flesh.
+  - Eight men followed you into the walls.
+  - Stand firm, second Eye of the circle.
   symbol: {fileID: 0}
