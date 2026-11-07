@@ -77,6 +77,7 @@ namespace KhoaHon.EditorTools
             var keep = new HashSet<string>();
             foreach (var (k, vi, en) in KhoaHonContent.Text) { t.Set(k, vi, en); keep.Add(k); }
             foreach (var (k, vi, en) in KhoaHonContent.TextCharacters) { t.Set(k, vi, en); keep.Add(k); }
+            foreach (var (k, vi, en) in KhoaHonContent.TextSequences) { t.Set(k, vi, en); keep.Add(k); }
             t.RemoveAllExcept(keep);
         }
 

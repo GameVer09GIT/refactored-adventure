@@ -24,6 +24,12 @@ namespace KhoaHon.EditorTools
             W("sfx_window_pry", WoodCrack());
             W("sfx_prop_clatter", MechClick(0.35f, 2100f, 29));
             W("sfx_prop_thud", WrongThud());
+            W("sfx_engine_loop", EngineLoop(4f));
+            W("sfx_brake_skid", BrakeSkid());
+            W("sfx_engine_die", EngineDie());
+            W("sfx_radio_cry_loop", RadioCry(8f));
+            W("sfx_scratch_loop", Scratch(5f));
+            W("sfx_shatter", Shatter());
             return made;
         }
 
@@ -172,6 +178,88 @@ namespace KhoaHon.EditorTools
                 b[i] = strain + crack + glass;
             }
             return Normalize(b, 0.85f);
+        }
+        // Động cơ xe chạy không tải / chạy chậm (vòng lặp)
+        static float[] EngineLoop(float sec)
+        {
+            int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(401); float lp = 0;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SR; float f = 38f;
+                float fire = Mathf.Sin(TAU * f * t) + 0.5f * Mathf.Sin(TAU * f * 2f * t + 0.3f) + 0.25f * Mathf.Sin(TAU * f * 3f * t);
+                lp += (Noise(r) - lp) * 0.05f;
+                b[i] = fire * (0.6f + 0.4f * Mathf.Abs(Mathf.Sin(TAU * f * 0.5f * t))) * 0.4f + lp * 0.8f;
+            }
+            return Normalize(LoopFade(b, 0.3f), 0.6f);
+        }
+
+        static float[] BrakeSkid()
+        {
+            float sec = 1.4f; int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(402);
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SR; float e = Mathf.Sin(Mathf.PI * Mathf.Clamp01(t / sec));
+                float f = 1900f + 300f * Mathf.Sin(t * 30f) - 600f * t;
+                b[i] = (Mathf.Sin(TAU * f * t) * 0.5f + Noise(r) * 0.35f) * e;
+            }
+            return Normalize(b, 0.8f);
+        }
+
+        static float[] EngineDie()
+        {
+            float sec = 2.4f; int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(403); float ph = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SR; float f = Mathf.Lerp(40f, 8f, t / sec);
+                ph += TAU * f / SR;
+                float cough = (t > 0.6f && t < 0.75f) || (t > 1.1f && t < 1.2f) ? 0.2f : 1f;
+                b[i] = (Mathf.Sin(ph) + 0.4f * Mathf.Sin(ph * 2f)) * Mathf.Clamp01(1f - t / sec) * cough * 0.6f + Noise(r) * 0.05f * Mathf.Clamp01(1f - t);
+            }
+            return Normalize(b, 0.8f);
+        }
+
+        // Radio nhiễu + tiếng nức nở (dao động cao độ như tiếng khóc)
+        static float[] RadioCry(float sec)
+        {
+            int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(404); float lp = 0, ph = 0;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SR;
+                lp += (Noise(r) - lp) * 0.3f;
+                float sob = Mathf.Pow(Mathf.Max(0f, Mathf.Sin(TAU * 0.6f * t)), 3f);
+                float f = 420f + 90f * Mathf.Sin(TAU * 5.5f * t) - 120f * (t % 1.6f);
+                ph += TAU * f / SR;
+                float voice = (Mathf.Sin(ph) + 0.3f * Mathf.Sin(ph * 2.01f)) * sob;
+                b[i] = lp * 0.25f + voice * 0.35f * (0.7f + 0.3f * Mathf.Sin(TAU * 0.13f * t));
+            }
+            return Normalize(LoopFade(b, 0.5f), 0.55f);
+        }
+
+        static float[] Scratch(float sec)
+        {
+            int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(405); float hp = 0, prev = 0;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SR;
+                float w = Noise(r); hp = w - prev; prev = w;
+                float stroke = Mathf.Pow(Mathf.Max(0f, Mathf.Sin(TAU * 0.9f * t + Mathf.Sin(t))), 2f);
+                b[i] = hp * stroke * 0.6f;
+            }
+            return Normalize(LoopFade(b, 0.3f), 0.5f);
+        }
+
+        static float[] Shatter()
+        {
+            float sec = 2.2f; int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(406);
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SR;
+                float boom = Mathf.Sin(TAU * 55f * t) * Mathf.Exp(-t * 4f);
+                float glass = Noise(r) * Mathf.Exp(-t * 3f) * 0.6f;
+                float ring = (Mathf.Sin(TAU * 3100f * t) + Mathf.Sin(TAU * 4700f * t)) * Mathf.Exp(-t * 2.5f) * 0.15f;
+                b[i] = boom + glass + ring;
+            }
+            return Normalize(b, 0.95f);
         }
     }
 }

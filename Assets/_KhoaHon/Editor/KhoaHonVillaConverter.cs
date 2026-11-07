@@ -100,6 +100,7 @@ namespace KhoaHon.EditorTools
             BakeNavMesh(scene, floor2Area);
             log.Add(KhoaHonHousekeeperBuilder.Build(root, F2));
             log.Add(KhoaHonHorrorBuilder.Build(root, CellarOrigin));
+            BuildSequences(systems);
             BakeReflectionProbes();
 
             EditorSceneManager.SaveScene(scene);
@@ -352,6 +353,113 @@ namespace KhoaHon.EditorTools
             t.color = new Color(0.7f, 1f, 0.75f, 0.9f);
             t.rectTransform.sizeDelta = new Vector2(6f, 1.5f);
             t.fontStyle = TMPro.FontStyles.Italic;
+        }
+
+
+        // =====================================================================
+        // Cutscene: vòng lặp cổng, Sảnh Tế, thi thể Julian, phòng 13, 3 kết
+        static void BuildSequences(GameObject systems)
+        {
+            var all = Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            // Cánh cổng sắt trước dinh thự (bỏ static để xoay được lúc chạy)
+            var doors = all.Where(t => t.name == "Struct_Fence1_Gate_A_Door_DM" && Mathf.Abs(t.position.z + 9.4f) < 0.8f && t.position.x > 70f && t.position.x < 95f).ToArray();
+            foreach (var d in doors) foreach (var c in d.GetComponentsInChildren<Transform>()) c.gameObject.isStatic = false;
+            systems.AddComponent<KhoaHon.Sequences.GateLoopSequence>().Configure(Model("KH_BW_Sedan"), Model("KH_BW_Signpost"), doors,
+                Sfx("sfx_engine_loop"), Sfx("sfx_brake_skid"), Sfx("sfx_engine_die"), Sfx("sfx_radio_cry_loop"), Sfx("sfx_scare_creak"), Sfx("sfx_stinger_detect"));
+
+            // Sảnh Tế
+            var relic = all.FirstOrDefault(t => t.name == "AnDong_Placeholder");
+            var chair = all.FirstOrDefault(t => t.name == "GheGoMun");
+            GameObject lord = null;
+            if (chair != null && relic != null)
+            {
+                var face = relic.position - chair.position; face.y = 0f;
+                float yaw = Quaternion.LookRotation(face.sqrMagnitude > 0.01f ? face : Vector3.forward).eulerAngles.y;
+                lord = Place(Model("KH_BW_LordGhost"), chair.parent, chair.position + face.normalized * 0.55f, yaw, 1f, "LordBlackwood_Ghost");
+                if (lord != null)
+                {
+                    // Vật liệu bóng ma bán trong suốt, phát sáng lạnh
+                    string gp = "Assets/_KhoaHon/Materials/M_LordGhost.mat";
+                    var gm = AssetDatabase.LoadAssetAtPath<Material>(gp);
+                    if (gm == null) { gm = new Material(Shader.Find("Universal Render Pipeline/Lit")); AssetDatabase.CreateAsset(gm, gp); }
+                    gm.SetFloat("_Surface", 1f); gm.SetFloat("_Blend", 0f);
+                    gm.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha); gm.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                    gm.SetFloat("_ZWrite", 0f); gm.EnableKeyword("_SURFACE_TYPE_TRANSPARENT"); gm.renderQueue = 3000;
+                    gm.SetColor("_BaseColor", new Color(0.55f, 0.65f, 0.85f, 0.28f));
+                    gm.EnableKeyword("_EMISSION"); gm.SetColor("_EmissionColor", new Color(0.18f, 0.26f, 0.42f));
+                    gm.SetFloat("_Smoothness", 0.2f);
+                    EditorUtility.SetDirty(gm);
+                    foreach (var r in lord.GetComponentsInChildren<Renderer>())
+                    {
+                        r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                        var mats = new Material[r.sharedMaterials.Length]; for (int m = 0; m < mats.Length; m++) mats[m] = gm; r.sharedMaterials = mats;
+                    }
+                    var aura = new GameObject("LordAura").AddComponent<Light>();
+                    aura.transform.SetParent(lord.transform, false); aura.transform.localPosition = new Vector3(0f, 1.6f, 0.6f);
+                    aura.type = LightType.Point; aura.range = 4f; aura.intensity = 1.2f; aura.color = new Color(0.55f, 0.65f, 0.9f);
+                }
+            }
+            KhoaHon.Sequences.RitualSequence ritual = null;
+            if (relic != null)
+            {
+                relic.gameObject.isStatic = false;
+                var glow = new GameObject("RelicGlow").AddComponent<Light>();
+                glow.transform.SetParent(relic, false); glow.type = LightType.Point; glow.range = 3.5f; glow.intensity = 1.2f; glow.color = new Color(1f, 0.12f, 0.05f);
+                var trig = new GameObject("RitualTrigger");
+                trig.transform.SetParent(root);
+                trig.transform.position = CellarOrigin + new Vector3(-6.5f, -8.8f, -7.2f);
+                var bc = trig.AddComponent<BoxCollider>(); bc.isTrigger = true; bc.size = new Vector3(5f, 3f, 1.6f);
+                ritual = trig.AddComponent<KhoaHon.Sequences.RitualSequence>();
+                ritual.Configure(lord != null ? lord.transform : null, relic, Sfx("sfx_scare_whispers"), null);
+            }
+            else log.Add("WARN no relic in ritual hall");
+
+            // Thi thể Julian trong xà lim
+            var body = all.FirstOrDefault(t => t.name == "XacQuan");
+            if (body != null)
+            {
+                if (body.GetComponent<Collider>() == null)
+                {
+                    var bb = Bounds(body.gameObject); var col = body.gameObject.AddComponent<BoxCollider>();
+                    col.center = body.InverseTransformPoint(bb.center); col.size = Vector3.Max(body.InverseTransformVector(bb.size), Vector3.one * 0.2f);
+                }
+                body.gameObject.AddComponent<KhoaHon.Sequences.JulianBody>().Configure(Sfx("sfx_stinger_detect"));
+            }
+            else log.Add("WARN no Julian body");
+
+            // Phòng 13 bệnh viện tâm thần (chỉ dùng trong cutscene Kết ẩn) — dựng xa khỏi bản đồ
+            var cell = new GameObject("KH_AsylumCell").transform;
+            cell.SetParent(root); cell.position = new Vector3(40f, 40f, -160f);
+            var pad = data.mats[0];
+            GB.Box(cell, "Floor", cell.position + new Vector3(0, -0.1f, 0), new Vector3(4.2f, 0.2f, 5.2f), pad);
+            GB.Box(cell, "Ceil", cell.position + new Vector3(0, 3.1f, 0), new Vector3(4.2f, 0.2f, 5.2f), pad);
+            GB.Box(cell, "WallN", cell.position + new Vector3(0, 1.5f, 2.6f), new Vector3(4.2f, 3.2f, 0.2f), pad);
+            GB.Box(cell, "WallS", cell.position + new Vector3(0, 1.5f, -2.6f), new Vector3(4.2f, 3.2f, 0.2f), pad);
+            GB.Box(cell, "WallE", cell.position + new Vector3(2.1f, 1.5f, 0), new Vector3(0.2f, 3.2f, 5.2f), pad);
+            GB.Box(cell, "WallW", cell.position + new Vector3(-2.1f, 1.5f, 0), new Vector3(0.2f, 3.2f, 5.2f), pad);
+            Place(P("Assets/Abandoned_Asylum/Prefabs/Bed.prefab"), cell, cell.position + new Vector3(-1.3f, 0f, -0.6f), 0f, 1f, "AsylumBed");
+            var ink = data.mats[6];
+            for (int k = 0; k < 8; k++)
+            {
+                float a0 = k * Mathf.PI / 4f, a1 = (k + 1) * Mathf.PI / 4f;
+                var p0 = new Vector3(Mathf.Cos(a0) * 0.7f, 1.6f + Mathf.Sin(a0) * 0.9f, 2.48f);
+                var p1 = new Vector3(Mathf.Cos(a1) * 0.7f, 1.6f + Mathf.Sin(a1) * 0.9f, 2.48f);
+                var mid = cell.position + (p0 + p1) * 0.5f;
+                var stroke = GB.Box(cell, "Scratch_" + k, mid, new Vector3(Vector3.Distance(p0, p1), 0.03f, 0.01f), ink, false);
+                stroke.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(p1.y - p0.y, p1.x - p0.x) * Mathf.Rad2Deg);
+            }
+            var bulb = new GameObject("CellLight").AddComponent<Light>();
+            bulb.transform.SetParent(cell); bulb.transform.position = cell.position + new Vector3(0, 2.8f, 0);
+            bulb.type = LightType.Point; bulb.range = 6f; bulb.intensity = 1.1f; bulb.color = new Color(0.75f, 0.9f, 0.8f); bulb.shadows = LightShadows.Soft;
+            bulb.gameObject.AddComponent<HorrorGame.Lighting.PeriodicFlickerLight>();
+            var dark = data.mats[6];
+            var patient = GB.Box(cell, "Patient_Body", cell.position + new Vector3(0.2f, 0.75f, 2.0f), new Vector3(0.45f, 1.5f, 0.3f), dark, false);
+            GB.Box(cell, "Patient_Head", cell.position + new Vector3(0.2f, 1.65f, 2.0f), new Vector3(0.24f, 0.28f, 0.24f), dark, false);
+
+            var tal = data.sources.TryGetValue("TAL_Hoa", out var th) ? th as KhoaHon.Notebook.TalismanData : null;
+            systems.AddComponent<KhoaHon.Sequences.EndingCutscenes>().Configure(ritual, Model("KH_BW_Sedan"), cell, tal,
+                Sfx("sfx_shatter"), Sfx("sfx_rumble"), Sfx("sfx_scare_whispers"), Sfx("sfx_engine_loop"), Sfx("sfx_jumpscare"), Sfx("sfx_scratch_loop"), Sfx("sfx_chains_break"));
+            log.Add($"Sequences: gateDoors={doors.Length} relic={relic != null} lord={lord != null} julian={body != null}");
         }
 
         static AudioClip Sfx(string n)
@@ -638,7 +746,7 @@ namespace KhoaHon.EditorTools
                 if (r.sharedMaterial == GB.mStone) r.sharedMaterial = stone;
             // Đồ sảnh tế: thay khối xám bằng model Blender
             ReplaceWithModel(cellar, "VacMauDen", "KH_VacMau", 0f, 0.0f);
-            ReplaceWithModel(cellar, "AnDong_Placeholder", "KH_AnDong", 0f, 0.0f);
+            ReplaceWithModel(cellar, "AnDong_Placeholder", "KH_BW_Relic", 0f, 0.25f); // Khối Cổ Vật obsidian lơ lửng trên vạc
             var chair = cellar.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "GheGoMun");
             if (chair != null)
             {

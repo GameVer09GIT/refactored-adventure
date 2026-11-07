@@ -94,3 +94,17 @@
 - `NoisyProp` (5 đồ vật ở hành lang tầng 2) + `PlayerPushProps` (người chơi xô ngã đồ, chạy thì mạnh hơn) → tiếng động bán kính 11 m → Mrs. Peake nghi ngờ. Đã kiểm chứng: xô ấm đổ → bà tới và bắt người chơi.
 - Âm thanh mới: `sfx_prop_clatter`, `sfx_prop_thud`.
 - Test 39/39.
+
+## Blackwood F — Cutscene & 3 kết thúc (2026-11-08)
+- `Sequences/CutsceneKit`: camera điện ảnh tạm thời (tắt camera + điều khiển người chơi, ẩn HUD/thanh đồ), letterbox, màn mờ đen/trắng, phụ đề cutscene, hình người tối.
+- **Giai đoạn 0 — vòng lặp cổng** (`GateLoopSequence`, chạy sau chữ mở đầu của Trò chơi mới): ngồi trong xe sedan (model Blender) trên đường z=−18, giữ W lái / S phanh / chuột nhìn quanh, đèn pha có bóng xuyên sương dày (Volume riêng). Lần 1 bóng phụ nữ giữa đường → phanh rít → tỉnh dậy trước cổng; lần 2 ba biển báo đổi thành tên người mất tích + radio khóc; lần 3 chết máy, đèn tắt, 2 cánh cổng sắt tự mở. Cờ GateLoop1–3. Đã kiểm chứng chạy trọn vẹn và trao quyền điều khiển trước bậc thềm dinh thự.
+- **Xà lim**: `JulianBody` — xem thi thể Julian → dòng chữ khắc, phản ứng riêng của Alex/Evelyn, nhận chiếc còi (FoundQuan, HasWhistle), −12 lý trí.
+- **Sảnh Tế** (`RitualSequence`): Khối Cổ Vật obsidian lơ lửng xoay trên vạc, bóng ma Lord Blackwood (vật liệu bán trong suốt phát sáng). Bước vào → 4 câu đàm phán với góc máy riêng (thoại riêng khi nói với Alex), DoF lấy nét theo chủ thể (`HorrorPostFX.FocusDistance`), rồi bảng lựa chọn. `EndingRules` (thuần, 2 test): Kết 1 cần đủ 5 kỷ vật + búa Thomas; Kết 2 cần bài chú thứ năm.
+- **3 kết** (`EndingCutscenes` → `EndingDirector.CutsceneHook`, có lưới an toàn timeout):
+  - I Giải thoát: kỷ vật vào vạc, lửa bùng, Cổ Vật vỡ (chớp trắng, rung), Lord tan biến, nhà rung → bình minh ngoài dinh thự (Volume trời quang).
+  - II Tân Chủ Nhân: đọc ngược bài chú thứ năm (chữ đỏ), oan hồn quỳ → "Vài tháng sau": cửa sổ tầng 2 có bóng người, xe đỗ trước cổng, "Vào đi…".
+  - Ẩn Kẻ Hèn Nhát: lái xe lúc 2 giờ sáng, quay lại thấy bóng quản gia ở ghế sau → Phòng 13 bệnh viện tâm thần (dựng trong converter, hình bát giác cào trên tường, tiếng cào).
+- Đếm số lần chết cho màn thống kê (`kh_deaths_run`, reset khi chơi mới).
+- Âm thanh mới: động cơ, phanh rít, chết máy, radio khóc, tiếng cào, Cổ Vật vỡ.
+- Sửa: camera cutscene là con của xe nên bị xóa theo xe (kết ẩn kẹt màn đen).
+- Test 41/41. Ảnh: `Temp/KhoaHon/f_gate1.png`, `f_gate3.png`, `f_after_gate.png`, `f_lord2.png`, `f_choice.png`, `f_nm1.png`, `f_release_end.png`.
