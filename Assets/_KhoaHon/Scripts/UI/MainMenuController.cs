@@ -355,6 +355,7 @@ namespace KhoaHon.UI
             yield return Fade(1f, 1.2f);
             SaveSystem.Delete();
             SaveSystem.PendingLoad = null;
+            PlayerPrefs.SetInt("kh_deaths_run", 0);
             GameFlow.PendingStart = StartMode.NewGame;
             ModalUI.Reset();
             SceneManager.LoadScene(SceneManager.GetActiveScene().path);
@@ -401,6 +402,18 @@ namespace KhoaHon.UI
                 text.alpha = 1; text.text = "";
             }
             Destroy(text.gameObject);
+            // Giai đoạn 0: vòng lặp lái xe trong sương (chỉ chạy một lần mỗi lượt chơi)
+            var gate = Sequences.GateLoopSequence.Instance;
+            if (gate != null && gate.ShouldRun)
+            {
+                bool done = false;
+                Sequences.CutsceneKit.SetFade(1f);
+                fader.alpha = 0f;
+                gate.Run(() => done = true);
+                while (!done) yield return null;
+                fader.alpha = 1f;
+                Sequences.CutsceneKit.SetFade(0f);
+            }
             yield return EnterPlaying(2.0f);
         }
 

@@ -30,8 +30,9 @@ namespace KhoaHon.Narrative
         public static readonly string[] EndingKeys = { "end.1", "end.2", "end.3" };
         public bool Running { get; private set; }
 
-        private void Awake() => Instance = this;
-        private void OnDestroy() { if (Instance == this) Instance = null; }
+        private void Awake() { Instance = this; DeathScreenManager.OnPlayerDied += CountDeath; }
+        private void OnDestroy() { DeathScreenManager.OnPlayerDied -= CountDeath; if (Instance == this) Instance = null; }
+        private static void CountDeath() { PlayerPrefs.SetInt("kh_deaths_run", PlayerPrefs.GetInt("kh_deaths_run", 0) + 1); }
 
         public void Play(EndingId id)
         {
@@ -57,7 +58,14 @@ namespace KhoaHon.Narrative
             if (CutsceneHook != null)
             {
                 var cs = CutsceneHook(id);
-                if (cs != null) yield return cs;
+                if (cs != null)
+                {
+                    // Chạy riêng + giới hạn thời gian: cutscene lỗi cũng không làm kẹt màn hình đen
+                    bool done = false;
+                    StartCoroutine(Guard(cs, () => done = true));
+                    float limit = 0f;
+                    while (!done && limit < 90f) { limit += Time.unscaledDeltaTime; yield return null; }
+                }
             }
 
             // Màn chữ kết thúc
@@ -87,6 +95,12 @@ namespace KhoaHon.Narrative
             GameFlow.PendingStart = StartMode.None;
             ModalUI.Reset();
             SceneManager.LoadScene(SceneManager.GetActiveScene().path);
+        }
+
+        private static IEnumerator Guard(IEnumerator inner, System.Action finished)
+        {
+            yield return inner;
+            finished();
         }
 
         private static string StatsLine()

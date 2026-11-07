@@ -1038,3 +1038,113 @@ MonoBehaviour:
   - key: mind.link.11
     text: "L\u1ED7 khoan 2009 sau v\xE1ch b\u1EBFp"
     en: The 2009 drill hole behind the kitchen wall
+  - key: gate.hint
+    text: "Gi\u1EEF [W] \u0111\u1EC3 l\xE1i \u0111i. [S] / [Space] \u0111\u1EC3 phanh.
+      Chu\u1ED9t \u0111\u1EC3 nh\xECn quanh."
+    en: Hold [W] to drive away. [S] / [Space] to brake. Mouse to look around.
+  - key: gate.wake
+    text: "\u2026T\xF4i t\u1EC9nh d\u1EADy. Chi\u1EBFc xe v\u1EABn \u0111\u1ED7 tr\u01B0\u1EDBc
+      c\u1ED5ng dinh th\u1EF1."
+    en: "\u2026I come to. The car is parked in front of the manor gate again."
+  - key: gate.again
+    text: "Kh\xF4ng th\u1EC3 n\xE0o. Th\u1EED l\u1EA1i."
+    en: That's impossible. Try again.
+  - key: gate.sign.1
+    text: ANNABELLE  1924
+    en: ANNABELLE  1924
+  - key: gate.sign.2
+    text: H. STERLING  1996
+    en: H. STERLING  1996
+  - key: gate.sign.3
+    text: JULIAN VANCE
+    en: JULIAN VANCE
+  - key: gate.wake2
+    text: "\u2026L\u1EA1i l\xE0 c\xE1nh c\u1ED5ng \u1EA5y. Ng\xF4i nh\xE0 kh\xF4ng
+      cho t\xF4i \u0111i."
+    en: "\u2026The same gate. The house won't let me leave."
+  - key: gate.try
+    text: "L\u1EA7n cu\u1ED1i."
+    en: One last time.
+  - key: gate.dead
+    text: "\u0110\u1ED9ng c\u01A1 ch\u1EBFt h\u1EB3n. \u0110\xE8n pha t\u1EAFt ng\u1EA5m."
+    en: The engine dies. The headlights go dark.
+  - key: gate.open
+    text: "C\xE1nh c\u1ED5ng s\u1EAFt t\u1EF1 m\u1EDF ra. N\xF3 \u0111ang m\u1EDDi
+      t\xF4i v\xE0o."
+    en: The iron gate swings open by itself. It's inviting me in.
+  - key: prompt.julian
+    text: "[E] Xem thi th\u1EC3"
+    en: '[E] Examine the body'
+  - key: prompt.julian_seen
+    text: "[E] Julian\u2026"
+    en: "[E] Julian\u2026"
+  - key: toast.whistle
+    text: "\u0110\xE3 nh\u1EB7t: chi\u1EBFc c\xF2i nh\u1ECF c\u1EE7a Julian"
+    en: 'Picked up: Julian''s little whistle'
+  - key: julian.reaction.alex
+    text: "Julian\u2026 em \u01A1i. Anh xin l\u1ED7i. Anh \u0111\u1EBFn mu\u1ED9n
+      qu\xE1."
+    en: "Julian\u2026 little brother. I'm sorry. I came too late."
+  - key: julian.reaction.evelyn
+    text: "C\u1EADu \u0111\xE3 \u0111i xa h\u01A1n b\u1EA5t k\u1EF3 ai, Julian. T\xF4i
+      s\u1EBD k\u1EBFt th\xFAc chuy\u1EC7n n\xE0y."
+    en: You came further than anyone, Julian. I'll finish this.
+  - key: ritual.choose
+    text: "Lord Blackwood ch\u1EDD c\xE2u tr\u1EA3 l\u1EDDi c\u1EE7a b\u1EA1n."
+    en: Lord Blackwood awaits your answer.
+  - key: ritual.need_relics
+    text: "(c\u1EA7n \u0111\u1EE7 5 k\u1EF7 v\u1EADt v\xE0 b\xFAa c\u1EE7a Thomas)"
+    en: (needs all 5 relics and Thomas's hammer)
+  - key: ritual.need_verse
+    text: "(c\u1EA7n b\xE0i ch\xFA th\u1EE9 n\u0103m)"
+    en: (needs the fifth verse)
+  - key: end.1.a
+    text: "T\u1EEBng k\u1EF7 v\u1EADt m\u1ED9t r\u01A1i v\xE0o v\u1EA1c m\xE1u \u0111en."
+    en: One by one, the relics fall into the black cauldron.
+  - key: end.1.b
+    text: "Chi\u1EBFc b\xFAa c\u1EE7a Thomas n\u1EB7ng tr\u0129u trong tay."
+    en: Thomas's hammer is heavy in your hands.
+  - key: end.1.c
+    text: "M\u01B0\u1EDDi ba s\u1EE3i x\xEDch linh h\u1ED3n \u0111\u1EE9t tung c\xF9ng
+      l\xFAc."
+    en: Thirteen soul-chains snap at once.
+  - key: end.1.d
+    text: "B\xECnh minh. L\u1EA7n \u0111\u1EA7u ti\xEAn sau m\u1ED9t tr\u0103m n\u0103m."
+    en: Dawn. For the first time in a hundred years.
+  - key: end.2.a
+    text: "M\u1ED9t gi\u1ECDt m\xE1u r\u01A1i l\xEAn m\u1EB7t \u0111\xE1 \u0111en.
+      N\xF3 \u1EA5m l\xEAn."
+    en: A drop of blood falls on the black stone. It grows warm.
+  - key: end.2.b
+    text: "M\u01B0\u1EDDi ba oan h\u1ED3n qu\u1EF3 xu\u1ED1ng. Ng\xF4i nh\xE0 \u0111\xE3
+      c\xF3 ch\u1EE7 m\u1EDBi."
+    en: Thirteen souls kneel. The house has a new master.
+  - key: end.2.later
+    text: "V\xE0i th\xE1ng sau."
+    en: Months later.
+  - key: end.2.quote
+    text: "\"V\xE0o \u0111i\u2026 nh\xE0 \u0111ang \u0111\u1EE3i c\xE1c b\u1EA1n.\""
+    en: "\"Come in\u2026 the house has been waiting for you.\""
+  - key: end.3.a
+    text: "Hai gi\u1EDD s\xE1ng. T\xF4i \u0111\xE3 tho\xE1t. T\xF4i \u0111\xE3 tho\xE1t\u2026"
+    en: "Two in the morning. I got out. I got out\u2026"
+  - key: end.3.b
+    text: "B\u1EC7nh vi\u1EC7n t\xE2m th\u1EA7n Ashford. Ph\xF2ng 13."
+    en: Ashford Asylum. Room 13.
+  - key: lord.2.alex
+    text: "Em trai anh \u0111\xE3 \u0111i xa h\u01A1n b\u1EA5t k\u1EF3 ai. Nh\u01B0ng
+      n\xF3 t\u1EEB ch\u1ED1i m\xF3n qu\xE0 c\u1EE7a ta. Th\u1EADt ph\xED ph\u1EA1m."
+    en: Your little brother came further than anyone. But he refused my gift. Such
+      a waste.
+  - key: lord.3.alex
+    text: "Nh\u1ECF m\u1ED9t gi\u1ECDt m\xE1u l\xEAn C\u1ED5 V\u1EADt, \u0111\u1ECDc
+      ng\u01B0\u1EE3c b\xE0i ch\xFA th\u1EE9 n\u0103m. M\u01B0\u1EDDi ba linh h\u1ED3n
+      s\u1EBD qu\u1EF3 d\u01B0\u1EDBi ch\xE2n anh. V\xE0 h\xE0ng tri\u1EC7u ng\u01B0\u1EDDi
+      s\u1EBD xem anh. M\xE3i m\xE3i."
+    en: One drop of blood upon the Relic. Read the fifth verse backwards. Thirteen
+      souls will kneel at your feet. And millions will watch you. Forever.
+  - key: lord.4.alex
+    text: "Hay anh \u0111\u1ECBnh \u0111\u1EADp v\u1EE1 n\xF3? Ng\xF4i nh\xE0 s\u1EBD
+      s\u1EADp. Anh s\u1EBD ch\u1EB3ng c\xF2n g\xEC \u2014 k\u1EC3 c\u1EA3 n\xF3."
+    en: "Or will you break it? The house will fall. You'll have nothing \u2014 not
+      even him."

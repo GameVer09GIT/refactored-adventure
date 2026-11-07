@@ -30,6 +30,8 @@ namespace KhoaHon.Horror
         private DepthOfField dof;
         /// <summary>Bật DoF (cutscene). Tài liệu/sổ tay đang mở cũng tự bật.</summary>
         public static bool CinematicFocus;
+        /// <summary>Khoảng lấy nét DoF (m) khi CinematicFocus; mặc định 0.6 cho tài liệu cầm tay.</summary>
+        public static float FocusDistance = 0.6f;
         private float prox, hunt, flash;
         private Transform cam;
 
@@ -82,7 +84,7 @@ namespace KhoaHon.Horror
             }
             if (blur != null) blur.active = MotionBlurEnabled && !menu;
             // Làm mờ nền khi đọc tài liệu / mở sổ tay / cutscene
-            if (dof != null) dof.active = CinematicFocus || (ModalUI.IsAnyOpen && GameFlow.State == FlowState.Playing);
+            if (dof != null) { dof.active = CinematicFocus || (ModalUI.IsAnyOpen && GameFlow.State == FlowState.Playing); dof.focusDistance.value = CinematicFocus ? FocusDistance : 0.6f; }
             if (heartbeat != null)
             {
                 float hv = Mathf.Clamp01(prox * 1.3f + hunt * 0.4f + Mathf.Clamp01(0.55f - sanity01) * 0.8f) * AudioMix.Sfx;
