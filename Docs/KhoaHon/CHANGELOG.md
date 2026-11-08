@@ -118,3 +118,9 @@
 - Tên vật phẩm trên thanh đồ theo ngôn ngữ (bản sao ItemData lúc chạy, không ghi asset; đổi ngôn ngữ cập nhật ngay). `HotbarGate.ReplaceItem`.
 - Thống kê màn kết dùng giờ chơi thật. Phiên bản hiển thị 1.0.
 - Test 41/41. Ảnh: `Temp/KhoaHon/g_menu.png`, `g_slots.png`, `g_extras.png`, `g_loading.png`.
+
+## Blackwood H — Build Windows (2026-11-08)
+- Sửa lỗi có sẵn khiến bản build phát hành không biên dịch được: `PlayerArmIKTuningUI` chỉ tồn tại trong Editor/Development nhưng `PlayerController` và `HotbarInventory` gọi vô điều kiện → thêm bản rỗng cho bản phát hành (`IsVisible` luôn false). Không sửa PlayerController/HotbarInventory/IK.
+- `KhoaHon/Build/5. Windows Build (Blackwood Manor)` (`KhoaHonBuildTool`): chỉ KH_Main, mở lại scene từ đĩa trước khi build, productName "Blackwood Manor", xuất `Builds/BlackwoodManor/BlackwoodManor.exe`.
+- Kết quả: **Succeeded**, 0 lỗi, 490 cảnh báo, 1.516 MB, 73 phút (lần đầu biên dịch shader; URP Lit 6144 biến thể). Chạy thử 30 giây ở chế độ cửa sổ: không crash, Player.log không có exception (chỉ lỗi chứng chỉ mạng vô hại).
+- Chưa commit: thay đổi URP tự ghi khi build (`m_Prefiltering*` trong `Assets/Settings/*`, `KH_URP_*`, preloadedAssets/batching trong ProjectSettings, LightingData).
