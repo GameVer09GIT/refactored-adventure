@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using KhoaHon.AI;
 using KhoaHon.Core;
@@ -26,22 +27,44 @@ namespace KhoaHon.EditorTools
             var cfg = KhoaHonDataBuilder.LoadOrCreate<HousekeeperConfig>("Assets/_KhoaHon/Data/Configs/KH_HousekeeperConfig.asset");
 
             // ---------- Vật liệu
-            var shader = Shader.Find("Universal Render Pipeline/Lit");
-            Material Mat(string n, Color c, float smooth, Color emit)
+            // "Banshee": giữ lưới skinned + normal map gốc của civilian_girl, thay albedo bằng bản xử lý
+            // (da tử thi, hốc mắt thâm, máu trào miệng, tóc bạc, váy áo trắng ngà đẫm máu) — không sửa file asset pack
+            var girlPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/civilian_girl/Prefabs/civilian_girl.prefab");
+            var orig = new Dictionary<string, Material>();
+            foreach (var r in girlPrefab.GetComponentsInChildren<Renderer>(true))
+                foreach (var m in r.sharedMaterials) if (m != null && !orig.ContainsKey(m.name)) orig[m.name] = m;
+            Material Clone(string n, string origName, Texture2D baseMap, float smooth, Color emit)
             {
+                if (!orig.TryGetValue(origName, out var o)) return null;
                 string p = MatDir + "/" + n + ".mat";
                 var m = AssetDatabase.LoadAssetAtPath<Material>(p);
-                if (m == null) { m = new Material(shader); AssetDatabase.CreateAsset(m, p); }
-                m.SetColor("_BaseColor", c); m.SetFloat("_Smoothness", smooth); m.SetFloat("_Metallic", 0f);
-                if (emit.maxColorComponent > 0f) { m.EnableKeyword("_EMISSION"); m.SetColor("_EmissionColor", emit); m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None; }
+                if (m == null) { m = new Material(o); AssetDatabase.CreateAsset(m, p); }
+                else { m.shader = o.shader; m.CopyPropertiesFromMaterial(o); }
+                if (baseMap != null) { m.SetTexture("_BaseMap", baseMap); m.SetTexture("_MainTex", baseMap); }
+                m.SetColor("_BaseColor", Color.white);
+                if (smooth >= 0f) m.SetFloat("_Smoothness", smooth);
+                if (emit.maxColorComponent > 0f)
+                {
+                    m.EnableKeyword("_EMISSION"); m.SetColor("_EmissionColor", emit); m.SetTexture("_EmissionMap", baseMap);
+                    m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+                }
                 else m.DisableKeyword("_EMISSION");
                 EditorUtility.SetDirty(m);
                 return m;
             }
-            var cloth = Mat("M_HK_AoBaBa", new Color(0.035f, 0.03f, 0.032f), 0.18f, Color.black);
-            var skin = Mat("M_HK_Skin", new Color(0.40f, 0.43f, 0.41f), 0.38f, new Color(0.02f, 0.026f, 0.024f));
-            var hair = Mat("M_HK_Hair", new Color(0.02f, 0.018f, 0.018f), 0.55f, Color.black);
-            var eyes = Mat("M_HK_Eyes", new Color(0.85f, 0.88f, 0.86f), 0.9f, new Color(0.35f, 0.38f, 0.36f));
+            var headTex = orig.ContainsKey("head") ? KhoaHonBansheeTextures.Head(orig["head"].GetTexture("_BaseMap")) : null;
+            var bodyTex = orig.ContainsKey("body") ? KhoaHonBansheeTextures.Body(orig["body"].GetTexture("_BaseMap")) : null;
+            var hairTex = orig.ContainsKey("hair") ? KhoaHonBansheeTextures.Hair(orig["hair"].GetTexture("_BaseMap")) : null;
+            var remap = new Dictionary<string, Material>
+            {
+                { "head", Clone("M_HK_B_Head", "head", headTex, 0.5f, Color.black) },
+                { "body", Clone("M_HK_B_Body", "body", bodyTex, -1f, Color.black) },
+                { "body_skin", Clone("M_HK_B_Skin", "body_skin", bodyTex, 0.45f, Color.black) },
+                { "hair", Clone("M_HK_B_Hair", "hair", hairTex, 0.3f, Color.black) },
+                { "head_eyes", Clone("M_HK_B_Eyes", "head_eyes", headTex, 0.95f, new Color(0.55f, 0.6f, 0.66f)) },
+                { "eyelahes", Clone("M_HK_B_Lashes", "eyelahes", null, -1f, Color.black) },
+            };
+            if (remap["eyelahes"] != null) remap["eyelahes"].SetColor("_BaseColor", new Color(0.55f, 0.55f, 0.52f));
 
             // ---------- Animator (Idle / Walk / Run theo Speed)
             string ctrlPath = AnimDir + "/KH_Housekeeper.controller";
@@ -73,19 +96,18 @@ namespace KhoaHon.EditorTools
             girl.name = "Body_QuanGia";
             PrefabUtility.UnpackPrefabInstance(girl, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
             girl.transform.localPosition = Vector3.zero; girl.transform.localRotation = Quaternion.identity;
-            girl.transform.localScale = Vector3.one * 1.03f;
-            foreach (var mb in girl.GetComponentsInChildren<MonoBehaviour>(true)) if (mb == null || !(mb is Animator)) Object.DestroyImmediate(mb);
+                        foreach (var mb in girl.GetComponentsInChildren<MonoBehaviour>(true)) if (mb == null || !(mb is Animator)) Object.DestroyImmediate(mb);
             foreach (var c in girl.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(c);
             foreach (var r in girl.GetComponentsInChildren<Renderer>(true))
             {
-                string n = r.name.ToLowerInvariant();
-                Material m = n.Contains("hair") || n.Contains("lash") || n.Contains("brow") ? hair
-                           : n.Contains("eye") ? eyes
-                           : n.Contains("head") || n.Contains("hand") || n.Contains("body") || n.Contains("skin") ? skin
-                           : cloth;
-                var arr = r.sharedMaterials; for (int i = 0; i < arr.Length; i++) arr[i] = m; r.sharedMaterials = arr;
+                var arr = r.sharedMaterials;
+                for (int i = 0; i < arr.Length; i++)
+                    if (arr[i] != null && remap.TryGetValue(arr[i].name, out var nm) && nm != null) arr[i] = nm;
+                r.sharedMaterials = arr;
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             }
+            // Dáng cao gầy, lêu nghêu
+            girl.transform.localScale = new Vector3(0.96f, 1.08f, 0.96f);
             var anim = girl.GetComponent<Animator>();
             if (anim == null) anim = girl.AddComponent<Animator>();
             anim.runtimeAnimatorController = ctrl;
@@ -107,8 +129,6 @@ namespace KhoaHon.EditorTools
                 keys.transform.localScale = Vector3.one * 1.4f;
             }
 
-            // Áo bà ba + tóc dài (mảnh cứng gắn theo xương, dựng trong Blender)
-            if (anim.isHuman) AttachGarments(anim, cloth, hair);
 
             // Âm thanh
             AudioSource Src(string n, Transform parent)

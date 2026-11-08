@@ -13,7 +13,10 @@ namespace KhoaHon.Horror
         [SerializeField] private Animator animator;
         [SerializeField] private HousekeeperAI ai;
 
-        private Transform head, neck, spine, hips, lArm, rArm;
+        private Transform head, neck, spine, hips, lArm, rArm, jaw;
+        private Transform[] lipsUp;
+        private Vector3[] lipsInit;
+        private Quaternion jawInit;
         private float twitchUntil, nextTwitch;
         private Quaternion twitchRot = Quaternion.identity;
         private float stutterUntil, nextStutter;
@@ -30,6 +33,16 @@ namespace KhoaHon.Horror
                 hips = animator.GetBoneTransform(HumanBodyBones.Hips);
                 lArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
                 rArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+                jaw = animator.GetBoneTransform(HumanBodyBones.Jaw);
+                if (head != null)
+                {
+                    var l = new System.Collections.Generic.List<Transform>();
+                    foreach (Transform c in head) if (c.name.StartsWith("lip_up")) l.Add(c);
+                    lipsUp = l.ToArray();
+                    lipsInit = new Vector3[lipsUp.Length];
+                    for (int i = 0; i < lipsUp.Length; i++) lipsInit[i] = lipsUp[i].localPosition;
+                }
+                if (jaw != null) jawInit = jaw.localRotation;
             }
             nextTwitch = Time.time + Random.Range(1f, 3f);
             nextStutter = Time.time + Random.Range(2f, 5f);
@@ -61,6 +74,14 @@ namespace KhoaHon.Horror
             var tilt = Quaternion.Euler(8f + Mathf.Sin(t * 0.7f) * 4f, Mathf.Sin(t * 0.37f) * 10f, baseTilt + Mathf.Sin(t * 1.3f) * 5f);
             head.localRotation = head.localRotation * tilt * (Time.time < twitchUntil ? twitchRot : Quaternion.identity);
             if (neck != null) neck.localRotation = neck.localRotation * Quaternion.Euler(10f, 0f, 6f);
+            // Miệng há hoác như đang gào (hàm trễ xuống, môi trên nhếch lộ răng); lúc săn há rộng hơn và run
+            if (jaw != null)
+            {
+                float gape = hunting ? 26f + Mathf.Sin(t * 23f) * 3f : 14f + Mathf.Sin(t * 0.9f) * 4f;
+                jaw.localRotation = jawInit * Quaternion.Euler(0f, 0f, -gape); // đặt tuyệt đối: không cộng dồn qua từng khung
+            }
+            if (lipsUp != null)
+                for (int i = 0; i < lipsUp.Length; i++) lipsUp[i].localPosition = lipsInit[i] + new Vector3(0f, hunting ? 0.004f : 0.0025f, 0f);
             // Gù lưng + vai sụp, run khi choáng
             if (spine != null) spine.localRotation = spine.localRotation * Quaternion.Euler(hunting ? 18f : 12f, 0f, stunned ? Mathf.Sin(t * 40f) * 6f : 0f);
             if (lArm != null) lArm.localRotation = lArm.localRotation * Quaternion.Euler(0f, 0f, hunting ? -18f : -8f);

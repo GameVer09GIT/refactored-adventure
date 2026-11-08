@@ -1166,21 +1166,18 @@ namespace HorrorGame.Inventory
             Vector3 fingerAxis = new Vector3(0f, 0f, -1f);
             Vector3 thumbAxis = new Vector3(0f, -1f, 0f);
 
-            if (currentItemData != null && currentItemData.ItemType == ItemType.Flashlight)
+            if (currentItemData != null && currentItemData.ItemType != ItemType.Radar)
             {
-                // === FLASHLIGHT (Slot 1) - GIỮ NGUYÊN 100% cơ chế multiplicative cũ ===
-                float f1 = 45f * fingerCurlAngle;
-                float f2 = 55f * fingerCurlAngle;
-                float f3 = 40f * fingerCurlAngle;
-                float t1 = 15f * fingerCurlAngle;
-                float t2 = 0f;
-                float t3 = 10f * fingerCurlAngle;
-
-                ApplyFingerJoints(rightArm.index, f1, f2, f3, fingerAxis, currentFingerWeight);
-                ApplyFingerJoints(rightArm.middle, f1, f2, f3, fingerAxis, currentFingerWeight);
-                ApplyFingerJoints(rightArm.ring, f1, f2, f3, fingerAxis, currentFingerWeight);
-                ApplyFingerJoints(rightArm.pinky, f1, f2, f3, fingerAxis, currentFingerWeight);
-                ApplyFingerJoints(rightArm.thumb, t1 + rightArm.thumbExtraAngle, t2, t3, thumbAxis, currentFingerWeight);
+                // === Đèn pin + mọi vật phẩm cầm nắm khác (xà beng, máy ghi âm, máy ảnh, điện thoại, máy quay) ===
+                // Nắm quanh thân vật theo độ cuộn từng ngón khai báo trong ItemData (trước đây chỉ đèn pin có gập ngón,
+                // các vật phẩm khác bị xòe tay). fingerCurlAngle giữ vai trò hệ số chung.
+                var d = currentItemData;
+                float k = fingerCurlAngle;
+                ApplyFingerJoints(rightArm.index, 62f * d.IndexCurl * k, 78f * d.IndexCurl * k, 52f * d.IndexCurl * k, fingerAxis, currentFingerWeight);
+                ApplyFingerJoints(rightArm.middle, 66f * d.MiddleCurl * k, 82f * d.MiddleCurl * k, 55f * d.MiddleCurl * k, fingerAxis, currentFingerWeight);
+                ApplyFingerJoints(rightArm.ring, 66f * d.RingCurl * k, 82f * d.RingCurl * k, 55f * d.RingCurl * k, fingerAxis, currentFingerWeight);
+                ApplyFingerJoints(rightArm.pinky, 62f * d.PinkyCurl * k, 78f * d.PinkyCurl * k, 52f * d.PinkyCurl * k, fingerAxis, currentFingerWeight);
+                ApplyFingerJoints(rightArm.thumb, 30f * d.ThumbCurl * k + rightArm.thumbExtraAngle, 10f * d.ThumbCurl * k, 28f * d.ThumbCurl * k, thumbAxis, currentFingerWeight);
             }
             else if (currentItemData != null && currentItemData.ItemType == ItemType.Radar)
             {
