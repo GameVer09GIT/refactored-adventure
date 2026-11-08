@@ -49,3 +49,19 @@ Mức ưu tiên: **P1** = ảnh hưởng hiểu cốt truyện / gameplay · **P
 ## TODO nội dung
 - **Bài chú trên 5 trang bùa**: GDD và PROMPT chưa có lời. Hiện để `[Câu chú n — chờ nội dung]` trong `Data/Talismans/TAL_*.asset`. Cần 4 câu/trang trước Phase 4 (Kết 2 đọc ngược bài chú trang Hỏa).
 - Thẻ phóng viên của Quân: GDD chưa có tên tòa soạn. Hiện để "THẺ PHÓNG VIÊN — Hạ Quân — Phóng viên ảnh".
+
+## Blackwood Manor — bản 1.0 (2026-11-08)
+Đã giải quyết: bài chú 5 trang Vademecum (có đủ Việt/Anh), thẻ của Julian (The Ashford Herald), âm thanh rè cassette / màn trập / động cơ / radio (tổng hợp thủ tục).
+
+| Hạng mục | Mô tả | Dùng ở | Ưu tiên | Hiện tại |
+|---|---|---|---|---|
+| Lồng tiếng Julian (6 câu × 3 băng) | Nam trẻ, thì thầm, kiệt sức; Việt + Anh | TapePlayer | P1 | Phụ đề + tiếng rè |
+| Lồng tiếng Lord Blackwood (4 câu + 3 câu riêng cho Alex) | Quý ông Anh, giọng trầm, mềm mỏng | Sảnh Tế | P1 | Phụ đề + thì thầm tổng hợp |
+| Giọng Mrs. Peake + bài hát ru | Bà già Anh, khàn | Tầng 2 | P2 | Phụ đề + âm tổng hợp |
+| Nhạc nền soạn riêng | Menu, truy đuổi, 3 kết, credits | Toàn game | P2 | Hộp nhạc + nhịp săn tổng hợp |
+| Chân dung Evelyn / Alex | Ảnh vẽ cho màn chọn nhân vật | Menu | P2 | Chữ cái đầu trên nền màu |
+| Model Lord Blackwood | Nhân vật nam áo đuôi tôm có rig | Sảnh Tế, kết | P1 | Bóng ma khối đơn giản (Blender script) + vật liệu bán trong suốt |
+| Trang phục Mrs. Peake | Váy quản gia Victoria + tạp dề | Tầng 2 | P2 | Áo bà ba đen (Blender) trên civilian_girl |
+| Steamworks | AppID, Steam Achievements, Cloud Save | AchievementService.Backend | P1 khi lên Steam | Thành tựu nội bộ PlayerPrefs |
+| Ảnh logo/capsule Steam | 460×215, 616×353, 1920×1080… | Trang Steam | P1 khi lên Steam | — |
+| Gán lại phím, tay cầm | PlayerController dùng Keyboard/Mouse trực tiếp | Cài đặt | P2 | Danh sách phím cố định |
