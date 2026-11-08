@@ -21,7 +21,9 @@ namespace KhoaHon.EditorTools
         const string TexDir = "Assets/_KhoaHon/Textures/Gore";
         const string MatDir = "Assets/_KhoaHon/Materials/Gore";
         const string Models = "Assets/_KhoaHon/Models/Props/";
-        static Material mSplat, mPool, mDrag, mHand, mHandSmall, mScorch, mDrip, mCorpse, mParticle;
+        // Mỗi loại máu có vài biến thể (seed khác nhau) để không lặp hình
+        static Material[] mSplat, mPool, mDrag, mHand, mHandSmall, mHandSmear, mScorch, mDrip;
+        static Material mCorpse, mParticle;
         static Transform root;
 
         public static string Build(Transform parent, Vector3 cellarOrigin)
@@ -38,16 +40,24 @@ namespace KhoaHon.EditorTools
             return $"Horror layer ok (decals={decals})";
         }
 
-        // ================================================================== Texture máu thủ tục
+        // ================================================================== Máu: URP Decal chiếu lên bề mặt
         static void BuildTexturesAndMaterials()
         {
-            mSplat = Mat("M_Blood_Splat", Tex("T_Blood_Splat", 512, Splat, 11), 0.82f);
-            mPool = Mat("M_Blood_Pool", Tex("T_Blood_Pool", 512, Pool, 12), 0.92f);
-            mDrag = Mat("M_Blood_Drag", Tex("T_Blood_Drag", 512, Drag, 13), 0.7f);
-            mHand = Mat("M_Blood_Hand", Tex("T_Blood_Hand", 256, (x, y, r) => Hand(x, y, r, false), 14), 0.6f);
-            mHandSmall = Mat("M_Blood_HandChild", Tex("T_Blood_HandChild", 256, (x, y, r) => Hand(x, y, r, true), 15), 0.6f);
-            mScorch = Mat("M_Scorch", Tex("T_Scorch", 512, Scorch, 16), 0.1f, true);
-            mDrip = Mat("M_Blood_Drips", Tex("T_Blood_Drips", 512, Drips, 17), 0.8f);
+            Material[] Set(string name, KhoaHonBloodTextures.Kind kind, bool wet, params int[] seeds)
+            {
+                var arr = new Material[seeds.Length];
+                for (int i = 0; i < seeds.Length; i++) arr[i] = DMat(name + "_" + seeds[i], KhoaHonBloodTextures.Build(kind, seeds[i]), wet);
+                return arr;
+            }
+            mSplat = Set("MD_Blood_Splat", KhoaHonBloodTextures.Kind.Splat, true, 11, 21, 31).Concat(Set("MD_Blood_SplatWide", KhoaHonBloodTextures.Kind.SplatWide, true, 41)).ToArray();
+            mPool = Set("MD_Blood_Pool", KhoaHonBloodTextures.Kind.Pool, true, 12, 22);
+            mDrag = Set("MD_Blood_Drag", KhoaHonBloodTextures.Kind.Drag, true, 13, 23);
+            mHand = Set("MD_Blood_Hand", KhoaHonBloodTextures.Kind.Hand, true, 14, 24);
+            mHandSmear = Set("MD_Blood_HandSmear", KhoaHonBloodTextures.Kind.HandSmear, true, 34);
+            mHand = mHand.Concat(mHandSmear).ToArray();
+            mHandSmall = Set("MD_Blood_HandChild", KhoaHonBloodTextures.Kind.HandChild, true, 15, 25);
+            mDrip = Set("MD_Blood_Drips", KhoaHonBloodTextures.Kind.Drips, true, 17, 27);
+            mScorch = Set("MD_Scorch", KhoaHonBloodTextures.Kind.Scorch, false, 16);
             mCorpse = PlainMat("M_Corpse_Skin", new Color(0.28f, 0.27f, 0.25f), 0.25f);
             mParticle = AssetDatabase.LoadAssetAtPath<Material>(MatDir + "/M_BloodDrop.mat");
             if (mParticle == null)
@@ -55,144 +65,32 @@ namespace KhoaHon.EditorTools
                 mParticle = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
                 AssetDatabase.CreateAsset(mParticle, MatDir + "/M_BloodDrop.mat");
             }
-            mParticle.SetColor("_BaseColor", new Color(0.32f, 0.01f, 0.01f, 1f));
+            mParticle.SetColor("_BaseColor", new Color(0.22f, 0.006f, 0.005f, 1f));
         }
 
-        delegate float Pixel(float x, float y, System.Random r);
-
-        static Texture2D Tex(string name, int size, Pixel f, int seed)
+        /// <summary>Vật liệu decal URP chuẩn (albedo + normal map độ dày giúp máu nổi khối, bắt sáng theo bề mặt bên dưới).</summary>
+        static Material DMat(string name, KhoaHonBloodTextures.Pair p, bool wet)
         {
-            string path = TexDir + "/" + name + ".png";
-            var r = new System.Random(seed);
-            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
-            var px = new Color32[size * size];
-            // Thông số ngẫu nhiên dùng chung cho mỗi texture (tạo trước để f() ổn định)
-            seedBlobs = new Vector4[40];
-            for (int i = 0; i < seedBlobs.Length; i++) seedBlobs[i] = new Vector4((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble());
-            for (int y = 0; y < size; y++)
-                for (int x = 0; x < size; x++)
-                {
-                    float u = (x + 0.5f) / size, v = (y + 0.5f) / size;
-                    float a = Mathf.Clamp01(f(u, v, r));
-                    // Máu: lõi đỏ thẫm gần đen, mép đỏ tươi hơn; chi tiết theo nhiễu
-                    float n = Mathf.PerlinNoise(u * 18f + seed, v * 18f) * 0.5f + Mathf.PerlinNoise(u * 60f, v * 60f + seed) * 0.5f;
-                    float core = Mathf.SmoothStep(0.2f, 1f, a);
-                    var c = Color.Lerp(new Color(0.66f, 0.05f, 0.03f), new Color(0.30f, 0.012f, 0.01f), core * 0.75f + n * 0.25f);
-                    px[y * size + x] = new Color(c.r, c.g, c.b, a);
-                }
-            tex.SetPixels32(px); tex.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + path), tex.EncodeToPNG());
-            Object.DestroyImmediate(tex);
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
-            var ti = (TextureImporter)AssetImporter.GetAtPath(path);
-            ti.alphaIsTransparency = true; ti.wrapMode = TextureWrapMode.Clamp; ti.mipmapEnabled = true; ti.textureCompression = TextureImporterCompression.CompressedHQ;
-            ti.SaveAndReimport();
-            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            string path = MatDir + "/" + name + ".mat";
+            var sh = Shader.Find("Shader Graphs/Decal");
+            var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (m == null) { m = new Material(sh); AssetDatabase.CreateAsset(m, path); }
+            else m.shader = sh;
+            m.SetTexture("Base_Map", p.baseMap);
+            m.SetTexture("Normal_Map", p.normalMap);
+            m.SetFloat("Normal_Blend", 0.9f);
+            m.enableInstancing = true;
+            EditorUtility.SetDirty(m);
+            return m;
         }
 
-        static Vector4[] seedBlobs;
-
+        /// <summary>Hình loang mềm dùng cho texture "thấm máu" của bà Quản Gia.</summary>
         static float Blob(float u, float v, float cx, float cy, float rad, float wobble, int k)
         {
             float dx = u - cx, dy = v - cy, d = Mathf.Sqrt(dx * dx + dy * dy);
             float ang = Mathf.Atan2(dy, dx);
             float edge = rad * (1f + wobble * (Mathf.PerlinNoise(Mathf.Cos(ang) * 2f + k, Mathf.Sin(ang) * 2f + k * 1.7f) - 0.5f) * 2f);
             return Mathf.Clamp01((edge - d) / (rad * 0.18f + 0.002f));
-        }
-
-        static float Splat(float u, float v, System.Random r)
-        {
-            float a = Blob(u, v, 0.5f, 0.5f, 0.22f, 0.55f, 1);
-            for (int i = 0; i < 28; i++)
-            {
-                var s = seedBlobs[i];
-                float ang = s.x * Mathf.PI * 2f, dist = 0.18f + s.y * 0.3f;
-                float cx = 0.5f + Mathf.Cos(ang) * dist, cy = 0.5f + Mathf.Sin(ang) * dist;
-                a = Mathf.Max(a, Blob(u, v, cx, cy, 0.008f + s.z * 0.035f, 0.3f, i));
-                // Tia bắn kéo dài về phía tâm
-                float t = Mathf.Clamp01(((u - 0.5f) * Mathf.Cos(ang) + (v - 0.5f) * Mathf.Sin(ang)) / dist);
-                float px = 0.5f + Mathf.Cos(ang) * dist * t, py = 0.5f + Mathf.Sin(ang) * dist * t;
-                float w = 0.004f + s.w * 0.01f * (1f - t);
-                float dd = Mathf.Sqrt((u - px) * (u - px) + (v - py) * (v - py));
-                if (s.w > 0.5f) a = Mathf.Max(a, Mathf.Clamp01((w - dd) / 0.003f) * Mathf.Clamp01(t * 3f));
-            }
-            return a;
-        }
-
-        static float Pool(float u, float v, System.Random r)
-        {
-            float a = Blob(u, v, 0.5f, 0.5f, 0.36f, 0.4f, 2);
-            for (int i = 0; i < 6; i++) { var s = seedBlobs[i]; a = Mathf.Max(a, Blob(u, v, 0.25f + s.x * 0.5f, 0.25f + s.y * 0.5f, 0.1f + s.z * 0.12f, 0.5f, i + 5)); }
-            return a;
-        }
-
-        static float Drag(float u, float v, System.Random r)
-        {
-            // Vệt kéo lê dọc trục V: dày đầu, mỏng dần, có sọc ngón tay
-            float width = Mathf.Lerp(0.32f, 0.06f, v) * (0.85f + 0.3f * Mathf.PerlinNoise(v * 8f, 3f));
-            float du = Mathf.Abs(u - 0.5f - 0.05f * Mathf.Sin(v * 7f));
-            float a = Mathf.Clamp01((width - du) / 0.03f) * Mathf.Clamp01((0.98f - v) / 0.05f) * Mathf.Clamp01(v / 0.04f + 0.3f);
-            float streak = 0.55f + 0.45f * Mathf.Sin(u * 140f + Mathf.PerlinNoise(u * 20f, v * 3f) * 4f);
-            return a * Mathf.Lerp(1f, streak, Mathf.Clamp01(v * 1.5f));
-        }
-
-        static float Hand(float u, float v, System.Random r, bool child)
-        {
-            float a = Blob(u, v, 0.5f, 0.36f, child ? 0.14f : 0.17f, 0.15f, 3); // lòng bàn tay
-            float[] ang = { -50f, -18f, 0f, 16f, 34f };
-            float[] len = { 0.16f, 0.26f, 0.29f, 0.27f, 0.21f };
-            for (int i = 0; i < 5; i++)
-            {
-                float rad = (90f + ang[i]) * Mathf.Deg2Rad;
-                float bx = 0.5f + Mathf.Cos(rad) * 0.12f, by = 0.4f + Mathf.Sin(rad) * 0.12f;
-                float ex = bx + Mathf.Cos(rad) * len[i], ey = by + Mathf.Sin(rad) * len[i];
-                float t = Mathf.Clamp01(((u - bx) * (ex - bx) + (v - by) * (ey - by)) / ((ex - bx) * (ex - bx) + (ey - by) * (ey - by)));
-                float px = bx + (ex - bx) * t, py = by + (ey - by) * t;
-                float d = Mathf.Sqrt((u - px) * (u - px) + (v - py) * (v - py));
-                a = Mathf.Max(a, Mathf.Clamp01((0.032f - d) / 0.008f));
-            }
-            // Vệt chảy xuống
-            float drip = Mathf.Clamp01((0.012f - Mathf.Abs(u - 0.47f)) / 0.006f) * Mathf.Clamp01((0.3f - v) / 0.3f) * (v < 0.3f ? 1f : 0f);
-            a = Mathf.Max(a, drip * (v > 0.05f ? 1f : 0f));
-            return a * (0.7f + 0.3f * Mathf.PerlinNoise(u * 30f, v * 30f));
-        }
-
-        static float Scorch(float u, float v, System.Random r)
-        {
-            float d = Mathf.Sqrt((u - 0.5f) * (u - 0.5f) + (v - 0.5f) * (v - 0.5f));
-            return Mathf.Clamp01((0.46f - d) / 0.25f) * (0.6f + 0.4f * Mathf.PerlinNoise(u * 12f, v * 12f));
-        }
-
-        static float Drips(float u, float v, System.Random r)
-        {
-            // Mảng máu trên cao chảy thành dòng xuống (dán tường)
-            float top = Mathf.Clamp01((v - 0.72f) / 0.08f) * Mathf.Clamp01((0.98f - v) / 0.04f) * (0.6f + 0.4f * Mathf.PerlinNoise(u * 9f, 1f));
-            float a = top;
-            for (int i = 0; i < 14; i++)
-            {
-                var s = seedBlobs[i];
-                float x = 0.06f + s.x * 0.88f, endY = 0.72f - (0.15f + s.y * 0.65f);
-                float w = 0.006f + s.z * 0.012f;
-                if (v < 0.75f && v > endY) a = Mathf.Max(a, Mathf.Clamp01((w - Mathf.Abs(u - x)) / 0.004f));
-                a = Mathf.Max(a, Blob(u, v, x, endY, w * 1.6f, 0.1f, i));
-            }
-            return a;
-        }
-
-        static Material Mat(string name, Texture2D tex, float smooth, bool dark = false)
-        {
-            string p = MatDir + "/" + name + ".mat";
-            var m = AssetDatabase.LoadAssetAtPath<Material>(p);
-            if (m == null) { m = new Material(Shader.Find("Universal Render Pipeline/Lit")); AssetDatabase.CreateAsset(m, p); }
-            m.SetTexture("_BaseMap", tex);
-            m.SetColor("_BaseColor", dark ? new Color(0.05f, 0.04f, 0.035f) : Color.white);
-            m.SetFloat("_Smoothness", smooth); m.SetFloat("_Metallic", 0f);
-            m.SetFloat("_AlphaClip", 1f); m.SetFloat("_Cutoff", 0.35f); m.EnableKeyword("_ALPHATEST_ON");
-            m.SetFloat("_Cull", 0f);
-            m.renderQueue = 2450;
-            m.enableInstancing = true;
-            EditorUtility.SetDirty(m);
-            return m;
         }
 
         static Material PlainMat(string name, Color c, float smooth)
@@ -208,30 +106,32 @@ namespace KhoaHon.EditorTools
         // ================================================================== Rải máu
         static int count;
 
-        /// <summary>Quad máu nằm trên sàn (y = mặt sàn) hoặc dán tường (normal hướng ra phòng).</summary>
-        static void Floor(Material m, float x, float y, float z, float size, float yaw, float stretch = 1f)
+        /// <summary>
+        /// Decal chiếu từ trên xuống (sàn) hoặc vào tường. Hộp chiếu dày nên ôm theo mọi gờ ván, bậc thang,
+        /// chân bàn — không còn tấm phẳng nổi lơ lửng hay lộ khung chữ nhật.
+        /// </summary>
+        static DecalProjector Proj(Material[] set, Vector3 pos, Quaternion rot, float w, float h, float depth)
         {
-            var q = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            Object.DestroyImmediate(q.GetComponent<Collider>());
-            q.name = "Gore_" + m.name; q.transform.SetParent(root);
-            q.transform.SetPositionAndRotation(new Vector3(x, y + 0.006f + (count % 7) * 0.0007f, z), Quaternion.Euler(90f, yaw, 0f));
-            q.transform.localScale = new Vector3(size, size * stretch, 1f);
-            var mr = q.GetComponent<MeshRenderer>(); mr.sharedMaterial = m; mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            q.isStatic = true;
+            var m = set[count % set.Length];
+            var go = new GameObject("Gore_" + m.name);
+            go.transform.SetParent(root);
+            go.transform.SetPositionAndRotation(pos, rot);
+            var dp = go.AddComponent<DecalProjector>();
+            dp.material = m;
+            dp.size = new Vector3(w, h, depth);
+            dp.pivot = Vector3.zero;
+            dp.drawDistance = 45f;
+            dp.fadeScale = 0.85f;
+            go.isStatic = true;
             count++;
+            return dp;
         }
 
-        static void Wall(Material m, Vector3 pos, Vector3 normal, float size, float roll = 0f, float stretch = 1f)
-        {
-            var q = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            Object.DestroyImmediate(q.GetComponent<Collider>());
-            q.name = "Gore_" + m.name; q.transform.SetParent(root);
-            q.transform.SetPositionAndRotation(pos + normal * 0.012f, Quaternion.LookRotation(-normal, Vector3.up) * Quaternion.Euler(0, 0, roll));
-            q.transform.localScale = new Vector3(size, size * stretch, 1f);
-            var mr = q.GetComponent<MeshRenderer>(); mr.sharedMaterial = m; mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            q.isStatic = true;
-            count++;
-        }
+        static void Floor(Material[] m, float x, float y, float z, float size, float yaw, float stretch = 1f)
+            => Proj(m, new Vector3(x, y, z), Quaternion.Euler(90f, yaw, 0f), size, size * stretch, 0.5f);
+
+        static void Wall(Material[] m, Vector3 pos, Vector3 normal, float size, float roll = 0f, float stretch = 1f)
+            => Proj(m, pos, Quaternion.LookRotation(-normal, Vector3.up) * Quaternion.Euler(0f, 0f, roll), size, size * stretch, 0.4f);
 
         static int PlaceGore(Vector3 O)
         {
@@ -285,6 +185,36 @@ namespace KhoaHon.EditorTools
             // --- Khách Trọ (bị chuốc độc): máu nôn quanh bàn
             Floor(mSplat, 107.6f, F2, 24.5f, 1.1f, R(0, 360));
             Floor(mPool, 108.3f, F2, 25.8f, 0.9f, 0f);
+            // --- Thêm máu dọc lối đi chính (sảnh -> cầu thang -> hành lang tầng 2), tường tìm bằng raycast
+            Physics.SyncTransforms();
+            void WallRay(Material[] m, Vector3 from, Vector3 dir, float size, float roll = 0f, float stretch = 1f)
+            {
+                if (Physics.Raycast(from, dir, out var hit, 6f, ~0, QueryTriggerInteraction.Ignore) && Mathf.Abs(hit.normal.y) < 0.3f)
+                    Wall(m, hit.point, hit.normal, size, roll, stretch);
+            }
+            Floor(mSplat, 83.4f, GF, 10.2f, 1.5f, R(0, 360));
+            Floor(mPool, 82.3f, GF, 13.8f, 1.2f, 30f);
+            Floor(mDrag, 84.0f, GF, 16.5f, 1.2f, 75f, 3.0f);
+            Floor(mSplat, 88.5f, GF, 14.0f, 1.3f, R(0, 360));
+            Floor(mSplat, 90.6f, GF, 21.5f, 1.0f, R(0, 360));
+            Floor(mDrag, 96.5f, GF, 22.0f, 1.1f, 100f, 3.2f);
+            Floor(mPool, 99.8f, GF, 21.0f, 1.0f, 0f);
+            WallRay(mSplat, new Vector3(84f, GF + 1.6f, 11f), Vector3.back, 1.6f, R(0, 360));
+            WallRay(mDrip, new Vector3(88f, GF + 2.6f, 11f), Vector3.back, 2.0f, 0f, 1.5f);
+            WallRay(mHand, new Vector3(86f, GF + 1.2f, 11f), Vector3.back, 0.32f, R(-25, 25));
+            WallRay(mHand, new Vector3(86.4f, GF + 1.0f, 11f), Vector3.back, 0.3f, R(-25, 25));
+            Floor(mSplat, 80.7f, F2, 21.0f, 1.2f, R(0, 360));
+            Floor(mPool, 85.5f, F2, 25.4f, 1.3f, 0f);
+            Floor(mDrag, 92.0f, F2, 25.5f, 1.1f, 90f, 3.4f);
+            Floor(mSplat, 98.7f, F2, 14.0f, 1.0f, R(0, 360));
+            Floor(mDrag, 98.7f, F2, 19.0f, 1.0f, 0f, 3.0f);
+            Floor(mSplat, 104.0f, F2, 25.8f, 1.0f, R(0, 360));
+            WallRay(mHand, new Vector3(80.7f, F2 + 1.2f, 12f), Vector3.left, 0.32f, R(-25, 25));
+            WallRay(mHand, new Vector3(80.7f, F2 + 1.0f, 12.8f), Vector3.left, 0.3f, R(-25, 25));
+            WallRay(mDrip, new Vector3(80.7f, F2 + 2.2f, 18f), Vector3.right, 1.8f, 0f, 1.5f);
+            WallRay(mSplat, new Vector3(98.7f, F2 + 1.5f, 12f), Vector3.right, 1.4f, R(0, 360));
+            WallRay(mHand, new Vector3(98.7f, F2 + 1.1f, 22f), Vector3.right, 0.3f, R(-25, 25));
+            WallRay(mDrip, new Vector3(90.7f, F2 + 2.2f, 25.5f), Vector3.forward, 1.8f, 0f, 1.5f);
             // --- Hầm: máu khắp nơi
             float yb = O.y - 10f;
             for (int i = 0; i < 6; i++) Floor(mDrag, O.x + 7f - i * 2.3f, O.y - 1.6f - i * 1.65f, O.z + 5.2f, 0.9f, 90f, 2.4f);
@@ -446,16 +376,7 @@ namespace KhoaHon.EditorTools
         {
             var hk = Object.FindFirstObjectByType<HousekeeperAI>();
             if (hk == null) return;
-            var anim = hk.GetComponentInChildren<Animator>();
-            // Mắt đen, ánh đỏ
-            var eyes = AssetDatabase.LoadAssetAtPath<Material>("Assets/_KhoaHon/Materials/Housekeeper/M_HK_Eyes.mat");
-            if (eyes != null) { eyes.SetColor("_BaseColor", new Color(0.02f, 0f, 0f)); eyes.EnableKeyword("_EMISSION"); eyes.SetColor("_EmissionColor", new Color(1.6f, 0.05f, 0.02f)); EditorUtility.SetDirty(eyes); }
-            var skin = AssetDatabase.LoadAssetAtPath<Material>("Assets/_KhoaHon/Materials/Housekeeper/M_HK_Skin.mat");
-            if (skin != null) { skin.SetColor("_BaseColor", new Color(0.33f, 0.34f, 0.32f)); skin.SetFloat("_Smoothness", 0.55f); EditorUtility.SetDirty(skin); }
-            // Máu thấm thẳng vào texture quần áo + da (không dùng quad dán: lộ khung, lóa sáng)
-            var cloth = AssetDatabase.LoadAssetAtPath<Material>("Assets/_KhoaHon/Materials/Housekeeper/M_HK_AoBaBa.mat");
-            if (cloth != null) Soak(cloth, "T_HK_ClothBlood", 1024, new Color(0.035f, 0.03f, 0.032f), 0.55f, 31, 0.18f);
-            if (skin != null) Soak(skin, "T_HK_SkinBlood", 1024, new Color(0.33f, 0.34f, 0.32f), 0.4f, 37, 0.35f);
+            // Máu, da tử thi, mắt trắng đục đã nằm sẵn trong texture Banshee (KhoaHonBansheeTextures)
             // Dáng đi + âm thanh mới
             if (hk.gameObject.GetComponent<HousekeeperCreep>() == null) hk.gameObject.AddComponent<HousekeeperCreep>();
             var so = new SerializedObject(hk);

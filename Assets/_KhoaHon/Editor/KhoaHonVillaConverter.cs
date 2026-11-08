@@ -101,6 +101,7 @@ namespace KhoaHon.EditorTools
             log.Add(KhoaHonHousekeeperBuilder.Build(root, F2));
             log.Add(KhoaHonHorrorBuilder.Build(root, CellarOrigin));
             BuildSequences(systems);
+            FixPlacement();
             BakeReflectionProbes();
 
             EditorSceneManager.SaveScene(scene);
@@ -211,7 +212,67 @@ namespace KhoaHon.EditorTools
             Clips("Assets/_KhoaHon/Prefabs/Items/KH_FilmCamera.prefab", r => SetClip(r.GetComponent<KhoaHon.Items.FilmCameraItem>(), "shutterClip", "sfx_tape_click"));
             Clips("Assets/_KhoaHon/Prefabs/Items/KH_Phone.prefab", r => SetClip(r.GetComponent<KhoaHon.Characters.PhoneItem>(), "flashClip", "sfx_safe_tick"));
             Clips("Assets/_KhoaHon/Prefabs/Items/KH_NightVision.prefab", r => SetClip(r.GetComponent<KhoaHon.Characters.NightVisionItem>(), "toggleClip", "sfx_tape_click"));
+            // Xà beng: thân dày bằng đèn pin để nắm tay ôm kín, thép sơn đỏ sẫm đã gỉ
+            Clips("Assets/_KhoaHon/Prefabs/Items/KH_Crowbar.prefab", r =>
+            {
+                if (r.transform.childCount == 0) return;
+                var m = r.transform.GetChild(0);
+                m.localScale = new Vector3(1.35f, 1f, 1.35f);
+                var mat = CrowbarSteel();
+                foreach (var mr in m.GetComponentsInChildren<MeshRenderer>()) mr.sharedMaterial = mat;
+            });
+            TuneHeldGrips(data);
             log.Add("Icons + held models updated");
+        }
+
+        static Material CrowbarSteel()
+        {
+            string p = "Assets/_KhoaHon/Materials/M_KH_CrowbarSteel.mat";
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(p);
+            if (mat == null) { mat = new Material(Shader.Find("Universal Render Pipeline/Lit")); AssetDatabase.CreateAsset(mat, p); }
+            mat.SetColor("_BaseColor", new Color(0.16f, 0.05f, 0.04f));
+            mat.SetFloat("_Metallic", 0.6f);
+            mat.SetFloat("_Smoothness", 0.35f);
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
+        /// <summary>
+        /// Tư thế cầm đồ đã chỉnh bằng mắt trong Play (ảnh Temp/KhoaHon/i_*.png):
+        /// xà beng nắm kín như cán đèn pin (dùng chung HandPose/IK của đèn pin), máy ảnh lưng hướng về người chơi,
+        /// máy ghi âm/điện thoại mặt trước hướng về người chơi, tay phải ôm cạnh phải.
+        /// </summary>
+        static void TuneHeldGrips(KhoaHonDataBuilder.Result data)
+        {
+            var fl = data.flashlight;
+            void Set(HorrorGame.Inventory.ItemData d, Vector3 gp, Vector3 gr, float th, float ix, float mi, float ri, float pi, bool fistLikeFlashlight)
+            {
+                if (d == null) return;
+                var so = new SerializedObject(d);
+                so.FindProperty("gripOffsetPosition").vector3Value = gp;
+                so.FindProperty("gripOffsetRotation").vector3Value = gr;
+                so.FindProperty("thumbCurl").floatValue = th;
+                so.FindProperty("indexCurl").floatValue = ix;
+                so.FindProperty("middleCurl").floatValue = mi;
+                so.FindProperty("ringCurl").floatValue = ri;
+                so.FindProperty("pinkyCurl").floatValue = pi;
+                if (fistLikeFlashlight && fl != null)
+                {
+                    so.FindProperty("rightPose").objectReferenceValue = fl.RightPose;
+                    so.FindProperty("ikTargetLocalPosition").vector3Value = new Vector3(0.17f, -0.17f, 0.24f);
+                    so.FindProperty("ikTargetLocalRotation").vector3Value = fl.IkTargetLocalRotation;
+                    so.FindProperty("elbowHintLocal").vector3Value = fl.ElbowHintLocal;
+                }
+                so.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(d);
+            }
+            Set(data.crowbar, new Vector3(-0.0395f, -0.0339f, 0.0988f), new Vector3(292.24f, 54.74f, 294.65f), 0.6f, 0.95f, 1f, 1f, 0.95f, true);
+            Set(data.recorder, new Vector3(-0.0375f, 0.0066f, -0.0188f), new Vector3(11.3f, 181.8f, 205.5f), 0.45f, 0.55f, 0.75f, 0.8f, 0.8f, false);
+            Set(data.filmCamera, new Vector3(-0.0406f, 0.0129f, -0.0184f), new Vector3(7.8f, 359.4f, 157.8f), 0.45f, 0.55f, 0.75f, 0.8f, 0.8f, false);
+            Set(data.phone, new Vector3(-0.0329f, -0.0108f, -0.0206f), new Vector3(23.2f, 349.0f, 153.0f), 0.45f, 0.55f, 0.75f, 0.8f, 0.8f, false);
+            Set(data.nightVision, new Vector3(-0.0382f, -0.0166f, -0.0334f), new Vector3(6.8f, 351.0f, 159.8f), 0.45f, 0.6f, 0.8f, 0.85f, 0.85f, false);
+            AssetDatabase.SaveAssets();
+            log.Add("Held grips tuned (crowbar fist, recorder/camera/phone facing)");
         }
 
         /// <summary>Không khí: đèn chập chờn hành lang tầng 2 (PeriodicFlickerLight có sẵn), ánh trăng lạnh qua cửa sổ sảnh.</summary>
@@ -804,6 +865,18 @@ namespace KhoaHon.EditorTools
                 rewards: new[] { StoryFlag.GotQuanBackpack, StoryFlag.HasCrowbar },
                 sources: new NotebookSource[] { data.sources["TAPE_1"], data.sources["DOC_Now_TheQuan"] }, hint: "hint.backpack");
             SetMat(bp.gameObject, AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_ClothBeige.mat"));
+            // Balo leo núi thật (Blender) thay khối hộp: hộp chỉ còn làm vùng tương tác
+            var bpModel = Model("KH_BW_Backpack");
+            if (bpModel != null)
+            {
+                foreach (var r in bp.GetComponentsInChildren<MeshRenderer>()) r.enabled = false;
+                var bpm = (GameObject)PrefabUtility.InstantiatePrefab(bpModel, bp.transform);
+                bpm.transform.position = new Vector3(93.0f, GF, 23.6f);
+                bpm.transform.rotation = Quaternion.Euler(-8f, 215f, 4f);
+                var ls = bp.transform.lossyScale;
+                bpm.transform.localScale = new Vector3(1f / ls.x, 1f / ls.y, 1f / ls.z);
+                bpm.name = "BackpackModel";
+            }
             var bb = GB.Readable(c, "Doc_BienBan2009", new Vector3(80.0f, GF + 1.7f, 7.95f), new Vector3(0.32f, 0.42f, 0.01f), "DOC_2009_BienBan");
             SetMat(bb.gameObject, mPaper);
             // Cửa sổ sảnh bị đóng đinh (Kết ẩn: nạy bằng xà beng)
@@ -920,6 +993,150 @@ namespace KhoaHon.EditorTools
             log.Add("Content placed");
         }
 
+        // =====================================================================
+        /// <summary>
+        /// Rà soát vật lơ lửng sau khi dựng xong: giấy dán cửa/tường áp sát bề mặt + đinh ghim, ván đóng cửa sổ
+        /// áp vào mặt tường + đinh, giấy tờ dùng texture chữ viết tay cũ thay vì mặt trơn.
+        /// </summary>
+        static void FixPlacement()
+        {
+            Physics.SyncTransforms();
+            var c = root.Find("KH_Content");
+            if (c == null) return;
+            var paper = PaperNoteMat();
+            foreach (var rd in c.GetComponentsInChildren<ReadableDocument>(true))
+            {
+                var mr = rd.GetComponent<MeshRenderer>();
+                if (mr != null && mr.sharedMaterial != null && mr.sharedMaterial.name.Contains("Paper")) mr.sharedMaterial = paper;
+            }
+            var doc = c.Find("Doc_BienBan2009");
+            if (doc != null && SnapToSurface(doc, Vector3.back, 0.005f))
+            {
+                doc.rotation = Quaternion.Euler(0f, 0f, -3.5f);
+                Nail(doc, doc.position + Vector3.up * 0.18f + Vector3.forward * 0.006f, Vector3.back);
+                log.Add("Doc_BienBan2009 -> " + doc.position.ToString("F3"));
+            }
+            var win = c.Find("HallWindow_Pryable");
+            if (win != null)
+            {
+                // Mặt tường hiển thị hai bên khung cửa sổ (collider tường mỏng hơn mesh nên raycast vào mesh thật)
+                var temp = new List<MeshCollider>();
+                foreach (var mf in Object.FindObjectsByType<MeshFilter>(FindObjectsSortMode.None))
+                    if (mf.sharedMesh != null && mf.name.Contains("Wall") && Vector3.Distance(mf.GetComponent<Renderer>().bounds.ClosestPoint(win.position), win.position) < 2f)
+                    { var mc = mf.gameObject.AddComponent<MeshCollider>(); mc.sharedMesh = mf.sharedMesh; temp.Add(mc); }
+                Physics.SyncTransforms();
+                float wallZ = float.MinValue;
+                foreach (float dx in new[] { -1.25f, 1.25f })
+                    foreach (var hit in Physics.RaycastAll(new Vector3(win.position.x + dx, win.position.y, win.position.z + 1.5f), Vector3.back, 3f, ~0, QueryTriggerInteraction.Ignore))
+                        if (hit.collider is MeshCollider hm && temp.Contains(hm)) wallZ = Mathf.Max(wallZ, hit.point.z);
+                foreach (var mc in temp) Object.DestroyImmediate(mc);
+                Physics.SyncTransforms();
+                if (wallZ > float.MinValue)
+                {
+                    var p = win.position; p.z = wallZ + 0.024f; win.position = p;
+                    var plankMat = PlankMat();
+                    foreach (Transform plank in win)
+                    {
+                        if (!plank.name.StartsWith("Plank_")) continue;
+                        var mr = plank.GetComponent<MeshRenderer>(); if (mr != null) mr.sharedMaterial = plankMat;
+                        foreach (float lx in new[] { -0.43f, 0.43f })
+                            Nail(win, plank.TransformPoint(new Vector3(lx, 0f, -0.5f)) + Vector3.forward * 0.004f, Vector3.back);
+                    }
+                    log.Add("HallWindow planks -> wall z " + wallZ.ToString("F3"));
+                }
+            }
+        }
+
+        static bool SnapToSurface(Transform t, Vector3 dir, float halfThick)
+        {
+            var hits = Physics.RaycastAll(t.position - dir * 0.6f, dir, 2f, ~0, QueryTriggerInteraction.Ignore)
+                .Where(h => !h.collider.transform.IsChildOf(t)).OrderBy(h => h.distance).ToArray();
+            if (hits.Length == 0) return false;
+            t.position = hits[0].point - dir * (halfThick + 0.002f);
+            return true;
+        }
+
+        static void Nail(Transform parent, Vector3 pos, Vector3 intoSurface)
+        {
+            var n = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            Object.DestroyImmediate(n.GetComponent<Collider>());
+            n.name = "Nail";
+            n.transform.SetParent(parent, true);
+            n.transform.position = pos;
+            n.transform.rotation = Quaternion.FromToRotation(Vector3.up, -intoSurface);
+            n.transform.localScale = Vector3.one;
+            var ls = n.transform.lossyScale;
+            n.transform.localScale = new Vector3(0.012f / ls.x, 0.003f / ls.y, 0.012f / ls.z);
+            var mr = n.GetComponent<MeshRenderer>();
+            mr.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_Rust.mat") ?? GB.mDoor;
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
+
+        static Material PlankMat()
+        {
+            string p = "Assets/_KhoaHon/Materials/M_KH_PlankOld.mat";
+            var src = AssetDatabase.LoadAssetAtPath<Material>("Assets/Abandoned_Asylum/Materials/Board.mat");
+            var m = AssetDatabase.LoadAssetAtPath<Material>(p);
+            if (m == null) { m = src != null ? new Material(src) : new Material(Shader.Find("Universal Render Pipeline/Lit")); AssetDatabase.CreateAsset(m, p); }
+            else if (src != null) { m.shader = src.shader; m.CopyPropertiesFromMaterial(src); }
+            m.SetColor("_BaseColor", new Color(0.7f, 0.64f, 0.56f));
+            EditorUtility.SetDirty(m);
+            return m;
+        }
+
+        /// <summary>Giấy cũ ố vàng có chữ viết tay mực xanh đen, nếp gấp, vết ố nước (texture sinh thủ tục).</summary>
+        static Material PaperNoteMat()
+        {
+            string tp = "Assets/_KhoaHon/Textures/T_PaperNote.png", mp = "Assets/_KhoaHon/Materials/M_KH_PaperNote.mat";
+            const int W = 512, H = 672;
+            var rnd = new System.Random(19);
+            var px = new Color32[W * H];
+            // Dòng chữ: mỗi dòng là chuỗi "từ" (đoạn nét lượn sóng), xuống dòng đều
+            var words = new List<Vector4>(); // x0, x1, yLine, phase
+            for (int line = 0; line < 17; line++)
+            {
+                float y = 0.86f - line * 0.046f; if (line == 0) y = 0.9f;
+                float x = 0.1f + (line == 0 ? 0.18f : 0f);
+                float end = line == 16 ? 0.5f : 0.9f;
+                while (x < end) { float w = 0.04f + (float)rnd.NextDouble() * 0.12f; words.Add(new Vector4(x, Mathf.Min(end, x + w), y, (float)rnd.NextDouble() * 10f)); x += w + 0.02f; }
+            }
+            for (int y = 0; y < H; y++)
+                for (int x = 0; x < W; x++)
+                {
+                    float u = (x + 0.5f) / W, v = (y + 0.5f) / H;
+                    float n = Mathf.PerlinNoise(u * 6f + 3f, v * 6f) * 0.6f + Mathf.PerlinNoise(u * 40f, v * 40f + 9f) * 0.4f;
+                    var col = Color.Lerp(new Color(0.80f, 0.74f, 0.6f), new Color(0.66f, 0.58f, 0.42f), n * 0.7f);
+                    float edge = Mathf.Min(Mathf.Min(u, 1f - u), Mathf.Min(v, 1f - v));
+                    col = Color.Lerp(new Color(0.45f, 0.36f, 0.24f), col, Mathf.Clamp01(edge / 0.06f));
+                    float stain = Mathf.PerlinNoise(u * 3f + 17f, v * 3f + 4f);
+                    if (stain > 0.62f) col = Color.Lerp(col, new Color(0.55f, 0.45f, 0.3f), Mathf.Clamp01((stain - 0.62f) / 0.05f) * 0.5f);
+                    if (Mathf.Abs(v - 0.5f) < 0.004f) col *= 0.82f; // nếp gấp
+                    float ink = 0f;
+                    foreach (var w in words)
+                    {
+                        if (u < w.x || u > w.y || Mathf.Abs(v - w.z) > 0.02f) continue;
+                        float wave = w.z + 0.007f * Mathf.Sin(u * 260f + w.w) * Mathf.Sin(u * 47f + w.w * 2f);
+                        float d = Mathf.Abs(v - wave);
+                        ink = Mathf.Max(ink, Mathf.Clamp01((0.0028f - d) / 0.0015f) * (0.6f + 0.4f * Mathf.PerlinNoise(u * 90f, w.w)));
+                    }
+                    col = Color.Lerp(col, new Color(0.08f, 0.08f, 0.14f), ink * 0.9f);
+                    col.a = 1f;
+                    px[y * W + x] = col;
+                }
+            var tex = new Texture2D(W, H, TextureFormat.RGBA32, false);
+            tex.SetPixels32(px); tex.Apply();
+            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + tp), tex.EncodeToPNG());
+            Object.DestroyImmediate(tex);
+            AssetDatabase.ImportAsset(tp, ImportAssetOptions.ForceUpdate);
+            var m = AssetDatabase.LoadAssetAtPath<Material>(mp);
+            if (m == null) { m = new Material(Shader.Find("Universal Render Pipeline/Lit")); AssetDatabase.CreateAsset(m, mp); }
+            m.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>(tp));
+            m.SetColor("_BaseColor", Color.white);
+            m.SetFloat("_Smoothness", 0.12f);
+            EditorUtility.SetDirty(m);
+            return m;
+        }
+
         static void BuildShrine(Transform c)
         {
             var g = new GameObject("PhongTho_BanTho").transform;
@@ -932,13 +1149,18 @@ namespace KhoaHon.EditorTools
             var step = GB.Box(g, "BanTho_Tang2", new Vector3(67.15f, F2 + 1.05f, 17.5f), new Vector3(0.5f, 0.3f, 3.2f),
                 AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_WoodDark.mat") ?? GB.mDoor);
             altar.gameObject.AddComponent<InfoInteractable>().Configure("prompt.altar", "msg.altar");
+            // Bảng gỗ tưởng niệm dựng trên bàn thờ, tựa tường: 13 bia gắn lên bảng (không lơ lửng trước cửa sổ)
+            GB.Box(g, "BangTuongNiem", new Vector3(66.82f, F2 + 1.55f, 17.5f), new Vector3(0.035f, 1.25f, 3.75f),
+                AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_BW_Oak.mat") ?? GB.mDoor);
+            GB.Box(g, "BangTuongNiem_Dinh", new Vector3(66.84f, F2 + 2.2f, 17.5f), new Vector3(0.06f, 0.08f, 3.85f),
+                AssetDatabase.LoadAssetAtPath<Material>(ModelsDir + "/Materials/M_WoodDark.mat") ?? GB.mDoor, false);
             // 13 bài vị: 5 Mắt Trận (mạ vàng) xen giữa 8 phu hồ
             int[] marked = { 1, 4, 6, 8, 11 };
             for (int i = 0; i < 13; i++)
             {
                 bool m = marked.Contains(i);
                 // 13 bia tưởng niệm treo tường (5 Mắt Trận mạ đồng sáng)
-                Place(Model(m ? "KH_BW_Plaque_Eye" : "KH_BW_Plaque"), g, new Vector3(66.86f, F2 + 1.3f + (i % 2) * 0.42f, 15.95f + i * 0.26f), 90f, 0.9f, (m ? "BaiVi_MatTran_" : "BaiVi_") + i);
+                Place(Model(m ? "KH_BW_Plaque_Eye" : "KH_BW_Plaque"), g, new Vector3(66.84f, F2 + 1.3f + (i % 2) * 0.42f, 15.95f + i * 0.26f), 90f, 0.9f, (m ? "BaiVi_MatTran_" : "BaiVi_") + i);
             }
             string[] hanh = { "Moc", "Thuy", "Tho", "Kim", "Hoa" };
             var stands = new KhoaHon.Puzzles.CandleStand[5];

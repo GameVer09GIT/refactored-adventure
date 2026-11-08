@@ -24,10 +24,10 @@ MonoBehaviour:
   ikTargetLocalPosition: {x: 0.085, y: -0.075, z: 0.22}
   ikTargetLocalRotation: {x: -12, y: -10, z: -130}
   elbowHintLocal: {x: 0.35, y: -0.45, z: -0.15}
-  gripOffsetPosition: {x: 0.001, y: -0.001, z: -0.018}
-  gripOffsetRotation: {x: 5.43, y: 17.55, z: 305.69}
-  thumbCurl: 0.2
-  indexCurl: 0.45
-  middleCurl: 0.5
-  ringCurl: 0.5
-  pinkyCurl: 0.45
+  gripOffsetPosition: {x: -0.0329, y: -0.0108, z: -0.0206}
+  gripOffsetRotation: {x: 23.2, y: 349, z: 153}
+  thumbCurl: 0.45
+  indexCurl: 0.55
+  middleCurl: 0.75
+  ringCurl: 0.8
+  pinkyCurl: 0.8

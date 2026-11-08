@@ -41,6 +41,8 @@ def BW():
         "sign_green": mat("M_BW_SignGreen", (0.03, 0.18, 0.08), 0.5),
         "typewriter": mat("M_BW_Typewriter", (0.03, 0.035, 0.03), 0.35, 0.4),
         "keycap": mat("M_BW_Keycap", (0.85, 0.82, 0.72), 0.5),
+        "canvas": mat("M_BW_Canvas", (0.13, 0.15, 0.09), 0.92),
+        "canvas_dark": mat("M_BW_CanvasDark", (0.06, 0.065, 0.05), 0.9),
     })
     return m
 
@@ -63,25 +65,42 @@ def plaque(m, gilded):
 
 
 def candle_stand(m):
-    """Giá nến sắt rèn: chân 3 nhánh, thân xoắn, đĩa hứng sáp."""
+    """Giá nến sắt rèn: đế tròn bậc, thân tiện kiểu con tiện (không xoắn), đĩa hứng sáp, chân ba móng."""
     parts = []
-    base = lathe("Base", [(0.0, 0.0), (0.075, 0.0), (0.078, 0.012), (0.05, 0.03), (0.02, 0.05), (0.0, 0.05)], 32)
-    assign(base, m["iron"]); parts.append(base)
+    prof = [(0.0, 0.0), (0.078, 0.0), (0.08, 0.01), (0.07, 0.018), (0.05, 0.026), (0.03, 0.04), (0.018, 0.055),
+            (0.024, 0.07), (0.024, 0.08), (0.012, 0.095), (0.01, 0.15), (0.016, 0.17), (0.016, 0.18), (0.009, 0.2),
+            (0.009, 0.26), (0.02, 0.275), (0.012, 0.29), (0.0, 0.29)]
+    body = lathe("Body", prof, 32); assign(body, m["iron"]); parts.append(body)
     for k in range(3):
         a = k * 2 * math.pi / 3
-        foot = add("sphere", "Foot", (0.07 * math.cos(a), 0.07 * math.sin(a), 0.006), (0.014, 0.014, 0.008), segments=10, ring_count=6)
+        foot = add("sphere", "Foot", (0.068 * math.cos(a), 0.068 * math.sin(a), 0.006), (0.016, 0.016, 0.009), segments=12, ring_count=8)
         assign(foot, m["iron"]); parts.append(foot)
-    stem = add("cyl", "Stem", (0, 0, 0.17), (0.011, 0.011, 0.14), vertices=12)
-    tw = stem.modifiers.new("Twist", "SIMPLE_DEFORM"); tw.deform_method = "TWIST"; tw.angle = math.radians(240)
-    assign(stem, m["iron"]); parts.append(stem)
-    for z, r in ((0.08, 0.02), (0.2, 0.017)):
-        k = add("sphere", "Knot", (0, 0, z), (r, r, r * 0.8), segments=12, ring_count=8); assign(k, m["iron"]); parts.append(k)
-    pan = lathe("Pan", [(0.0, 0.0), (0.055, 0.0), (0.06, 0.012), (0.052, 0.014), (0.0, 0.006)], 32)
-    pan.location = (0, 0, 0.305); assign(pan, m["iron"]); parts.append(pan)
-    spike = add("cone", "Spike", (0, 0, 0.33), (0.006, 0.006, 0.02), vertices=8); assign(spike, m["iron"]); parts.append(spike)
+    pan = lathe("Pan", [(0.0, 0.0), (0.012, 0.0), (0.05, 0.006), (0.058, 0.016), (0.055, 0.018), (0.046, 0.01), (0.0, 0.008)], 32)
+    pan.location = (0, 0, 0.288); assign(pan, m["iron"]); parts.append(pan)
+    spike = add("cone", "Spike", (0, 0, 0.318), (0.005, 0.005, 0.018), vertices=10); assign(spike, m["iron"]); parts.append(spike)
     for p in parts: apply_all(p)
     o = join(parts, "KH_BW_CandleStand")
     smooth(o, 50)
+
+
+def backpack(m):
+    """Balo leo núi của Julian: thân vải bo tròn, nắp trùm, túi trước, hai quai đeo, khóa kéo, quai xách."""
+    body = add("cube", "Body", (0, 0, 0.24), (0.15, 0.1, 0.22)); bevel(body, 0.05, 4); assign(body, m["canvas"])
+    lid = add("cube", "Lid", (0, -0.005, 0.455), (0.152, 0.105, 0.035)); bevel(lid, 0.03, 3); assign(lid, m["canvas_dark"])
+    flap = add("cube", "Flap", (0, -0.1, 0.4), (0.13, 0.012, 0.07)); bevel(flap, 0.01, 2); assign(flap, m["canvas_dark"])
+    pocket = add("cube", "Pocket", (0, -0.115, 0.16), (0.11, 0.035, 0.1)); bevel(pocket, 0.025, 3); assign(pocket, m["canvas_dark"])
+    zip1 = add("cube", "Zip", (0, -0.151, 0.2), (0.09, 0.002, 0.003)); assign(zip1, m["plastic"])
+    pull = add("cube", "Pull", (0.07, -0.153, 0.195), (0.005, 0.002, 0.012)); assign(pull, m["chrome"])
+    parts = [body, lid, flap, pocket, zip1, pull]
+    for s in (-1, 1):
+        strap = add("cube", "Strap", (s * 0.075, 0.115, 0.24), (0.028, 0.012, 0.2)); bevel(strap, 0.008, 2); assign(strap, m["canvas_dark"]); parts.append(strap)
+        side = add("cube", "SidePocket", (s * 0.155, 0, 0.14), (0.02, 0.07, 0.08)); bevel(side, 0.015, 2); assign(side, m["canvas"]); parts.append(side)
+        buckle = add("cube", "Buckle", (s * 0.06, -0.113, 0.4), (0.012, 0.004, 0.012)); assign(buckle, m["plastic"]); parts.append(buckle)
+    handle = add("torus", "Handle", (0, 0.06, 0.49), (0.035, 0.035, 0.035), (math.pi / 2, 0, 0), major_radius=1.0, minor_radius=0.18); assign(handle, m["canvas_dark"]); parts.append(handle)
+    stain = add("cube", "Stain", (0.05, -0.152, 0.11), (0.04, 0.001, 0.03)); assign(stain, m["blood"]); parts.append(stain)
+    for p in parts: apply_all(p)
+    o = join(parts, "KH_BW_Backpack")
+    smooth(o, 40)
 
 
 def vademecum(m):
@@ -200,6 +219,7 @@ BW_BUILDERS = [
     ("KH_BW_CandleStand", candle_stand), ("KH_BW_Vademecum", vademecum), ("KH_BW_Relic", relic),
     ("KH_BW_Phone", phone), ("KH_BW_Camcorder", camcorder), ("KH_BW_Sedan", sedan),
     ("KH_BW_Signpost", signpost), ("KH_BW_Typewriter", typewriter), ("KH_BW_LordGhost", lord_ghost),
+    ("KH_BW_Backpack", backpack),
 ]
 
 only_bw = set(a for a in argv[1:] if not a.startswith("--"))

@@ -17,17 +17,17 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 050860715aef478489cb0596fd566795, type: 3}
   heldPrefab: {fileID: 8222148178195390099, guid: e2e43b44704cd25469a0dbed231057f7, type: 3}
   gripType: 1
-  rightPose: {fileID: 11400000, guid: 2f4e094947781b6428086a8d6223dc3f, type: 2}
+  rightPose: {fileID: 11400000, guid: f12b191b19297ce48bf16aec04eef2cc, type: 2}
   leftPose: {fileID: 0}
   rightGripOffset: {x: 0, y: 0, z: 0}
   leftGripOffset: {x: 0, y: 0, z: 0}
-  ikTargetLocalPosition: {x: 0.085, y: -0.075, z: 0.22}
+  ikTargetLocalPosition: {x: 0.17, y: -0.17, z: 0.24}
   ikTargetLocalRotation: {x: -12, y: -10, z: -130}
   elbowHintLocal: {x: 0.35, y: -0.45, z: -0.15}
-  gripOffsetPosition: {x: 0.001, y: -0.001, z: -0.018}
-  gripOffsetRotation: {x: 5.43, y: 17.55, z: 305.69}
-  thumbCurl: 0.2
-  indexCurl: 0.45
-  middleCurl: 0.5
-  ringCurl: 0.5
-  pinkyCurl: 0.45
+  gripOffsetPosition: {x: -0.0395, y: -0.0339, z: 0.0988}
+  gripOffsetRotation: {x: 292.24, y: 54.74, z: 294.65}
+  thumbCurl: 0.6
+  indexCurl: 0.95
+  middleCurl: 1
+  ringCurl: 1
+  pinkyCurl: 0.95
