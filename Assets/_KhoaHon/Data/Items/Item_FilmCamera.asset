@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5c7cb4a051563344b68a1718cd1a801, type: 3}
+  m_Name: Item_FilmCamera
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorGame.Inventory.ItemData
+  displayName: Film Camera
+  itemType: 5
+  icon: {fileID: 21300000, guid: 757093e7ad418cb449662d47f990f6cd, type: 3}
+  heldPrefab: {fileID: 2752398419020380537, guid: 2ed1431fedb8d8d40a6ed71479b059d6, type: 3}
+  gripType: 1
+  rightPose: {fileID: 11400000, guid: 2f4e094947781b6428086a8d6223dc3f, type: 2}
+  leftPose: {fileID: 0}
+  rightGripOffset: {x: 0, y: 0, z: 0}
+  leftGripOffset: {x: 0, y: 0, z: 0}
+  ikTargetLocalPosition: {x: 0.085, y: -0.075, z: 0.22}
+  ikTargetLocalRotation: {x: -12, y: -10, z: -130}
+  elbowHintLocal: {x: 0.35, y: -0.45, z: -0.15}
+  gripOffsetPosition: {x: -0.0406, y: 0.0129, z: -0.0184}
+  gripOffsetRotation: {x: 7.8, y: 359.4, z: 157.8}
+  thumbCurl: 0.45
+  indexCurl: 0.55
+  middleCurl: 0.75
+  ringCurl: 0.8
+  pinkyCurl: 0.8

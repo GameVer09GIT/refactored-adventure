@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00b4c20e46d9a64d880127eadee96be, type: 3}
+  m_Name: KH_HousekeeperConfig
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.AI.HousekeeperConfig
+  patrolSpeed: 1.3
+  suspiciousSpeed: 3
+  huntSpeedMultiplier: 1.15
+  weakenedHuntMultiplier: 1
+  fieldOfView: 110
+  sightRangeDark: 10
+  sightRangeLit: 16
+  flashlightFaceRange: 12
+  flashlightConeHalfAngle: 22
+  detectInterval: 0.15
+  patrolWait: {x: 2, y: 4}
+  loseSightTime: 4
+  searchTime: {x: 8, y: 10}
+  killRange: 1.5
+  flashStunTime: 3
+  combStunTime: 20
+  weakenedHesitate: 2
+  hidingInspectTime: 5.5
+  breathHoldDuration: 7
+  audioMinDistance: 2
+  audioMaxDistance: 25
+  lullabyInterval: {x: 25, y: 50}

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a54c9ad046ebd18459cb83962f9bbce7, type: 3}
+  m_Name: TAL_Moc
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TalismanData
+  id: TAL_Moc
+  title: "Vademecum \u2014 Trang \u0110\u1EE9a Tr\u1EBB"
+  titleEn: "Vademecum \u2014 The Child's Page"
+  year: 1
+  body: "B\xE0i ch\xFA b\u1EA1n ch\xE9p l\u1EA1i t\u1EEB trang kh\xE2u trong b\xFAp
+    b\xEA."
+  bodyEn: The verse you copied from the page inside the doll.
+  serif: 1
+  hanh: 0
+  chantLines:
+  - "Nh\u1ECF b\xE9 nh\u1EA5t, gi\u1EEF c\xE1nh c\u1EEDa \u0111\u1EA7u ti\xEAn."
+  - "B\xF3ng t\u1ED1i trong t\u1EE7 l\xE0 ch\u0103n c\u1EE7a ng\u01B0\u01A1i."
+  - "Ng\u01B0\u01A1i \u0111\xF3i, v\xE0 c\u01A1n \u0111\xF3i gi\u1EEF ng\u01B0\u01A1i
+    l\u1EA1i."
+  - "Ng\u1EE7 \u0111i, M\u1EAFt Tr\u1EADn th\u1EE9 t\u01B0."
+  chantLinesEn:
+  - The smallest one, keeper of the first door.
+  - The dark of the wardrobe is your blanket.
+  - You hunger, and the hunger holds you.
+  - Sleep now, fourth Eye of the circle.
+  symbol: {fileID: 0}

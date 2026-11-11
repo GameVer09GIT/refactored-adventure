@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4d5b9f9450d40f4595969ae59bbd522, type: 3}
+  m_Name: TAPE_3
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TapeData
+  id: TAPE_3
+  title: "B\u0103ng #3 \u2014 c\u1EA7u thang h\u1EA7m"
+  titleEn: "Tape #3 \u2014 Cellar Stairs"
+  year: 6
+  body: "Cu\u1ED9n b\u0103ng r\u01A1i tr\xEAn b\u1EADc thang \u0111\xE1, c\u1EA1nh
+    \u0111\u1ED1ng \u0111\xE1 s\u1EADp."
+  bodyEn: Dropped on the stone steps beside the rubble.
+  serif: 0
+  clip: {fileID: 0}
+  lines:
+  - time: 0.5
+    duration: 2.2
+    text: "(gi\u1ECDng y\u1EBFu, th\u1EDF g\u1EA5p)"
+    textEn: (weak voice, laboured breathing)
+  - time: 3.1000001
+    duration: 4.16
+    text: "Em t\xECm \u0111\u01B0\u1EE3c c\xE1i l\u1ED7 \u0111\u1ED9i th\u1EE3 khoan
+      n\u0103m 2009, sau v\xE1ch b\u1EBFp\u2026"
+    textEn: "I found the hole the 2009 crew drilled, behind the kitchen wall\u2026"
+  - time: 7.66
+    duration: 4.81
+    text: "Chui l\u1ECDt xu\u1ED1ng \u0111\u01B0\u1EE3c th\xEC v\xE1ch s\u1EADp.
+      Ch\xE2n em k\u1EB9t d\u01B0\u1EDBi \u0111\xE1\u2026 ch\u1EA3y m\xE1u nhi\u1EC1u
+      qu\xE1."
+    textEn: "I squeezed through and the wall came down. My leg's pinned\u2026 so
+      much blood."
+  - time: 12.87
+    duration: 4.29
+    text: "C\xF3 ai \u0111\xF3 d\u01B0\u1EDBi n\xE0y, ng\u1ED3i tr\xEAn gh\u1EBF,
+      n\xF3i chuy\u1EC7n r\u1EA5t nh\u1EB9 nh\xE0ng."
+    textEn: There's someone down here. Sitting in a chair. Speaking so gently.
+  - time: 17.56
+    duration: 5.785
+    text: "L\xE3o b\u1EA3o l\xE3o c\xF3 th\u1EC3 cho em m\u1ECDi th\u1EE9. Cho c\xE1i
+      k\xEAnh c\u1EE7a anh Alex. Cho b\xE0i b\xE1o c\u1EE7a ch\u1ECB Evelyn."
+    textEn: He says he can give me everything. Alex's channel. Evelyn's story.
+  - time: 23.744999
+    duration: 2.86
+    text: "N\u1EBFu em kh\xF4ng ra \u0111\u01B0\u1EE3c\u2026 \u0111\u1EEBng nghe
+      l\xE3o."
+    textEn: "If I don't make it out\u2026 don't listen to him."
+  sanityRestore: 5

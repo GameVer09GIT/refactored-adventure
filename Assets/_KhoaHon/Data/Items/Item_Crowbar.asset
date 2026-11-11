@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5c7cb4a051563344b68a1718cd1a801, type: 3}
+  m_Name: Item_Crowbar
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorGame.Inventory.ItemData
+  displayName: Crowbar
+  itemType: 6
+  icon: {fileID: 21300000, guid: 050860715aef478489cb0596fd566795, type: 3}
+  heldPrefab: {fileID: 8222148178195390099, guid: e2e43b44704cd25469a0dbed231057f7, type: 3}
+  gripType: 1
+  rightPose: {fileID: 11400000, guid: f12b191b19297ce48bf16aec04eef2cc, type: 2}
+  leftPose: {fileID: 0}
+  rightGripOffset: {x: 0, y: 0, z: 0}
+  leftGripOffset: {x: 0, y: 0, z: 0}
+  ikTargetLocalPosition: {x: 0.17, y: -0.17, z: 0.24}
+  ikTargetLocalRotation: {x: -12, y: -10, z: -130}
+  elbowHintLocal: {x: 0.35, y: -0.45, z: -0.15}
+  gripOffsetPosition: {x: -0.0395, y: -0.0339, z: 0.0988}
+  gripOffsetRotation: {x: 292.24, y: 54.74, z: 294.65}
+  thumbCurl: 0.6
+  indexCurl: 0.95
+  middleCurl: 1
+  ringCurl: 1
+  pinkyCurl: 0.95

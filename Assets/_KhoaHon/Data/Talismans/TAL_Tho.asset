@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a54c9ad046ebd18459cb83962f9bbce7, type: 3}
+  m_Name: TAL_Tho
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TalismanData
+  id: TAL_Tho
+  title: "Vademecum \u2014 Trang Ng\u01B0\u1EDDi Gi\u1EEF Ch\xECa"
+  titleEn: "Vademecum \u2014 The Keeper's Page"
+  year: 1
+  body: "B\xE0i ch\xFA b\u1EA1n ch\xE9p l\u1EA1i t\u1EEB trang qu\u1EA5n quanh chi\u1EBFc
+    l\u01B0\u1EE3c."
+  bodyEn: The verse you copied from the page wound around the comb.
+  serif: 1
+  hanh: 2
+  chantLines:
+  - "K\u1EBB trung th\xE0nh nh\u1EA5t, gi\u1EEF m\u1ECDi ch\xECa kh\xF3a."
+  - "Ng\u01B0\u01A1i canh c\u1EEDa cho \u0111\u1EBFn t\u1EADn c\xF9ng."
+  - "Kh\xF4ng ai ra, kh\xF4ng ai v\xE0o n\u1EBFu ng\u01B0\u01A1i kh\xF4ng cho."
+  - "Canh gi\u1EEF \u0111i, M\u1EAFt Tr\u1EADn th\u1EE9 nh\u1EA5t."
+  chantLinesEn:
+  - The most loyal one, keeper of every key.
+  - You guard the doors until the end of days.
+  - None leave, none enter, without your leave.
+  - Keep watch, first Eye of the circle.
+  symbol: {fileID: 0}

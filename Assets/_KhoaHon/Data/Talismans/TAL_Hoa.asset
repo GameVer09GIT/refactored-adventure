@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a54c9ad046ebd18459cb83962f9bbce7, type: 3}
+  m_Name: TAL_Hoa
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.TalismanData
+  id: TAL_Hoa
+  title: "Vademecum \u2014 Trang Qu\xFD B\xE0 (b\xE0i ch\xFA th\u1EE9 n\u0103m)"
+  titleEn: "Vademecum \u2014 The Lady's Page (the fifth verse)"
+  year: 1
+  body: "B\xE0i ch\xFA b\u1EA1n ch\xE9p l\u1EA1i t\u1EEB trang l\xF3t trong gi\xE0y.
+    L\u1EC1 trang ghi b\u1EB1ng m\u1EF1c \u0111\u1ECF: \"\u0110\u1ECDc ng\u01B0\u1EE3c
+    \u0111\u1EC3 nh\u1EADn l\u1EA5y C\u1ED5 V\u1EADt.\""
+  bodyEn: 'The verse you copied from the page inside the slippers. A note in red
+    ink in the margin: "Read it backwards to claim the Relic."'
+  serif: 1
+  hanh: 4
+  chantLines:
+  - "Ng\u01B0\u1EDDi \u0111\u01B0\u1EE3c y\xEAu nh\u1EA5t, b\u1ECB ph\u1EA3n b\u1ED9i
+    nh\u1EA5t."
+  - "L\u1EE5a tr\u1EAFng h\xF3a tro trong l\u1EEDa n\u1EBFn."
+  - "L\u1EDDi th\u1EC1 tr\u01B0\u1EDBc b\xE0n th\u1EDD l\xE0 xi\u1EC1ng x\xEDch."
+  - "\u1EDE b\xEAn ta m\xE3i, M\u1EAFt Tr\u1EADn th\u1EE9 ba."
+  chantLinesEn:
+  - The most beloved, the most betrayed.
+  - White silk turned to ash in candle flame.
+  - The vow before the altar is the chain.
+  - Stay by me forever, third Eye of the circle.
+  symbol: {fileID: 0}

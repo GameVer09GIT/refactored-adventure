@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1db693696d896a44fab4f1242b57fba3, type: 3}
+  m_Name: REL_Tho
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.RelicData
+  id: REL_Tho
+  title: "L\u01B0\u1EE3c s\u1EEBng c\u1EE7a Mrs. Peake"
+  titleEn: Mrs. Peake's Horn Comb
+  year: 1
+  body: "Chi\u1EBFc l\u01B0\u1EE3c s\u1EEBng c\u1ED5 c\u1EE7a b\xE0 qu\u1EA3n gia
+    Eleanor Peake \u2014 ng\u01B0\u1EDDi \u0111\u1EA7u ti\xEAn b\u1ECB tr\xF3i linh
+    h\u1ED3n v\xE0o Kh\u1ED1i C\u1ED5 V\u1EADt, bi\u1EBFn th\xE0nh The Keeper.\nQu\u1EA5n
+    quanh l\u01B0\u1EE3c l\xE0 m\u1ED9t trang Vademecum."
+  bodyEn: "The antique horn comb of housekeeper Eleanor Peake \u2014 the first soul
+    bound into the Obsidian Relic, made into The Keeper.\nA page of the Vademecum
+    is wound around it."
+  serif: 1
+  hanh: 2
+  talisman: {fileID: 11400000, guid: ec46a1415508f7e4291f441c2727cb15, type: 2}
+  pickupLine: "Ch\u1EA1y \u0111i\u2026 ta kh\xF4ng ki\u1EC1m ch\u1EBF \u0111\u01B0\u1EE3c\u2026"
+  pickupLineEn: "Run\u2026 I can't hold myself back\u2026"

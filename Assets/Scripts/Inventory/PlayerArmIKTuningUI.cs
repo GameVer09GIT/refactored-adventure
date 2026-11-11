@@ -361,4 +361,13 @@ namespace HorrorGame.Inventory
         }
     }
 }
+#else
+namespace HorrorGame.Inventory
+{
+    /// <summary>Bản rỗng cho bản build phát hành: công cụ tinh chỉnh IK (F12) chỉ có trong Editor/Development build.</summary>
+    public class PlayerArmIKTuningUI : UnityEngine.MonoBehaviour
+    {
+        public static bool IsVisible => false;
+    }
+}
 #endif

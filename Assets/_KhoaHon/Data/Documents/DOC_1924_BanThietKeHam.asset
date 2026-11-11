@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90e318e617ea7dd4cb2778362dae431d, type: 3}
+  m_Name: DOC_1924_BanThietKeHam
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.DocumentData
+  id: DOC_1924_BanThietKeHam
+  title: "B\u1EA3n thi\u1EBFt k\u1EBF h\u1EA7m ng\u1EA7m"
+  titleEn: Cellar Blueprint
+  year: 1
+  body: "C\u1EA7u thang \u0111\xE1 \u2014 s\xE2u m\u01B0\u1EDDi l\u0103m m\xE9t.
+    X\xE0 lim. S\u1EA3nh t\u1EBF b\xE1t gi\xE1c. V\u1EA1c \u0111\u1EB7t ch\xEDnh
+    gi\u1EEFa.\n\n(Ch\u1EEF k\xFD Th\u1EE3 C\u1EA3 Thomas b\u1ECB g\u1EA1ch x\xF3a
+    b\u1EB1ng m\u1EF1c \u0111\u1ECF.)"
+  bodyEn: "Stone stair \u2014 fifty feet down. Holding cell. Octagonal ritual hall.
+    Cauldron at the centre.\n\n(Master Builder Thomas's signature has been struck
+    through in red ink.)"
+  serif: 1
+  flagOnRead: 0

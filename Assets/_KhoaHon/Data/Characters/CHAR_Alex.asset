@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c52ca39a73a6304fbc48fd9714970fa, type: 3}
+  m_Name: CHAR_Alex
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Core.CharacterProfile
+  character: 1
+  nameKey: char.alex.name
+  roleKey: char.alex.role
+  motiveKey: char.alex.motive
+  toolsKey: char.alex.tools
+  introKeys:
+  - intro.alex.1
+  - intro.alex.2
+  - intro.alex.3
+  portrait: {fileID: 0}
+  accent: {r: 0.35, g: 0.75, b: 0.95, a: 1}
+  hotbar:
+  - {fileID: 11400000, guid: 736af6205ca26bc44b99e4b9654e2a52, type: 2}
+  - {fileID: 11400000, guid: 89af847df506376448dfafc4aa1af0e5, type: 2}
+  - {fileID: 11400000, guid: ef0f363928ba9dc4696237658b4428fe, type: 2}

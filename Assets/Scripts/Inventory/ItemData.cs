@@ -7,7 +7,14 @@ namespace HorrorGame.Inventory
         None,
         Flashlight,
         Radar,
-        Generic
+        Generic,
+        // --- Khóa Hồn: chỉ thêm ở cuối để không lệch giá trị đã serialize ---
+        Recorder,
+        FilmCamera,
+        Crowbar,
+        // --- Blackwood Manor: nhân vật Alex ---
+        Phone,
+        NightVision
     }
 
     public enum GripType

@@ -1,0 +1,1336 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3913ed5f51e5045acd20091cb8bb5d, type: 3}
+  m_Name: KH_TextTable
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Core.TextTable
+  entries:
+  - key: prompt.open_door
+    text: "[E] M\u1EDF c\u1EEDa"
+    en: '[E] Open'
+  - key: prompt.close_door
+    text: "[E] \u0110\xF3ng c\u1EEDa"
+    en: '[E] Close'
+  - key: prompt.locked
+    text: "C\u1EEDa b\u1ECB kh\xF3a"
+    en: Locked
+  - key: prompt.unlock_with
+    text: "[E] M\u1EDF kh\xF3a b\u1EB1ng {0}"
+    en: '[E] Unlock with {0}'
+  - key: prompt.pickup
+    text: "[E] Nh\u1EB7t {0}"
+    en: '[E] Take {0}'
+  - key: prompt.read
+    text: "[E] \u0110\u1ECDc: {0}"
+    en: '[E] Read: {0}'
+  - key: prompt.inspect
+    text: '[E] Xem'
+    en: '[E] Examine'
+  - key: prompt.main_door_locked
+    text: "C\u1EEDa ch\xEDnh \u0111\xE3 s\u1EADp kh\xF3a. Kh\xF4ng m\u1EDF \u0111\u01B0\u1EE3c."
+    en: The front door has slammed shut. It won't budge.
+  - key: prompt.stair_door_locked
+    text: "C\u1EEDa l\xEAn t\u1EA7ng hai b\u1ECB kh\xF3a"
+    en: The door to the upper floor is locked
+  - key: prompt.chains
+    text: "N\u1EAFp h\u1EA7m b\u1ECB kh\xF3a b\u1EB1ng 5 s\u1EE3i x\xEDch"
+    en: The cellar hatch is bound by five chains
+  - key: prompt.altar
+    text: "B\xE0n th\u1EDD gia t\u1ED9c \u2014 13 bia t\u01B0\u1EDFng ni\u1EC7m,
+      5 b\u1EC7 n\u1EBFn"
+    en: "Family shrine \u2014 13 memorial plaques, 5 candle stands"
+  - key: prompt.body
+    text: '[E] Xem'
+    en: '[E] Examine'
+  - key: msg.chains
+    text: "N\u0103m s\u1EE3i x\xEDch l\u1EDBn n\u1ED1i ng\u1EA7m v\xE0o t\u01B0\u1EDDng.
+      Kh\xF4ng c\xF3 \u1ED5 kh\xF3a n\xE0o c\u1EA3."
+    en: Five heavy chains run into the walls. There is no lock anywhere.
+  - key: msg.altar
+    text: "M\u01B0\u1EDDi ba t\u1EA5m bia t\u01B0\u1EDFng ni\u1EC7m. N\u0103m t\u1EA5m
+      m\u1EA1 v\xE0ng, d\u01B0\u1EDBi m\u1ED7i t\u1EA5m l\xE0 m\u1ED9t b\u1EC7 n\u1EBFn
+      tr\u1ED1ng."
+    en: Thirteen memorial plaques. Five are gilded, each above an empty candle stand.
+  - key: msg.rubble
+    text: "\u0110\xE1 s\u1EADp k\xEDn m\u1ED9t \u0111\u01B0\u1EDDng h\u1EA7m khoan
+      h\u1EB9p. Kh\xF4ng \u0111i ti\u1EBFp \u0111\u01B0\u1EE3c."
+    en: Collapsed stone blocks a narrow drilled tunnel. No way through.
+  - key: key.upstairs
+    text: "ch\xECa kh\xF3a c\u1EEDa c\u1EA7u thang"
+    en: the staircase key
+  - key: item.backpack
+    text: "balo c\u1EE7a Julian"
+    en: Julian's backpack
+  - key: item.battery
+    text: pin
+    en: batteries
+  - key: item.film
+    text: "cu\u1ED9n phim"
+    en: a film roll
+  - key: item.safe_placeholder
+    text: "\u0111\u1ED3 trong k\xE9t s\u1EAFt"
+    en: the safe's contents
+  - key: item.tape
+    text: "cu\u1ED9n b\u0103ng cassette"
+    en: a cassette tape
+  - key: item.newspaper
+    text: "m\u1EA9u b\xE1o c\u0169"
+    en: an old newspaper
+  - key: item.relic_moc
+    text: "b\xFAp b\xEA v\u1EA3i"
+    en: the rag doll
+  - key: item.relic_thuy
+    text: "l\xE1 th\u01B0 c\u1EA7u c\u1EE9u"
+    en: the unsent letter
+  - key: item.relic_tho
+    text: "l\u01B0\u1EE3c s\u1EEBng c\u1ED5"
+    en: the horn comb
+  - key: item.relic_kim
+    text: "b\xFAa \u0111\xF3ng \u0111inh"
+    en: the bloody hammer
+  - key: item.relic_hoa
+    text: "\u0111\xF4i gi\xE0y l\u1EE5a th\xEAu"
+    en: the embroidered silk slippers
+  - key: item.generic
+    text: "v\u1EADt ph\u1EA9m"
+    en: item
+  - key: toast.got_item
+    text: "\u0110\xE3 nh\u1EB7t: {0}"
+    en: 'Picked up: {0}'
+  - key: toast.notebook_added
+    text: "\u0110\xE3 ghi v\xE0o S\u1ED5 tay: {0}"
+    en: 'Added to notebook: {0}'
+  - key: toast.saved
+    text: "\u0110\xE3 l\u01B0u ti\u1EBFn tr\xECnh"
+    en: Progress saved
+  - key: toast.no_save
+    text: "Ch\u01B0a c\xF3 b\u1EA3n l\u01B0u"
+    en: No saved game
+  - key: hint.backpack
+    text: "Nghe cu\u1ED9n b\u0103ng b\u1EB1ng m\xE1y ghi \xE2m ho\u1EB7c \u0111i\u1EC7n
+      tho\u1EA1i (Tab > B\u0103ng ghi \xE2m)"
+    en: Play the tape on the recorder or phone (Tab > Tapes)
+  - key: sub.front_door_slam
+    text: "(C\u1EEDa ch\xEDnh s\u1EADp l\u1EA1i sau l\u01B0ng. Then c\xE0i r\u01A1i
+      xu\u1ED1ng.)"
+    en: (The front door slams behind you. The bolt drops.)
+  - key: ui.close
+    text: "\u0110\xF3ng [E]"
+    en: 'Close [E]'
+  - key: notebook.title
+    text: "S\u1ED5 tay \u0111i\u1EC1u tra"
+    en: Case Notebook
+  - key: notebook.hint
+    text: "Tab / J: \u0111\xF3ng  \xB7  Q / E: \u0111\u1ED5i tab"
+    en: "Tab / J: close  \xB7  Q / E: switch tab"
+  - key: notebook.tab.documents
+    text: "T\xE0i li\u1EC7u"
+    en: Documents
+  - key: notebook.tab.tapes
+    text: "B\u0103ng ghi \xE2m"
+    en: Tapes
+  - key: notebook.tab.photos
+    text: "\u1EA2nh"
+    en: Photos
+  - key: notebook.tab.talismans
+    text: Vademecum
+    en: Vademecum
+  - key: notebook.tab.relics
+    text: "K\u1EF7 v\u1EADt"
+    en: Relics
+  - key: notebook.empty
+    text: "Ch\u01B0a c\xF3 g\xEC."
+    en: Nothing yet.
+  - key: notebook.new
+    text: "m\u1EDBi"
+    en: new
+  - key: notebook.tape_hint
+    text: "[Space] Ph\xE1t b\u0103ng n\xE0y (v\u1EEBa \u0111i v\u1EEBa nghe \u0111\u01B0\u1EE3c)."
+    en: '[Space] Play this tape (you can keep walking).'
+  - key: intro.1
+    text: "Julian Vance m\u1EA5t t\xEDch \u1EDF dinh th\u1EF1 Blackwood \u0111\xE3
+      m\u01B0\u1EDDi b\u1ED1n ng\xE0y."
+    en: Julian Vance has been missing inside Blackwood Manor for fourteen days.
+  - key: intro.2
+    text: "\u0110\xEAm cu\u1ED1i c\xF9ng, c\u1EADu \u1EA5y g\u1EEDi v\u1EC1 m\u1ED9t
+      b\u1EE9c \u1EA3nh ch\u1EE5p s\xE0n nh\xE0 b\u1EBFp. C\u1EA3nh s\xE1t n\xF3i
+      \u0111\xF3 ch\u1EC9 l\xE0 v\u1EBFt b\u1EA9n."
+    en: On his last night he sent a photo of the kitchen floor. The police called
+      it a stain.
+  - key: intro.3
+    text: "T\xF4i kh\xF4ng tin."
+    en: I don't believe them.
+  - key: prompt.door_stuck
+    text: "C\u1EEDa k\u1EB9t c\u1EE9ng, kh\xF4ng m\u1EDF \u0111\u01B0\u1EE3c"
+    en: The door is jammed shut
+  - key: prompt.locked_outside
+    text: "C\u1EEDa b\u1ECB kh\xF3a t\u1EEB b\xEAn ngo\xE0i"
+    en: Locked from the other side
+  - key: prompt.hide_wardrobe
+    text: "[E] Tr\u1ED1n v\xE0o t\u1EE7"
+    en: '[E] Hide in the wardrobe'
+  - key: prompt.hide_bed
+    text: "[E] Chui xu\u1ED1ng g\u1EA7m gi\u01B0\u1EDDng"
+    en: '[E] Hide under the bed'
+  - key: prompt.hide_exit
+    text: "[E] Ra ngo\xE0i"
+    en: '[E] Come out'
+  - key: prompt.hold_breath
+    text: "Gi\u1EEF [Space] \u0111\u1EC3 n\xEDn th\u1EDF!"
+    en: Hold [Space] to hold your breath!
+  - key: sub.hk_run
+    text: "Ch\u1EA1y \u0111i\u2026"
+    en: "Run\u2026"
+  - key: sub.hk_comb
+    text: "Ch\u1EA1y \u0111i\u2026 ta kh\xF4ng ki\u1EC1m ch\u1EBF \u0111\u01B0\u1EE3c\u2026"
+    en: "Run\u2026 I can't hold myself back\u2026"
+  - key: sub.hk_lullaby
+    text: "\u266A Ng\u1EE7 \u0111i con, n\u1EBFn \u0111\xE3 t\xE0n\u2026 c\u1EEDa
+      \u0111\xE3 c\xE0i\u2026 B\xE0 Peake gi\u1EEF ch\xECa kh\xF3a, ch\u1EB3ng ai
+      ra ngo\xE0i\u2026 \u266A"
+    en: "\u266A Hush now, child, the candle's low\u2026 the doors are barred\u2026
+      Mrs. Peake keeps the keys, and no one leaves at all\u2026 \u266A"
+  - key: ui.title_top
+    text: "L\u1EDCI NGUY\u1EC0N KH\xD3A H\u1ED2N"
+    en: THE SOUL-LOCK CURSE
+  - key: ui.title_main
+    text: BLACKWOOD MANOR
+    en: BLACKWOOD MANOR
+  - key: ui.continue
+    text: "Ti\u1EBFp t\u1EE5c"
+    en: Continue
+  - key: ui.new_game
+    text: "Tr\xF2 ch\u01A1i m\u1EDBi"
+    en: New Game
+  - key: ui.settings
+    text: "C\xE0i \u0111\u1EB7t"
+    en: Settings
+  - key: ui.credits
+    text: "Th\xF4ng tin"
+    en: Credits
+  - key: ui.quit
+    text: "Tho\xE1t"
+    en: Quit
+  - key: ui.version
+    text: "Blackwood Manor \xB7 phi\xEAn b\u1EA3n 1.0"
+    en: "Blackwood Manor \xB7 build 1.0"
+  - key: ui.menu_hint
+    text: "N\xEAn \u0111eo tai nghe v\xE0 ch\u01A1i trong b\xF3ng t\u1ED1i."
+    en: Best played with headphones, in the dark.
+  - key: ui.confirm_new
+    text: "B\u1EAFt \u0111\u1EA7u l\u1EA1i t\u1EEB \u0111\u1EA7u? Ti\u1EBFn tr\xECnh
+      \u0111\xE3 l\u01B0u s\u1EBD b\u1ECB x\xF3a."
+    en: Start over? Your saved progress will be lost.
+  - key: ui.confirm_quit
+    text: "Tho\xE1t game?"
+    en: Quit the game?
+  - key: ui.confirm_menu
+    text: "V\u1EC1 menu ch\xEDnh? Ti\u1EBFn tr\xECnh t\u1EEB \u0111i\u1EC3m l\u01B0u
+      g\u1EA7n nh\u1EA5t s\u1EBD m\u1EA5t."
+    en: Return to the main menu? Progress since the last save will be lost.
+  - key: ui.confirm_reload
+    text: "T\u1EA3i l\u1EA1i \u0111i\u1EC3m l\u01B0u g\u1EA7n nh\u1EA5t?"
+    en: Reload the last checkpoint?
+  - key: ui.yes
+    text: "\u0110\u1ED3ng \xFD"
+    en: Yes
+  - key: ui.no
+    text: "H\u1EE7y"
+    en: Cancel
+  - key: ui.confirm
+    text: "X\xE1c nh\u1EADn"
+    en: Confirm
+  - key: ui.back
+    text: "Quay l\u1EA1i"
+    en: Back
+  - key: ui.apply
+    text: "\xC1p d\u1EE5ng"
+    en: Apply
+  - key: ui.defaults
+    text: "M\u1EB7c \u0111\u1ECBnh"
+    en: Defaults
+  - key: ui.applied
+    text: "\u0110\xE3 \xE1p d\u1EE5ng c\xE0i \u0111\u1EB7t"
+    en: Settings applied
+  - key: ui.paused
+    text: "T\u1EA0M D\u1EEANG"
+    en: PAUSED
+  - key: ui.resume
+    text: "Ti\u1EBFp t\u1EE5c"
+    en: Resume
+  - key: ui.reload_checkpoint
+    text: "T\u1EA3i l\u1EA1i \u0111i\u1EC3m l\u01B0u"
+    en: Reload checkpoint
+  - key: ui.main_menu
+    text: "V\u1EC1 menu ch\xEDnh"
+    en: Main menu
+  - key: ui.pause_tip
+    text: "B\xE0 ta kh\xF4ng ng\u1EE7. B\xE0 ta ch\u1EC9 ch\u1EDD."
+    en: She doesn't sleep. She waits.
+  - key: ui.warning_title
+    text: "C\u1EA2NH B\xC1O"
+    en: WARNING
+  - key: ui.warning_body
+    text: "Tr\xF2 ch\u01A1i ch\u1EE9a h\xECnh \u1EA3nh m\xE1u me, x\xE1c ch\u1EBFt,
+      \xE2m thanh \u0111\u1ED9t ng\u1ED9t v\xE0 \xE1nh s\xE1ng nh\u1EA5p nh\xE1y.\nKh\xF4ng
+      ph\xF9 h\u1EE3p v\u1EDBi ng\u01B0\u1EDDi d\u01B0\u1EDBi 18 tu\u1ED5i, ng\u01B0\u1EDDi
+      c\xF3 b\u1EC7nh tim ho\u1EB7c d\u1EC5 b\u1ECB k\xEDch \u0111\u1ED9ng.\n\nNh\u1EA5n
+      ph\xEDm b\u1EA5t k\u1EF3 \u0111\u1EC3 ti\u1EBFp t\u1EE5c."
+    en: 'This game contains graphic violence, gore, sudden loud sounds and flashing
+      lights.
+
+      Not suitable for players under 18, or anyone with a heart condition
+      or photosensitivity.
+
+
+      Press any key to continue.'
+  - key: ui.calib_title
+    text: "\u0110I\u1EC0U CH\u1EC8NH \u0110\u1ED8 S\xC1NG"
+    en: BRIGHTNESS CALIBRATION
+  - key: ui.calib_body
+    text: "K\xE9o thanh tr\u01B0\u1EE3t cho t\u1EDBi khi h\xECnh b\xEAn tr\xE1i th\u1EA5y
+      r\xF5, h\xECnh gi\u1EEFa th\u1EA5y m\u1EDD\nv\xE0 h\xECnh b\xEAn ph\u1EA3i
+      G\u1EA6N NH\u01AF kh\xF4ng nh\xECn th\u1EA5y."
+    en: 'Adjust until the left symbol is clearly visible, the middle one faint,
+
+      and
+      the right one BARELY visible.'
+  - key: ui.credits_body
+    text: "BLACKWOOD MANOR: THE SOUL-LOCK CURSE\n\nK\u1ECBch b\u1EA3n & thi\u1EBFt
+      k\u1EBF: nh\xF3m d\u1EF1 \xE1n refactored-adventure\nL\u1EADp tr\xECnh, d\u1EF1ng
+      c\u1EA3nh, \xE2m thanh t\u1ED5ng h\u1EE3p: Claude (Anthropic) c\xF9ng nh\xF3m\nT\xE0i
+      nguy\xEAn: Flooded Grounds, Abandoned Asylum, Vintage Living Room, civilian_girl,
+      Mixamo\nPh\xF4ng ch\u1EEF: Be Vietnam Pro, Noto Serif (SIL OFL)\n\nC\u1EA3m
+      \u01A1n b\u1EA1n \u0111\xE3 d\xE1m b\u01B0\u1EDBc v\xE0o dinh th\u1EF1 Blackwood."
+    en: 'BLACKWOOD MANOR: THE SOUL-LOCK CURSE
+
+
+      Story & design: the refactored-adventure
+      team
+
+      Programming, level building, synthesized audio: Claude (Anthropic)
+      with the team
+
+      Assets: Flooded Grounds, Abandoned Asylum, Vintage Living
+      Room, civilian_girl, Mixamo
+
+      Fonts: Be Vietnam Pro, Noto Serif (SIL OFL)
+
+
+      Thank
+      you for daring to enter Blackwood Manor.'
+  - key: ui.tab.graphics
+    text: "H\xECnh \u1EA3nh"
+    en: Graphics
+  - key: ui.tab.audio
+    text: "\xC2m thanh"
+    en: Audio
+  - key: ui.tab.controls
+    text: "\u0110i\u1EC1u khi\u1EC3n"
+    en: Controls
+  - key: ui.tab.display
+    text: "Hi\u1EC3n th\u1ECB"
+    en: Display
+  - key: ui.h.screen
+    text: "M\xE0n h\xECnh"
+    en: Screen
+  - key: ui.h.quality
+    text: "Ch\u1EA5t l\u01B0\u1EE3ng"
+    en: Quality
+  - key: ui.h.volume
+    text: "\xC2m l\u01B0\u1EE3ng"
+    en: Volume
+  - key: ui.h.subtitles
+    text: "Ph\u1EE5 \u0111\u1EC1"
+    en: Subtitles
+  - key: ui.h.mouse
+    text: "Chu\u1ED9t"
+    en: Mouse
+  - key: ui.h.keys
+    text: "Ph\xEDm \u0111i\u1EC1u khi\u1EC3n"
+    en: Key bindings
+  - key: ui.h.brightness
+    text: "\u0110\u1ED9 s\xE1ng"
+    en: Brightness
+  - key: ui.h.hud
+    text: "Giao di\u1EC7n"
+    en: Interface
+  - key: ui.screen_mode
+    text: "Ch\u1EBF \u0111\u1ED9 hi\u1EC3n th\u1ECB"
+    en: Display mode
+  - key: ui.fullscreen
+    text: "To\xE0n m\xE0n h\xECnh"
+    en: Fullscreen
+  - key: ui.borderless
+    text: "C\u1EEDa s\u1ED5 kh\xF4ng vi\u1EC1n"
+    en: Borderless window
+  - key: ui.windowed
+    text: "C\u1EEDa s\u1ED5"
+    en: Windowed
+  - key: ui.resolution
+    text: "\u0110\u1ED9 ph\xE2n gi\u1EA3i"
+    en: Resolution
+  - key: ui.vsync
+    text: "\u0110\u1ED3ng b\u1ED9 d\u1ECDc (VSync)"
+    en: VSync
+  - key: ui.fps_cap
+    text: "Gi\u1EDBi h\u1EA1n FPS"
+    en: Frame rate limit
+  - key: ui.unlimited
+    text: "Kh\xF4ng gi\u1EDBi h\u1EA1n"
+    en: Unlimited
+  - key: ui.quality
+    text: "Ch\u1EA5t l\u01B0\u1EE3ng \u0111\u1ED3 h\u1ECDa"
+    en: Graphics quality
+  - key: ui.fov
+    text: "Tr\u01B0\u1EDDng nh\xECn (FOV)"
+    en: Field of view
+  - key: ui.motion_blur
+    text: "L\xE0m m\u1EDD chuy\u1EC3n \u0111\u1ED9ng"
+    en: Motion blur
+  - key: ui.film_grain
+    text: "Nhi\u1EC5u h\u1EA1t phim"
+    en: Film grain
+  - key: ui.vol_master
+    text: "T\u1ED5ng"
+    en: Master
+  - key: ui.vol_music
+    text: "Nh\u1EA1c"
+    en: Music
+  - key: ui.vol_sfx
+    text: "Hi\u1EC7u \u1EE9ng"
+    en: Effects
+  - key: ui.vol_amb
+    text: "M\xF4i tr\u01B0\u1EDDng"
+    en: Ambience
+  - key: ui.vol_voice
+    text: "Gi\u1ECDng n\xF3i"
+    en: Voice
+  - key: ui.subtitles
+    text: "Hi\u1EC7n ph\u1EE5 \u0111\u1EC1"
+    en: Show subtitles
+  - key: ui.headphones
+    text: "\xC2m thanh 3D \u0111\u01B0\u1EE3c thi\u1EBFt k\u1EBF cho tai nghe: ti\u1EBFng
+      ch\xECa kh\xF3a cho bi\u1EBFt b\xE0 ta \u1EDF b\xEAn n\xE0o."
+    en: '3D audio is designed for headphones: the jingle of keys tells you which
+      side she''s on.'
+  - key: ui.sensitivity
+    text: "\u0110\u1ED9 nh\u1EA1y chu\u1ED9t"
+    en: Mouse sensitivity
+  - key: ui.brightness
+    text: "\u0110\u1ED9 s\xE1ng"
+    en: Brightness
+  - key: ui.show_fps
+    text: "Hi\u1EC7n FPS"
+    en: Show FPS
+  - key: ui.language
+    text: "Ng\xF4n ng\u1EEF"
+    en: Language
+  - key: ui.on
+    text: "B\u1EADt"
+    en: On
+  - key: ui.off
+    text: "T\u1EAFt"
+    en: Off
+  - key: ui.key.move
+    text: "Di chuy\u1EC3n"
+    en: Move
+  - key: ui.key.run
+    text: "Ch\u1EA1y"
+    en: Sprint
+  - key: ui.key.interact
+    text: "T\u01B0\u01A1ng t\xE1c"
+    en: Interact
+  - key: ui.key.notebook
+    text: "S\u1ED5 tay"
+    en: Notebook
+  - key: ui.key.hotbar
+    text: "\u0110\u1ED5i v\u1EADt ph\u1EA9m"
+    en: Switch item
+  - key: ui.key.use
+    text: "D\xF9ng v\u1EADt ph\u1EA9m"
+    en: Use item
+  - key: ui.key.breath
+    text: "N\xEDn th\u1EDF (khi tr\u1ED1n)"
+    en: Hold breath (hiding)
+  - key: ui.key.pause
+    text: "T\u1EA1m d\u1EEBng"
+    en: Pause
+  - key: ui.you_died
+    text: "B\u1EA0N \u0110\xC3 CH\u1EBET"
+    en: YOU DIED
+  - key: hud.battery
+    text: PIN
+    en: BATTERY
+  - key: hud.film
+    text: PHIM
+    en: FILM
+  - key: item.recorder
+    text: "M\xE1y ghi \xE2m"
+    en: Cassette Recorder
+  - key: item.film_camera
+    text: "M\xE1y \u1EA3nh film"
+    en: Film Camera
+  - key: item.crowbar
+    text: "X\xE0 beng"
+    en: Crowbar
+  - key: item.phone
+    text: "\u0110i\u1EC7n tho\u1EA1i"
+    en: Smartphone
+  - key: item.night_vision
+    text: "K\xEDnh nh\xECn \u0111\xEAm"
+    en: Night Vision
+  - key: year.present
+    text: "Hi\u1EC7n t\u1EA1i"
+    en: Present
+  - key: char.choose
+    text: "CH\u1ECCN NH\xC2N V\u1EACT"
+    en: CHOOSE YOUR INVESTIGATOR
+  - key: char.evelyn.name
+    text: Evelyn Reid
+    en: Evelyn Reid
+  - key: char.evelyn.role
+    text: "Nh\xE0 b\xE1o \u0111i\u1EC1u tra \xB7 The Ashford Herald"
+    en: "Investigative Journalist \xB7 The Ashford Herald"
+  - key: char.evelyn.motive
+    text: "G\u1EA7n m\u1ED9t th\u1EBF k\u1EF7 \xE1n m\u1EA1ng b\u1ECB ni\xEAm phong.
+      C\u1ED9ng s\u1EF1 c\u1EE7a c\xF4, Julian Vance, \u0111\xE3 m\u1EA5t li\xEAn
+      l\u1EA1c ngay sau khi g\u1EEDi v\u1EC1 m\u1ED9t b\u1EE9c \u1EA3nh m\u1EADt
+      m\xE3."
+    en: Nearly a century of sealed murder files. Her partner, Julian Vance, went
+      silent right after sending back a coded photograph.
+  - key: char.evelyn.tools
+    text: "S\u01A1 \u0111\u1ED3 trinh th\xE1m x\xE2u chu\u1ED7i manh m\u1ED1i (ph\xEDm
+      M) \xB7 M\xE1y ghi \xE2m b\u1EAFt ti\u1EBFng EVP \u0111\u1EC3 \u0111\u1ECBnh
+      h\u01B0\u1EDBng k\u1EBB s\u0103n \u0111u\u1ED5i \xB7 M\xE1y \u1EA3nh film c\xF3
+      \u0111\xE8n flash"
+    en: "A case board that links the evidence (M key) \xB7 A cassette recorder that
+      catches EVP and tracks the hunter \xB7 A film camera with flash"
+  - key: char.alex.name
+    text: Alex Vance
+    en: Alex Vance
+  - key: char.alex.role
+    text: "Streamer t\xE2m linh \xB7 k\xEAnh VanceAfterDark"
+    en: "Paranormal Streamer \xB7 VanceAfterDark"
+  - key: char.alex.motive
+    text: "K\xEAnh livestream \u0111ang l\u1EE5i t\xE0n. Em trai anh, k\u1EF9 thu\u1EADt
+      vi\xEAn Julian, bi\u1EBFn m\u1EA5t trong dinh th\u1EF1 14 ng\xE0y tr\u01B0\u1EDBc.
+      \u0110\xEAm nay anh l\xEAn s\xF3ng, v\xE0 \u0111i t\xECm n\xF3."
+    en: "The channel is dying. His little brother Julian, a sound tech, vanished
+      in the manor 14 days ago. Tonight Alex goes live \u2014 and goes looking for
+      him."
+  - key: char.alex.tools
+    text: "\u0110i\u1EC7n tho\u1EA1i livestream v\u1EDBi khung chat tr\u1EF1c ti\u1EBFp
+      \xB7 K\xEDnh nh\xECn \u0111\xEAm soi d\u1EA5u v\u1EBFt \u1EA9n \xB7 \u0110\xE8n
+      flash \u0111i\u1EC7n tho\u1EA1i"
+    en: "A livestreaming phone with live chat \xB7 Night vision that reveals hidden
+      traces \xB7 Phone flash"
+  - key: char.start
+    text: "B\u1EAFt \u0111\u1EA7u"
+    en: Begin
+  - key: intro.evelyn.1
+    text: "H\u1ED3 s\u01A1 Blackwood: 1924, 1953, 1978, 1996, 2009. M\u01B0\u1EDDi
+      ba n\u0103m m\u1ED9t l\u1EA7n, c\xF3 ng\u01B0\u1EDDi ch\u1EBFt trong ng\xF4i
+      nh\xE0 n\xE0y."
+    en: 'The Blackwood files: 1924, 1953, 1978, 1996, 2009. Every generation, someone
+      dies in that house.'
+  - key: intro.evelyn.2
+    text: "M\u01B0\u1EDDi b\u1ED1n ng\xE0y tr\u01B0\u1EDBc, Julian g\u1EEDi cho t\xF4i
+      m\u1ED9t b\u1EE9c \u1EA3nh ch\u1EE5p s\xE0n nh\xE0 b\u1EBFp. R\u1ED3i im l\u1EB7ng."
+    en: Fourteen days ago, Julian sent me a photograph of the kitchen floor. Then
+      nothing.
+  - key: intro.evelyn.3
+    text: "T\xF2a so\u1EA1n b\u1EA3o t\xF4i b\u1ECF \u0111i. T\xF4i l\xE1i xe \u0111\u1EBFn
+      Blackwood l\xFAc n\u1EEDa \u0111\xEAm."
+    en: The paper told me to drop it. I drove to Blackwood at midnight.
+  - key: intro.alex.1
+    text: "Ba tr\u0103m ng\u01B0\u1EDDi xem. Tu\u1EA7n tr\u01B0\u1EDBc c\xF2n ba
+      ngh\xECn."
+    en: Three hundred viewers. Last week it was three thousand.
+  - key: intro.alex.2
+    text: "Julian b\u1EA3o n\xF3 t\xECm \u0111\u01B0\u1EE3c th\u1EE9 s\u1EBD c\u1EE9u
+      c\xE1i k\xEAnh n\xE0y. \u0110\xF3 l\xE0 tin nh\u1EAFn cu\u1ED1i c\xF9ng c\u1EE7a
+      n\xF3."
+    en: Julian said he'd found something that would save the channel. That was his
+      last message.
+  - key: intro.alex.3
+    text: "\u0110\xEAm nay t\xF4i l\xEAn s\xF3ng \u1EDF dinh th\u1EF1 Blackwood.
+      V\xE0 t\xF4i s\u1EBD \u0111\u01B0a em t\xF4i v\u1EC1."
+    en: Tonight I go live from Blackwood Manor. And I'm bringing my brother home.
+  - key: ui.keyname.hotbar
+    text: "1 \u2013 4 \xB7 cu\u1ED9n chu\u1ED9t"
+    en: "1 \u2013 4 \xB7 mouse wheel"
+  - key: ui.keyname.lmb
+    text: "Chu\u1ED9t tr\xE1i"
+    en: Left mouse
+  - key: ui.keyname.hold_space
+    text: "Gi\u1EEF Space"
+    en: Hold Space
+  - key: lord.1
+    text: "\xC0\u2026 v\u1ECB kh\xE1ch th\u1EE9 m\u01B0\u1EDDi b\u1ED1n. M\u1EDDi
+      ng\u1ED3i. \u0110\u1EEBng \u0111\u1EC3 \xFD nh\u1EEFng b\u1ED9 x\u01B0\u01A1ng
+      \u2014 h\u1ECD l\xE0 ng\u01B0\u1EDDi nh\xE0 c\u1EA3 th\xF4i."
+    en: "Ah\u2026 the fourteenth guest. Do sit. Pay no mind to the bones \u2014 they're
+      family, after all."
+  - key: lord.2
+    text: "C\u1EADu Julian c\u1EE7a c\xF4 \u0111\xE3 \u0111i xa h\u01A1n b\u1EA5t
+      k\u1EF3 ai. Nh\u01B0ng c\u1EADu \u1EA5y t\u1EEB ch\u1ED1i m\xF3n qu\xE0 c\u1EE7a
+      ta. Th\u1EADt ph\xED ph\u1EA1m."
+    en: Your Julian came further than anyone. But he refused my gift. Such a waste.
+  - key: lord.3
+    text: "Nh\u1ECF m\u1ED9t gi\u1ECDt m\xE1u l\xEAn C\u1ED5 V\u1EADt, \u0111\u1ECDc
+      ng\u01B0\u1EE3c b\xE0i ch\xFA th\u1EE9 n\u0103m. M\u01B0\u1EDDi ba linh h\u1ED3n
+      s\u1EBD qu\u1EF3 d\u01B0\u1EDBi ch\xE2n c\xF4. M\xE3i m\xE3i."
+    en: One drop of blood upon the Relic. Read the fifth verse backwards. Thirteen
+      souls will kneel at your feet. Forever.
+  - key: lord.4
+    text: "Hay c\xF4 \u0111\u1ECBnh \u0111\u1EADp v\u1EE1 n\xF3? Ng\xF4i nh\xE0 s\u1EBD
+      s\u1EADp. C\xF4 s\u1EBD ch\u1EB3ng c\xF2n g\xEC \u2014 k\u1EC3 c\u1EA3 c\u1EADu
+      ta."
+    en: "Or will you break it? The house will fall. You'll have nothing \u2014 not
+      even him."
+  - key: lord.choice.burn
+    text: "N\xE9m k\u1EF7 v\u1EADt v\xE0o v\u1EA1c, \u0111\u1EADp n\xE1t C\u1ED5
+      V\u1EADt"
+    en: Cast the relics into the cauldron and shatter the Relic
+  - key: lord.choice.blood
+    text: "Nh\u1ECF m\xE1u l\xEAn C\u1ED5 V\u1EADt, \u0111\u1ECDc ng\u01B0\u1EE3c
+      b\xE0i ch\xFA"
+    en: Bleed upon the Relic and read the verse backwards
+  - key: julian.carving
+    text: "\"Lord Blackwood kh\xF4ng bao gi\u1EDD ch\u1EBFt. L\xE3o s\u1ED1ng b\u1EB1ng
+      ch\xEDnh l\xF2ng tham c\u1EE7a k\u1EBB k\u1EBF t\u1EE5c. \u0110\u1EEBng \u0111\u1EC3
+      l\xE3o g\u1EA1t\u2026\""
+    en: "\"Lord Blackwood never dies. He lives on the greed of whoever comes next.
+      Don't let him fool you\u2026\""
+  - key: end.1.title
+    text: "K\u1EBET TH\xDAC I \u2014 GI\u1EA2I THO\xC1T"
+    en: "ENDING I \u2014 RELEASE"
+  - key: end.1.body
+    text: "M\u01B0\u1EDDi ba s\u1EE3i x\xEDch linh h\u1ED3n \u0111\u1EE9t tung. Lord
+      Blackwood tan th\xE0nh tro b\u1EE5i. Mrs. Peake m\u1EC9m c\u01B0\u1EDDi, l\u1EA7n
+      \u0111\u1EA7u ti\xEAn sau m\u1ED9t tr\u0103m n\u0103m. Julian \xF4m b\u1EA1n
+      m\u1ED9t l\u1EA7n cu\u1ED1i r\u1ED3i tan v\xE0o \xE1nh s\xE1ng.\n\nDinh th\u1EF1
+      s\u1EE5p \u0111\u1ED5 sau l\u01B0ng. B\u1EA1n ch\u1EA1y ra \u0111\xFAng l\xFAc
+      b\xECnh minh. Trong t\xFAi \xE1o v\u1EABn c\xF2n chi\u1EBFc c\xF2i nh\u1ECF
+      c\u1EE7a Julian."
+    en: "Thirteen soul-chains snap at once. Lord Blackwood crumbles to ash. Mrs.
+      Peake smiles \u2014 for the first time in a hundred years. Julian holds you
+      one last time, then fades into the light.\n\nThe manor collapses behind you.
+      You stumble out as the sun rises. In your pocket, Julian's little whistle."
+  - key: end.2.title
+    text: "K\u1EBET TH\xDAC II \u2014 T\xC2N CH\u1EE6 NH\xC2N"
+    en: "ENDING II \u2014 THE NEW MASTER"
+  - key: end.2.body
+    text: "M\u01B0\u1EDDi ba oan h\u1ED3n qu\u1EF3 ph\u1EE5c d\u01B0\u1EDBi ch\xE2n
+      b\u1EA1n. Lord Blackwood b\u1ECB h\xFAt v\xE0o C\u1ED5 V\u1EADt l\xE0m n\xF4
+      l\u1EC7. Julian b\u1ECB tr\xF3i trong \u0111\xF3, v\u0129nh vi\u1EC5n.\n\nV\xE0i
+      th\xE1ng sau, m\u1ED9t nh\xF3m b\u1EA1n tr\u1EBB d\u1EEBng xe tr\u01B0\u1EDBc
+      c\u1ED5ng. Tr\xEAn c\u1EEDa s\u1ED5 t\u1EA7ng hai, m\u1ED9t b\xF3ng ng\u01B0\u1EDDi
+      m\u1EC9m c\u01B0\u1EDDi.\n\n\"V\xE0o \u0111i\u2026 nh\xE0 \u0111ang \u0111\u1EE3i
+      c\xE1c b\u1EA1n.\""
+    en: "Thirteen souls kneel before you. Lord Blackwood is dragged into the Relic
+      as your slave. Julian is bound inside it \u2014 forever.\n\nMonths later, a
+      carload of friends pulls up at the gate. In a second-floor window, a figure
+      smiles.\n\n\"Come in\u2026 the house has been waiting for you.\""
+  - key: end.3.title
+    text: "K\u1EBET TH\xDAC B\xCD M\u1EACT \u2014 K\u1EBA H\xC8N NH\xC1T"
+    en: "SECRET ENDING \u2014 THE COWARD"
+  - key: end.3.body
+    text: "Hai gi\u1EDD s\xE1ng. \u0110\u01B0\u1EDDng l\u1ED9 tr\u1ED1ng tr\u01A1n.
+      B\u1EA1n \u0111\xE3 tho\xE1t.\n\nNh\u01B0ng m\u1ED7i l\u1EA7n li\u1EBFc g\u01B0\u01A1ng
+      chi\u1EBFu h\u1EADu, lu\xF4n c\xF3 m\u1ED9t ng\u01B0\u1EDDi \u0111\xE0n b\xE0
+      m\u1EB7c \u0111\u1ED3 qu\u1EA3n gia m\xE0u \u0111en ng\u1ED3i b\u1EA5t \u0111\u1ED9ng
+      \u1EDF gh\u1EBF sau.\n\nB\u1EC7nh vi\u1EC7n t\xE2m th\u1EA7n Ashford, ph\xF2ng
+      13. B\u1EC7nh nh\xE2n c\xE0o l\xEAn t\u01B0\u1EDDng c\xF9ng m\u1ED9t h\xECnh
+      th\xF9, \u0111\xEAm n\xE0y qua \u0111\xEAm kh\xE1c."
+    en: 'Two in the morning. The road is empty. You got away.
+
+
+      But every time
+      you glance in the rear-view mirror, a woman in a black housekeeper''s dress
+      sits perfectly still in the back seat.
+
+
+      Ashford Asylum, Room 13. The
+      patient scratches the same shape into the wall, night after night.'
+  - key: end.stats
+    text: "Th\u1EDDi gian ch\u01A1i: {0}  \xB7  S\u1ED1 l\u1EA7n ch\u1EBFt: {1} 
+      \xB7  T\xE0i li\u1EC7u: {2}"
+    en: "Play time: {0}  \xB7  Deaths: {1}  \xB7  Documents: {2}"
+  - key: end.continue
+    text: "Nh\u1EA5n ph\xEDm b\u1EA5t k\u1EF3"
+    en: Press any key
+  - key: ui.q.low
+    text: "Th\u1EA5p"
+    en: Low
+  - key: ui.q.medium
+    text: "Trung b\xECnh"
+    en: Medium
+  - key: ui.q.high
+    text: Cao
+    en: High
+  - key: ui.q.ultra
+    text: "Si\xEAu cao"
+    en: Ultra
+  - key: prompt.safe
+    text: "[E] Xoay m\xE3 k\xE9t s\u1EAFt"
+    en: '[E] Try the safe''s combination'
+  - key: prompt.safe_take
+    text: "[E] L\u1EA5y \u0111\u1ED3 trong k\xE9t"
+    en: '[E] Take what''s inside'
+  - key: safe.title
+    text: "K\xC9T S\u1EAET BLACKWOOD"
+    en: BLACKWOOD SAFE
+  - key: safe.hint
+    text: "A/D ch\u1ECDn v\xF2ng \xB7 W/S ho\u1EB7c cu\u1ED9n chu\u1ED9t \u0111\u1ED5i
+      s\u1ED1 \xB7 g\xF5 s\u1ED1 tr\u1EF1c ti\u1EBFp \xB7 Enter th\u1EED \xB7 Esc
+      \u0111\xF3ng"
+    en: "A/D select dial \xB7 W/S or mouse wheel change digit \xB7 type digits \xB7
+      Enter try \xB7 Esc close"
+  - key: safe.wrong
+    text: "Ch\u1ED1t kh\xF4ng nh\xFAc nh\xEDch."
+    en: The bolt doesn't move.
+  - key: safe.wrong_hint
+    text: "Kh\xF4ng ph\u1EA3i n\u0103m x\xE2y xong\u2026 m\xE0 l\xE0 n\u0103m c\u01A1
+      nghi\u1EC7p n\xE0y b\u1EAFt \u0111\u1EA7u."
+    en: "Not the year it was finished\u2026 the year this fortune began."
+  - key: safe.opened
+    text: "(Ch\u1ED1t th\xE9p b\u1EADt ra. C\u1EEDa k\xE9t n\u1EB7ng n\u1EC1 h\xE9
+      m\u1EDF.)"
+    en: (The steel bolt snaps back. The heavy door swings open.)
+  - key: prompt.stand
+    text: "[E] B\u1EC7 n\u1EBFn \u2014 bia kh\u1EAFc: {0}"
+    en: "[E] Candle stand \u2014 plaque: {0}"
+  - key: prompt.stand_lit
+    text: "Ng\u1ECDn n\u1EBFn \u0111\xE3 ch\xE1y \u2014 {0}"
+    en: "The candle burns \u2014 {0}"
+  - key: plaque.moc
+    text: "Annabelle Blackwood \xB7 1916\u20131924"
+    en: "Annabelle Blackwood \xB7 1916\u20131924"
+  - key: plaque.thuy
+    text: "V\u1ECB kh\xE1ch kh\xF4ng t\xEAn \xB7 1924"
+    en: "The Nameless Guest \xB7 1924"
+  - key: plaque.tho
+    text: "Eleanor Peake \xB7 1879\u20131924"
+    en: "Eleanor Peake \xB7 1879\u20131924"
+  - key: plaque.kim
+    text: "Thomas Hale \xB7 1881\u20131924"
+    en: "Thomas Hale \xB7 1881\u20131924"
+  - key: plaque.hoa
+    text: "Isabella Blackwood \xB7 1895\u20131924"
+    en: "Isabella Blackwood \xB7 1895\u20131924"
+  - key: altar.no_pages
+    text: "B\u1EC7 n\u1EBFn d\u01B0\u1EDBi bia \"{0}\" c\xF2n tr\u1ED1ng. C\u1EA7n
+      m\u1ED9t trang Vademecum."
+    en: The stand beneath "{0}" is empty. It needs a page of the Vademecum.
+  - key: altar.choose
+    text: "\u0110\u1EB7t trang n\xE0o l\xEAn b\u1EC7 c\u1EE7a\n{0}?"
+    en: 'Which page belongs to
+
+      {0}?'
+  - key: altar.hint
+    text: "M\u1ED7i t\u1EA5m bia l\xE0 m\u1ED9t M\u1EAFt Tr\u1EADn. \u0110\u1ECDc
+      l\u1EA1i k\u1EF7 v\u1EADt trong S\u1ED5 tay n\u1EBFu ch\u01B0a ch\u1EAFc. \xB7
+      Esc \u0111\u1EC3 h\u1EE7y"
+    en: "Each plaque names an Eye of the circle. Re-read the relics in your notebook
+      if unsure. \xB7 Esc to cancel"
+  - key: altar.correct
+    text: "(Ng\u1ECDn n\u1EBFn t\u1EF1 b\xF9ng ch\xE1y. {0}/5)"
+    en: (The candle flares to life by itself. {0}/5)
+  - key: altar.wrong
+    text: "(Ng\u1ECDn n\u1EBFn ph\u1EE5t t\u1EAFt. Trang gi\u1EA5y n\xF3ng r\u1EF1c
+      tr\xEAn tay. C\xF3 th\u1EE9 g\xEC \u0111\xF3 \u0111\xE3 nghe th\u1EA5y.)"
+    en: (The flame gutters out. The page burns hot in your hand. Something heard
+      that.)
+  - key: altar.rumble
+    text: "(C\u1EA3 dinh th\u1EF1 rung chuy\u1EC3n\u2026)"
+    en: "(The whole manor shudders\u2026)"
+  - key: altar.opened
+    text: "(D\u01B0\u1EDBi nh\xE0 b\u1EBFp v\u1ECDng l\xEAn ti\u1EBFng x\xEDch s\u1EAFt
+      \u0111\u1EE9t tung. N\u1EAFp h\u1EA7m \u0111\xE3 m\u1EDF.)"
+    en: (From the kitchen below comes the scream of snapping chains. The cellar is
+      open.)
+  - key: tape.playing
+    text: "\u0110ang ph\xE1t: {0}"
+    en: 'Playing: {0}'
+  - key: tape.speaker
+    text: Julian
+    en: Julian
+  - key: prompt.window_pry
+    text: "[E] N\u1EA1y c\u1EEDa s\u1ED5 b\u1EB1ng x\xE0 beng"
+    en: '[E] Pry the window open with the crowbar'
+  - key: prompt.window_nailed
+    text: "[E] C\u1EEDa s\u1ED5 b\u1ECB \u0111\xF3ng \u0111inh"
+    en: '[E] The window is nailed shut'
+  - key: msg.window_nailed
+    text: "V\xE1n g\u1ED7 \u0111\xF3ng \u0111inh ch\u1EB7t. C\u1EA7n th\u1EE9 g\xEC
+      \u0111\xF3 \u0111\u1EC3 n\u1EA1y."
+    en: The boards are nailed tight. You'd need something to pry them.
+  - key: ui.confirm_flee
+    text: "N\u1EA1y c\u1EEDa s\u1ED5 v\xE0 b\u1ECF ch\u1EA1y?\nJulian v\u1EABn c\xF2n
+      \u1EDF \u0111\xE2u \u0111\xF3 trong ng\xF4i nh\xE0 n\xE0y."
+    en: 'Pry the window and run?
+
+      Julian is still somewhere in this house.'
+  - key: toast.no_film
+    text: "H\u1EBFt phim"
+    en: Out of film
+  - key: toast.no_battery
+    text: "H\u1EBFt pin"
+    en: Battery empty
+  - key: sub.flash_stun
+    text: "(B\xE0 ta r\xFA l\xEAn, l\u1EA5y tay che m\u1EB7t.)"
+    en: (She shrieks and throws her hands over her face.)
+  - key: chat.viewers
+    text: "{0} ng\u01B0\u1EDDi xem"
+    en: '{0} watching'
+  - key: mind.title
+    text: "S\u01A0 \u0110\u1ED2 TRINH TH\xC1M"
+    en: CASE BOARD
+  - key: mind.hint
+    text: "M / Esc: \u0111\xF3ng  \xB7  Ch\u1EC9 \u0111\u1ECF n\u1ED1i hai manh m\u1ED1i
+      khi b\u1EA1n \u0111\xE3 c\xF3 c\u1EA3 hai"
+    en: "M / Esc: close  \xB7  Red string links two clues once you have both"
+  - key: mind.progress
+    text: "\u0110\xE3 x\xE2u chu\u1ED7i {0}/{1}"
+    en: Connected {0}/{1}
+  - key: chat.s0.1
+    text: "l\u1EA1i fake \xE0 Alex"
+    en: fake again alex lol
+  - key: chat.s0.2
+    text: drive faster bro
+    en: drive faster bro
+  - key: chat.s0.3
+    text: "c\xE1i nh\xE0 kia tr\xF4ng nh\u01B0 set phim"
+    en: that house looks like a film set
+  - key: chat.s0.4
+    text: "hello t\u1EEB Vi\u1EC7t Nam!!"
+    en: hello from Vietnam!!
+  - key: chat.s0.5
+    text: "tu\u1EA7n tr\u01B0\u1EDBc k\xEAnh n\xE0y 3k ng\u01B0\u1EDDi xem \u0111\xF3"
+    en: this channel had 3k viewers last week
+  - key: chat.s0.6
+    text: "ai c\xE1 Alex ch\u1EA1y v\u1EC1 trong 5 ph\xFAt"
+    en: who bets alex bails in 5 min
+  - key: chat.s0.7
+    text: "s\u01B0\u01A1ng m\xF9 fake b\u1EB1ng m\xE1y kh\xF3i \xE0"
+    en: is that a fog machine
+  - key: chat.s0.8
+    text: "t\xECm em trai \u0111i r\u1ED3i h\u1EB5ng di\u1EC5n"
+    en: find your brother first, then act
+  - key: chat.s1.1
+    text: "c\xE1i balo kia l\xE0 c\u1EE7a Julian th\u1EADt \xE0??"
+    en: is that julian's actual backpack??
+  - key: chat.s1.2
+    text: "b\xE0n ti\u1EC7c k\xECa\u2026 v\u1EABn c\xF2n \u0111\u1ED3 \u0103n??"
+    en: "the dinner table\u2026 there's still food??"
+  - key: chat.s1.3
+    text: "ok c\xE1i \u1EA3nh gia t\u1ED9c h\u01A1i gh\xEA"
+    en: ok that family portrait is creepy
+  - key: chat.s1.4
+    text: "nghe th\u1EA5y ti\u1EBFng g\xEC kh\xF4ng"
+    en: anyone else hear that
+  - key: chat.s1.5
+    text: "check k\xE9t s\u1EAFt \u0111i, c\xF3 ghi n\u0103m k\xECa"
+    en: check the safe, there's a year on it
+  - key: chat.s1.6
+    text: "Alex \u0111\u1EEBng \u0111i m\u1ED9t m\xECnh n\u1EEFa"
+    en: alex stop going alone
+  - key: chat.s1.7
+    text: "clip n\xE0y l\xEAn trending ch\u1EAFc lu\xF4n"
+    en: this clip is going viral for sure
+  - key: chat.s1.8
+    text: "mic b\u1ECB r\xE8 hay l\xE0 ti\u1EBFng th\u1EDF v\u1EADy"
+    en: is the mic crackling or is that breathing
+  - key: chat.s2.1
+    text: "ti\u1EBFng ch\xECa kh\xF3a k\xECa ALEX"
+    en: KEYS ALEX THE KEYS
+  - key: chat.s2.2
+    text: "t\u1EAFt \u0111\xE8n pin \u0111i tr\u1EDDi \u01A1i"
+    en: turn off the flashlight omg
+  - key: chat.s2.3
+    text: "ai \u0111\xF3 g\u1ECDi c\u1EA3nh s\xE1t \u0111i"
+    en: someone call the police
+  - key: chat.s2.4
+    text: "t\xF4i kh\xF4ng d\xE1m xem n\u1EEFa"
+    en: i can't watch anymore
+  - key: chat.s2.5
+    text: "tr\u1ED1n v\xE0o t\u1EE7 \u0111i!!!"
+    en: get in the wardrobe!!!
+  - key: chat.s2.6
+    text: "c\xE1i ph\xF2ng tr\u1EBB con kia\u2026"
+    en: "that child's room\u2026"
+  - key: chat.s2.7
+    text: "Alex, n\xEDn th\u1EDF khi tr\u1ED1n"
+    en: alex hold your breath when hiding
+  - key: chat.s2.8
+    text: "c\xE1i g\xEC v\u1EEBa \u0111i qua c\u1EEDa v\u1EADy"
+    en: what just walked past the door
+  - key: chat.s3.1
+    text: "\u0111\u1EEBng xu\u1ED1ng \u0111\xF3"
+    en: don't go down there
+  - key: chat.s3.2
+    text: "x\u01B0\u01A1ng trong t\u01B0\u1EDDng\u2026 th\u1EADt \u0111\u1EA5y \xE0"
+    en: "bones in the wall\u2026 is that real"
+  - key: chat.s3.3
+    text: "chat \u01A1i n\xF3 im l\u1EB7ng qu\xE1"
+    en: chat it's way too quiet
+  - key: chat.s3.4
+    text: "Julian\u2026 kh\xF4ng\u2026"
+    en: "julian\u2026 no\u2026"
+  - key: chat.s3.5
+    text: "\u0111\u1EEBng tin c\xE1i \xF4ng ng\u1ED3i gh\u1EBF"
+    en: don't trust the man in the chair
+  - key: chat.s3.6
+    text: "\u0111\u1EADp v\u1EE1 c\xE1i c\u1EE5c \u0111\xE1 \u0111en \u0111i"
+    en: smash the black stone
+  - key: chat.ghost.near.1
+    text: "b\xE0 \u1EA5y \u1EDF sau c\xE1nh c\u1EEDa"
+    en: she is behind the door
+  - key: chat.ghost.near.2
+    text: "\u0111\u1EEBng th\u1EDF"
+    en: don't breathe
+  - key: chat.ghost.near.3
+    text: "b\xEAn tr\xE1i"
+    en: left side
+  - key: chat.ghost.near.4
+    text: "b\xE0 \u1EA5y nghe th\u1EA5y anh r\u1ED3i"
+    en: she heard you
+  - key: chat.ghost.near.5
+    text: "\u0111\u1EE9ng y\xEAn"
+    en: stand still
+  - key: chat.ghost.near.6
+    text: "ch\xECa kh\xF3a \u0111ang l\u1EA1i g\u1EA7n"
+    en: the keys are coming closer
+  - key: chat.ghost.hunt.1
+    text: "CH\u1EA0Y"
+    en: RUN
+  - key: chat.ghost.hunt.2
+    text: "T\u1EE6 \xC1O. NGAY."
+    en: WARDROBE. NOW.
+  - key: chat.ghost.hunt.3
+    text: "b\xE0 \u1EA5y kh\xF4ng d\u1EEBng l\u1EA1i \u0111\xE2u"
+    en: she won't stop
+  - key: chat.ghost.hunt.4
+    text: "d\u01B0\u1EDBi g\u1EA7m gi\u01B0\u1EDDng"
+    en: under the bed
+  - key: chat.ghost.hunt.5
+    text: "flash v\xE0o m\u1EB7t b\xE0 \u1EA5y"
+    en: flash her face
+  - key: chat.ghost.idle.1
+    text: "ch\xFAng t\xF4i c\xF3 m\u01B0\u1EDDi ba ng\u01B0\u1EDDi"
+    en: there are thirteen of us
+  - key: chat.ghost.idle.2
+    text: "anh t\u1EDBi mu\u1ED9n m\u01B0\u1EDDi b\u1ED1n ng\xE0y"
+    en: you're fourteen days late
+  - key: chat.ghost.idle.3
+    text: "c\u1EADu \u1EA5y v\u1EABn \u1EDF d\u01B0\u1EDBi h\u1EA7m"
+    en: he is still in the cellar
+  - key: chat.ghost.idle.4
+    text: "ng\xF4i nh\xE0 \u0111ang ch\u1ECDn ch\u1EE7 m\u1EDBi"
+    en: the house is choosing a new master
+  - key: chat.ghost.idle.5
+    text: "\u0111\u1EEBng \u0111\u1ECDc ng\u01B0\u1EE3c"
+    en: don't read it backwards
+  - key: chat.ghost.idle.6
+    text: "ch\xFAng t\xF4i \u0111ang xem"
+    en: we are watching
+  - key: chat.flash.1
+    text: "flash \u0111\u1EB9p \u0111\u1EA5y"
+    en: nice flash
+  - key: chat.flash.2
+    text: "ch\u1EE5p h\u1EE5t r\u1ED3i"
+    en: missed
+  - key: chat.flash.3
+    text: "pin c\xF2n kh\xF4ng Alex"
+    en: how's your battery alex
+  - key: chat.flash_hit.1
+    text: "TR\xDANG R\u1ED2I"
+    en: GOT HER
+  - key: chat.flash_hit.2
+    text: "b\xE0 ta kh\u1EF1ng l\u1EA1i k\xECa!!"
+    en: she froze!!
+  - key: chat.flash_hit.3
+    text: "ch\u1EA1y ngay \u0111i"
+    en: run now
+  - key: chat.item.1
+    text: "c\xE1i g\xEC v\u1EADy?"
+    en: what is that?
+  - key: chat.item.2
+    text: "zoom v\xE0o \u0111i"
+    en: zoom in
+  - key: chat.item.3
+    text: "ghi l\u1EA1i h\u1EBFt \u0111i"
+    en: document everything
+  - key: chat.item.4
+    text: "c\xE1i n\xE0y manh m\u1ED1i \u0111\xF3"
+    en: that's a clue
+  - key: chat.caught.1
+    text: ALEXXXX
+    en: ALEXXXX
+  - key: chat.caught.2
+    text: "kh\xF4ng kh\xF4ng kh\xF4ng"
+    en: no no no
+  - key: chat.caught.3
+    text: "stream ch\u1EBFt r\u1ED3i \xE0??"
+    en: did the stream die??
+  - key: evp.1
+    text: "\u2026m\u01B0\u1EDDi ba\u2026"
+    en: "\u2026thirteen\u2026"
+  - key: evp.2
+    text: "\u2026c\u1EEDa h\u1EA7m d\u01B0\u1EDBi b\xE0n\u2026"
+    en: "\u2026the hatch under the table\u2026"
+  - key: evp.3
+    text: "\u2026b\xE0 \u1EA5y kh\xF4ng xu\u1ED1ng \u0111\u01B0\u1EE3c\u2026"
+    en: "\u2026she can't come down\u2026"
+  - key: evp.4
+    text: "\u2026\u0111\u1EEBng nghe l\xE3o\u2026"
+    en: "\u2026don't listen to him\u2026"
+  - key: evp.5
+    text: "\u2026ch\xE1u l\u1EA1nh qu\xE1\u2026"
+    en: "\u2026I'm so cold\u2026"
+  - key: evp.6
+    text: "\u2026ch\u1EA1y \u0111i\u2026"
+    en: "\u2026run\u2026"
+  - key: evp.7
+    text: "\u2026Evelyn\u2026"
+    en: "\u2026Evelyn\u2026"
+  - key: mind.link.1
+    text: "M\xE3 k\xE9t = n\u0103m kh\u1EDFi d\u1EF1ng 1921"
+    en: Safe code = founding year 1921
+  - key: mind.link.2
+    text: "Julian \u0111\xE3 th\u1EED 1924 \u2014 sai"
+    en: "Julian tried 1924 \u2014 wrong"
+  - key: mind.link.3
+    text: "L\u1ED1i xu\u1ED1ng h\u1EA7m n\u1EB1m d\u01B0\u1EDBi s\xE0n b\u1EBFp"
+    en: The way down is beneath the kitchen floor
+  - key: mind.link.4
+    text: "V\xF2ng tr\xF2n 5 c\xE1nh = 5 M\u1EAFt Tr\u1EADn"
+    en: Five-pointed circle = five Eyes
+  - key: mind.link.5
+    text: "Ng\u01B0\u1EDDi \u0111\xE0n b\xE0 c\u1EA7m ch\xECa kh\xF3a = Mrs. Peake"
+    en: The woman with the keys = Mrs. Peake
+  - key: mind.link.6
+    text: "Annabelle l\xE0 \u0110\u1EE9a Tr\u1EBB"
+    en: Annabelle is the Child
+  - key: mind.link.7
+    text: "V\u1ECB kh\xE1ch b\u1ECB chu\u1ED1c \u0111\u1ED9c l\xE0 K\u1EBB L\u1EEF
+      Kh\xE1ch"
+    en: The poisoned guest is the Wayfarer
+  - key: mind.link.8
+    text: "Thomas l\xE0 Ng\u01B0\u1EDDi Th\u1EE3"
+    en: Thomas is the Builder
+  - key: mind.link.9
+    text: "Isabella l\xE0 Qu\xFD B\xE0 \u2014 b\xE0i ch\xFA th\u1EE9 n\u0103m"
+    en: "Isabella is the Lady \u2014 the fifth verse"
+  - key: mind.link.10
+    text: "L\xF2ng tham \u0111\u01B0\u1EE3c thao t\xFAng qua Vademecum"
+    en: Greed spread through the Vademecum
+  - key: mind.link.11
+    text: "L\u1ED7 khoan 2009 sau v\xE1ch b\u1EBFp"
+    en: The 2009 drill hole behind the kitchen wall
+  - key: gate.hint
+    text: "Gi\u1EEF [W] \u0111\u1EC3 l\xE1i \u0111i. [S] / [Space] \u0111\u1EC3 phanh.
+      Chu\u1ED9t \u0111\u1EC3 nh\xECn quanh."
+    en: Hold [W] to drive away. [S] / [Space] to brake. Mouse to look around.
+  - key: gate.wake
+    text: "\u2026T\xF4i t\u1EC9nh d\u1EADy. Chi\u1EBFc xe v\u1EABn \u0111\u1ED7 tr\u01B0\u1EDBc
+      c\u1ED5ng dinh th\u1EF1."
+    en: "\u2026I come to. The car is parked in front of the manor gate again."
+  - key: gate.again
+    text: "Kh\xF4ng th\u1EC3 n\xE0o. Th\u1EED l\u1EA1i."
+    en: That's impossible. Try again.
+  - key: gate.sign.1
+    text: ANNABELLE  1924
+    en: ANNABELLE  1924
+  - key: gate.sign.2
+    text: H. STERLING  1996
+    en: H. STERLING  1996
+  - key: gate.sign.3
+    text: JULIAN VANCE
+    en: JULIAN VANCE
+  - key: gate.wake2
+    text: "\u2026L\u1EA1i l\xE0 c\xE1nh c\u1ED5ng \u1EA5y. Ng\xF4i nh\xE0 kh\xF4ng
+      cho t\xF4i \u0111i."
+    en: "\u2026The same gate. The house won't let me leave."
+  - key: gate.try
+    text: "L\u1EA7n cu\u1ED1i."
+    en: One last time.
+  - key: gate.dead
+    text: "\u0110\u1ED9ng c\u01A1 ch\u1EBFt h\u1EB3n. \u0110\xE8n pha t\u1EAFt ng\u1EA5m."
+    en: The engine dies. The headlights go dark.
+  - key: gate.open
+    text: "C\xE1nh c\u1ED5ng s\u1EAFt t\u1EF1 m\u1EDF ra. N\xF3 \u0111ang m\u1EDDi
+      t\xF4i v\xE0o."
+    en: The iron gate swings open by itself. It's inviting me in.
+  - key: prompt.julian
+    text: "[E] Xem thi th\u1EC3"
+    en: '[E] Examine the body'
+  - key: prompt.julian_seen
+    text: "[E] Julian\u2026"
+    en: "[E] Julian\u2026"
+  - key: toast.whistle
+    text: "\u0110\xE3 nh\u1EB7t: chi\u1EBFc c\xF2i nh\u1ECF c\u1EE7a Julian"
+    en: 'Picked up: Julian''s little whistle'
+  - key: julian.reaction.alex
+    text: "Julian\u2026 em \u01A1i. Anh xin l\u1ED7i. Anh \u0111\u1EBFn mu\u1ED9n
+      qu\xE1."
+    en: "Julian\u2026 little brother. I'm sorry. I came too late."
+  - key: julian.reaction.evelyn
+    text: "C\u1EADu \u0111\xE3 \u0111i xa h\u01A1n b\u1EA5t k\u1EF3 ai, Julian. T\xF4i
+      s\u1EBD k\u1EBFt th\xFAc chuy\u1EC7n n\xE0y."
+    en: You came further than anyone, Julian. I'll finish this.
+  - key: ritual.choose
+    text: "Lord Blackwood ch\u1EDD c\xE2u tr\u1EA3 l\u1EDDi c\u1EE7a b\u1EA1n."
+    en: Lord Blackwood awaits your answer.
+  - key: ritual.need_relics
+    text: "(c\u1EA7n \u0111\u1EE7 5 k\u1EF7 v\u1EADt v\xE0 b\xFAa c\u1EE7a Thomas)"
+    en: (needs all 5 relics and Thomas's hammer)
+  - key: ritual.need_verse
+    text: "(c\u1EA7n b\xE0i ch\xFA th\u1EE9 n\u0103m)"
+    en: (needs the fifth verse)
+  - key: end.1.a
+    text: "T\u1EEBng k\u1EF7 v\u1EADt m\u1ED9t r\u01A1i v\xE0o v\u1EA1c m\xE1u \u0111en."
+    en: One by one, the relics fall into the black cauldron.
+  - key: end.1.b
+    text: "Chi\u1EBFc b\xFAa c\u1EE7a Thomas n\u1EB7ng tr\u0129u trong tay."
+    en: Thomas's hammer is heavy in your hands.
+  - key: end.1.c
+    text: "M\u01B0\u1EDDi ba s\u1EE3i x\xEDch linh h\u1ED3n \u0111\u1EE9t tung c\xF9ng
+      l\xFAc."
+    en: Thirteen soul-chains snap at once.
+  - key: end.1.d
+    text: "B\xECnh minh. L\u1EA7n \u0111\u1EA7u ti\xEAn sau m\u1ED9t tr\u0103m n\u0103m."
+    en: Dawn. For the first time in a hundred years.
+  - key: end.2.a
+    text: "M\u1ED9t gi\u1ECDt m\xE1u r\u01A1i l\xEAn m\u1EB7t \u0111\xE1 \u0111en.
+      N\xF3 \u1EA5m l\xEAn."
+    en: A drop of blood falls on the black stone. It grows warm.
+  - key: end.2.b
+    text: "M\u01B0\u1EDDi ba oan h\u1ED3n qu\u1EF3 xu\u1ED1ng. Ng\xF4i nh\xE0 \u0111\xE3
+      c\xF3 ch\u1EE7 m\u1EDBi."
+    en: Thirteen souls kneel. The house has a new master.
+  - key: end.2.later
+    text: "V\xE0i th\xE1ng sau."
+    en: Months later.
+  - key: end.2.quote
+    text: "\"V\xE0o \u0111i\u2026 nh\xE0 \u0111ang \u0111\u1EE3i c\xE1c b\u1EA1n.\""
+    en: "\"Come in\u2026 the house has been waiting for you.\""
+  - key: end.3.a
+    text: "Hai gi\u1EDD s\xE1ng. T\xF4i \u0111\xE3 tho\xE1t. T\xF4i \u0111\xE3 tho\xE1t\u2026"
+    en: "Two in the morning. I got out. I got out\u2026"
+  - key: end.3.b
+    text: "B\u1EC7nh vi\u1EC7n t\xE2m th\u1EA7n Ashford. Ph\xF2ng 13."
+    en: Ashford Asylum. Room 13.
+  - key: lord.2.alex
+    text: "Em trai anh \u0111\xE3 \u0111i xa h\u01A1n b\u1EA5t k\u1EF3 ai. Nh\u01B0ng
+      n\xF3 t\u1EEB ch\u1ED1i m\xF3n qu\xE0 c\u1EE7a ta. Th\u1EADt ph\xED ph\u1EA1m."
+    en: Your little brother came further than anyone. But he refused my gift. Such
+      a waste.
+  - key: lord.3.alex
+    text: "Nh\u1ECF m\u1ED9t gi\u1ECDt m\xE1u l\xEAn C\u1ED5 V\u1EADt, \u0111\u1ECDc
+      ng\u01B0\u1EE3c b\xE0i ch\xFA th\u1EE9 n\u0103m. M\u01B0\u1EDDi ba linh h\u1ED3n
+      s\u1EBD qu\u1EF3 d\u01B0\u1EDBi ch\xE2n anh. V\xE0 h\xE0ng tri\u1EC7u ng\u01B0\u1EDDi
+      s\u1EBD xem anh. M\xE3i m\xE3i."
+    en: One drop of blood upon the Relic. Read the fifth verse backwards. Thirteen
+      souls will kneel at your feet. And millions will watch you. Forever.
+  - key: lord.4.alex
+    text: "Hay anh \u0111\u1ECBnh \u0111\u1EADp v\u1EE1 n\xF3? Ng\xF4i nh\xE0 s\u1EBD
+      s\u1EADp. Anh s\u1EBD ch\u1EB3ng c\xF2n g\xEC \u2014 k\u1EC3 c\u1EA3 n\xF3."
+    en: "Or will you break it? The house will fall. You'll have nothing \u2014 not
+      even him."
+  - key: ui.load_game
+    text: "T\u1EA3i tr\xF2 ch\u01A1i"
+    en: Load Game
+  - key: ui.extras
+    text: "Th\xEAm"
+    en: Extras
+  - key: ui.choose_slot_new
+    text: "CH\u1ECCN \xD4 L\u01AFU"
+    en: CHOOSE A SAVE SLOT
+  - key: ui.choose_slot_load
+    text: "T\u1EA2I TR\xD2 CH\u01A0I"
+    en: LOAD GAME
+  - key: ui.slot
+    text: "\xD4 l\u01B0u {0}"
+    en: Slot {0}
+  - key: ui.slot_empty
+    text: "Tr\u1ED1ng"
+    en: Empty
+  - key: ui.loading
+    text: "\u0110ang t\u1EA3i\u2026"
+    en: "Loading\u2026"
+  - key: ui.endings
+    text: "K\u1EBFt th\xFAc"
+    en: Endings
+  - key: ui.ending_locked
+    text: "???  (ch\u01B0a m\u1EDF kh\xF3a)"
+    en: ???  (locked)
+  - key: ui.achievements
+    text: "Th\xE0nh t\u1EF1u  {0}/{1}"
+    en: Achievements  {0}/{1}
+  - key: ui.credits_more
+    text: "\xC2M THANH\nT\u1ED5ng h\u1EE3p th\u1EE7 t\u1EE5c b\u1EB1ng code \u2014
+      kh\xF4ng d\xF9ng m\u1EABu c\xF3 b\u1EA3n quy\u1EC1n\n\nM\xD4 H\xCCNH \u0110\u1EA0O
+      C\u1EE4\nBlender 5.2 (d\u1EF1ng b\u1EB1ng script)\n\nC\xD4NG C\u1EE4\nUnity
+      6 \xB7 URP \xB7 MCP for Unity\n\nG\u1EEDi Julian.\nV\xE0 g\u1EEDi b\u1EA1n
+      \u2014 ng\u01B0\u1EDDi \u0111\xE3 d\xE1m b\u01B0\u1EDBc qua c\xE1nh c\u1ED5ng
+      \u1EA5y."
+    en: "AUDIO\nProcedurally synthesized in code \u2014 no licensed samples\n\nPROP
+      MODELS\nBlender 5.2 (scripted)\n\nTOOLS\nUnity 6 \xB7 URP \xB7 MCP for Unity\n\nFor
+      Julian.\nAnd for you \u2014 who dared to walk through that gate."
+  - key: stage.0
+    text: "Ch\u01B0\u01A1ng 0 \u2014 C\u1ED5ng s\u01B0\u01A1ng m\xF9"
+    en: "Chapter 0 \u2014 The Fog Gate"
+  - key: stage.1
+    text: "Ch\u01B0\u01A1ng 1 \u2014 T\u1EA7ng tr\u1EC7t"
+    en: "Chapter 1 \u2014 Ground Floor"
+  - key: stage.2
+    text: "Ch\u01B0\u01A1ng 2 \u2014 L\xE3nh \u0111\u1ECBa Mrs. Peake"
+    en: "Chapter 2 \u2014 Mrs. Peake's Domain"
+  - key: stage.3
+    text: "Ch\u01B0\u01A1ng 3 \u2014 M\xEA \u0111\u1EA1o h\u1EA7m ng\u1EA7m"
+    en: "Chapter 3 \u2014 The Cellar"
+  - key: stage.4
+    text: "Ch\u01B0\u01A1ng 4 \u2014 S\u1EA3nh T\u1EBF"
+    en: "Chapter 4 \u2014 The Ritual Hall"
+  - key: stage.5
+    text: "K\u1EBFt th\xFAc"
+    en: Finale
+  - key: ui.volumetric_fog
+    text: "S\u01B0\u01A1ng th\u1EC3 t\xEDch"
+    en: Volumetric fog
+  - key: ui.h.access
+    text: "H\u1ED7 tr\u1EE3"
+    en: Accessibility
+  - key: ui.subtitle_size
+    text: "C\u1EE1 ph\u1EE5 \u0111\u1EC1"
+    en: Subtitle size
+  - key: ui.size.normal
+    text: "Th\u01B0\u1EDDng"
+    en: Normal
+  - key: ui.size.large
+    text: "L\u1EDBn"
+    en: Large
+  - key: ui.size.xlarge
+    text: "R\u1EA5t l\u1EDBn"
+    en: Extra large
+  - key: ui.camera_shake
+    text: Rung camera
+    en: Camera shake
+  - key: tip.1
+    text: "Mrs. Peake kh\xF4ng xu\u1ED1ng \u0111\u01B0\u1EE3c t\u1EA7ng tr\u1EC7t.
+      C\u1EA7u thang l\xE0 ranh gi\u1EDBi c\u1EE7a b\xE0 ta."
+    en: Mrs. Peake cannot come down to the ground floor. The stairs are her border.
+  - key: tip.2
+    text: "Tr\u1ED1n trong t\u1EE7 ho\u1EB7c d\u01B0\u1EDBi g\u1EA7m gi\u01B0\u1EDDng,
+      gi\u1EEF Space \u0111\u1EC3 n\xEDn th\u1EDF khi b\xE0 ta l\u1EA1i g\u1EA7n."
+    en: "Hide in a wardrobe or under a bed \u2014 hold Space to hold your breath
+      when she comes close."
+  - key: tip.3
+    text: "Ti\u1EBFng ch\xECa kh\xF3a leng keng cho bi\u1EBFt b\xE0 ta \u1EDF b\xEAn
+      n\xE0o. H\xE3y \u0111eo tai nghe."
+    en: The jingle of keys tells you which side she's on. Wear headphones.
+  - key: tip.4
+    text: "\u0110\xE8n pin gi\u1EEF cho b\u1EA1n t\u1EC9nh t\xE1o \u2014 nh\u01B0ng
+      c\u0169ng cho b\xE0 ta th\u1EA5y b\u1EA1n."
+    en: "Your flashlight keeps you sane \u2014 and shows her where you are."
+  - key: tip.5
+    text: "M\u1ED7i t\u1EA5m bia trong ph\xF2ng th\u1EDD kh\u1EAFc t\xEAn m\u1ED9t
+      M\u1EAFt Tr\u1EADn. \u0110\u1ECDc k\u1EF9 c\xE1c k\u1EF7 v\u1EADt."
+    en: Each plaque in the shrine names an Eye of the circle. Read the relics carefully.
+  - key: tip.6
+    text: "\u0110\u1ED3 v\u1EADt \u0111\u1ED5 v\u1EE1 g\xE2y ti\u1EBFng \u0111\u1ED9ng.
+      \u0110i ch\u1EADm qua h\xE0nh lang t\u1EA7ng 2."
+    en: Things that fall make noise. Walk slowly through the upstairs halls.
+  - key: tip.7
+    text: "Flash m\xE1y \u1EA3nh ho\u1EB7c \u0111i\u1EC7n tho\u1EA1i c\xF3 th\u1EC3
+      l\xE0m b\xE0 ta kh\u1EF1ng l\u1EA1i v\xE0i gi\xE2y."
+    en: A camera or phone flash can stun her for a few seconds.
+  - key: tip.8
+    text: "\u1EDE trong b\xF3ng t\u1ED1i qu\xE1 l\xE2u, b\u1EA1n s\u1EBD b\u1EAFt
+      \u0111\u1EA7u th\u1EA5y nh\u1EEFng th\u1EE9 kh\xF4ng c\xF3 th\u1EADt."
+    en: Stay in the dark too long and you'll start seeing things that aren't there.
+  - key: tip.9
+    text: "N\u0103m x\xE2y xong ch\u01B0a ch\u1EAFc l\xE0 n\u0103m c\u01A1 nghi\u1EC7p
+      b\u1EAFt \u0111\u1EA7u."
+    en: The year it was finished isn't always the year it began.
+  - key: ach.unlocked
+    text: "Th\xE0nh t\u1EF1u: {0}"
+    en: 'Achievement: {0}'
+  - key: ach.end_release.title
+    text: "B\xECnh minh"
+    en: Daybreak
+  - key: ach.end_release.desc
+    text: "Gi\u1EA3i tho\xE1t m\u01B0\u1EDDi ba linh h\u1ED3n."
+    en: Free the thirteen souls.
+  - key: ach.end_master.title
+    text: "T\xE2n Ch\u1EE7 Nh\xE2n"
+    en: The New Master
+  - key: ach.end_master.desc
+    text: "Nh\u1EADn l\u1EA5y Kh\u1ED1i C\u1ED5 V\u1EADt."
+    en: Claim the Obsidian Relic.
+  - key: ach.end_coward.title
+    text: "K\u1EBB H\xE8n Nh\xE1t"
+    en: The Coward
+  - key: ach.end_coward.desc
+    text: "B\u1ECF ch\u1EA1y qua c\u1EEDa s\u1ED5 s\u1EA3nh."
+    en: Flee through the hall window.
+  - key: ach.both_characters.title
+    text: "Hai g\xF3c nh\xECn"
+    en: Two Perspectives
+  - key: ach.both_characters.desc
+    text: "Ho\xE0n th\xE0nh game v\u1EDBi c\u1EA3 Evelyn v\xE0 Alex."
+    en: Finish the game as both Evelyn and Alex.
+  - key: ach.no_death.title
+    text: "Kh\xF4ng m\u1ED9t v\u1EBFt x\u01B0\u1EDBc"
+    en: Untouched
+  - key: ach.no_death.desc
+    text: "\u0110\u1EA1t k\u1EBFt th\xFAc ch\xEDnh m\xE0 kh\xF4ng ch\u1EBFt l\u1EA7n
+      n\xE0o."
+    en: Reach a main ending without dying.
+  - key: ach.safe_cracked.title
+    text: "N\u0103m khai sinh"
+    en: Year of Founding
+  - key: ach.safe_cracked.desc
+    text: "M\u1EDF k\xE9t s\u1EAFt c\u1EE7a Lord Blackwood."
+    en: Open Lord Blackwood's safe.
+  - key: ach.found_julian.title
+    text: "M\u01B0\u1EDDi b\u1ED1n ng\xE0y"
+    en: Fourteen Days
+  - key: ach.found_julian.desc
+    text: "T\xECm th\u1EA5y Julian."
+    en: Find Julian.
+  - key: ach.first_flash.title
+    text: "N\u1EE5 c\u01B0\u1EDDi tr\u01B0\u1EDBc \u1ED1ng k\xEDnh"
+    en: Say Cheese
+  - key: ach.first_flash.desc
+    text: "L\xE0m cho\xE1ng Mrs. Peake b\u1EB1ng \u0111\xE8n flash."
+    en: Stun Mrs. Peake with a flash.
+  - key: ach.all_relics.title
+    text: "N\u0103m M\u1EAFt Tr\u1EADn"
+    en: Five Eyes
+  - key: ach.all_relics.desc
+    text: "Thu th\u1EADp \u0111\u1EE7 5 k\u1EF7 v\u1EADt."
+    en: Collect all five relics.
+  - key: ach.cellar_open.title
+    text: "X\xEDch \u0111\u1EE9t"
+    en: Broken Chains
+  - key: ach.cellar_open.desc
+    text: "M\u1EDF n\u1EAFp h\u1EA7m d\u01B0\u1EDBi nh\xE0 b\u1EBFp."
+    en: Open the cellar hatch.
+  - key: ach.archivist.title
+    text: "Ng\u01B0\u1EDDi l\u01B0u tr\u1EEF"
+    en: Archivist
+  - key: ach.archivist.desc
+    text: "Ghi \u0111\u1EA7y s\u1ED5 tay \u0111i\u1EC1u tra."
+    en: Fill the case notebook.

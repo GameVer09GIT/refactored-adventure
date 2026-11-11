@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90e318e617ea7dd4cb2778362dae431d, type: 3}
+  m_Name: DOC_1921_BangDong
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Notebook.DocumentData
+  id: DOC_1921_BangDong
+  title: "\u1EA2nh gia t\u1ED9c Blackwood"
+  titleEn: Blackwood Family Portrait
+  year: 0
+  body: "\u1EA2nh ch\u1EE5p to\xE0n gia t\u1ED9c tr\u01B0\u1EDBc ti\u1EC1n s\u1EA3nh
+    c\xF2n d\u1EF1ng gi\xE0n gi\xE1o.\nD\xF2ng ch\u1EEF m\u1EA1 v\xE0ng d\u01B0\u1EDBi
+    khung:\n\n\"BLACKWOOD MANOR \u2014 KH\u1EDEI D\u1EF0NG N\u0102M 1921\nLord Arthur
+    Blackwood c\xF9ng gia quy\u1EBFn.\""
+  bodyEn: "The whole family posed before an unfinished fa\xE7ade, scaffolding still
+    up.\nGilt lettering beneath the frame:\n\n\"BLACKWOOD MANOR \u2014 FOUNDED 1921\nLord
+    Arthur Blackwood and household.\""
+  serif: 1
+  flagOnRead: 0
