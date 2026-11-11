@@ -468,6 +468,7 @@ MonoBehaviour:
   - {fileID: -6288072647309666549}
   - {fileID: 7518938298396184218}
   - {fileID: -1410297666881709256}
+  - {fileID: 8480720503155850826}
 --- !u!114 &853819529557874667
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -925,6 +926,58 @@ MonoBehaviour:
   scale:
     m_OverrideState: 1
     m_Value: 1
+--- !u!114 &8480720503155850826
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aab8ed24730d1ae4aa5b04db3065ae63, type: 3}
+  m_Name: KHVolumetricFog
+  m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Rendering.KHVolumetricFog
+  active: 1
+  density:
+    m_OverrideState: 1
+    m_Value: 0
+  tint:
+    m_OverrideState: 1
+    m_Value: {r: 0.75, g: 0.8, b: 0.9, a: 1}
+  baseHeight:
+    m_OverrideState: 1
+    m_Value: 10
+  heightFalloff:
+    m_OverrideState: 1
+    m_Value: 0.15
+  maxDistance:
+    m_OverrideState: 1
+    m_Value: 45
+  startDistance:
+    m_OverrideState: 1
+    m_Value: 0.8
+  anisotropy:
+    m_OverrideState: 1
+    m_Value: 0.55
+  mainLightIntensity:
+    m_OverrideState: 1
+    m_Value: 1
+  additionalLightsIntensity:
+    m_OverrideState: 1
+    m_Value: 1
+  ambient:
+    m_OverrideState: 1
+    m_Value: {r: 0.01, g: 0.012, b: 0.018, a: 1}
+  noiseScale:
+    m_OverrideState: 1
+    m_Value: 0.18
+  noiseIntensity:
+    m_OverrideState: 1
+    m_Value: 0.6
+  wind:
+    m_OverrideState: 1
+    m_Value: {x: 0.25, y: 0.05, z: 0.1}
 --- !u!114 &9001657382290151224
 MonoBehaviour:
   m_ObjectHideFlags: 3
