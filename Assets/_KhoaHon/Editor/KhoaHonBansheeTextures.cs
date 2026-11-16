@@ -127,8 +127,8 @@ namespace KhoaHon.EditorTools
                     bool hair = lum < 0.24f && v > 0.42f && (v > 0.8f || u < 0.27f || u > 0.73f || (v > 0.74f && v < 0.8f && Mathf.Abs(u - 0.5f) < 0.17f));
                     if (hair)
                     {
-                        float g = 0.3f + lum * 1.2f + 0.12f * (Fbm(u * 50f, v * 8f, 3) - 0.5f);
-                        px[i] = new Color(g * 0.92f, g * 0.9f, g * 0.84f, c.a); continue;
+                        float g = 0.02f + lum * 0.22f + 0.03f * (Fbm(u * 50f, v * 8f, 3) - 0.5f);
+                        px[i] = new Color(g * 1.0f, g * 0.95f, g * 0.92f, c.a); continue;
                     }
                     var col = Corpse(c, u, v, 22f);
                     // Hốc mắt thâm đen trũng sâu
@@ -170,7 +170,9 @@ namespace KhoaHon.EditorTools
         }
 
         // ------------------------------------------------------------------ Thân
-        public static Texture2D Body(Texture src)
+        /// <param name="cloth">Mặt nạ vùng mặc vải đen (từ KhoaHonHousekeeperLook.ClothMask), null = kiểu cũ.</param>
+        /// <param name="trim">Mặt nạ viền ren cổ tay / cổ áo.</param>
+        public static Texture2D Body(Texture src, float[] cloth = null, float[] trim = null)
         {
             sx = 77.1f; sy = 12.9f;
             var px = Read(src, Size);
@@ -185,7 +187,29 @@ namespace KhoaHon.EditorTools
                     bool boots = u < 0.27f && v > 0.72f;
                     Color o;
                     float blood;
-                    if (skin)
+                    if (cloth != null && cloth[i] > 0.5f)
+                    {
+                        // Váy tang đen: thân áo bó, tay dài, cổ cao — giữ chút nếp nhăn theo độ sáng gốc, sợi dệt, bạc sờn, bụi
+                        float f = Mathf.Clamp(0.034f + (lum - 0.45f) * 0.03f, 0.02f, 0.06f);
+                        float weave = 0.85f + 0.3f * Fbm(u * 180f, v * 180f, 2);
+                        o = new Color(f * weave * 0.96f, f * weave * 0.95f, f * weave * 1.05f, c.a);
+                        float wornC = Sm(0.56f, 0.8f, Fbm(u * 9f + 4f, v * 9f, 4));
+                        o = Color.Lerp(o, new Color(0.12f, 0.115f, 0.11f, c.a), wornC * 0.5f);
+                        float tr = trim != null ? trim[i] : 0f;
+                        if (tr > 0f)
+                        {
+                            // Ren trắng ngà ố bẩn ở cổ tay / cổ áo
+                            float lace = 0.5f + 0.22f * Mathf.Sin(u * 900f) * Mathf.Sin(v * 900f);
+                            var lc = new Color(0.52f * lace + 0.12f, 0.49f * lace + 0.11f, 0.41f * lace + 0.09f, c.a);
+                            lc = Color.Lerp(lc, new Color(0.25f, 0.2f, 0.14f, c.a), Sm(0.4f, 0.7f, Fbm(u * 20f, v * 20f)) * 0.6f);
+                            o = Color.Lerp(o, lc, tr);
+                        }
+                        // Máu khô thấm vào vải đen: đỏ nâu rất sẫm
+                        float bigC = Sm(0.58f, 0.66f, Fbm(u * 4.5f, v * 4.5f) * 0.75f + Fbm(u * 18f, v * 18f) * 0.25f);
+                        o = Color.Lerp(o, new Color(0.13f, 0.012f, 0.012f, c.a), bigC * (0.75f + 0.25f * tr));
+                        blood = tr * Sm(0.5f, 0.66f, Fbm(u * 12f + 9f, v * 12f)) * 0.9f;
+                    }
+                    else if (skin)
                     {
                         o = Corpse(c, u, v, 14f);
                         // Vết cào: các đường mảnh đỏ sẫm
@@ -230,10 +254,9 @@ namespace KhoaHon.EditorTools
                 var c = px[i];
                 float u = (i % 1024 + 0.5f) / 1024f, v = (i / 1024 + 0.5f) / 1024f;
                 float lum = c.r * 0.3f + c.g * 0.59f + c.b * 0.11f;
-                float g = 0.26f + lum * 1.1f + 0.14f * (Fbm(u * 6f, v * 40f, 3) - 0.5f);
-                var o = new Color(g * 0.9f, g * 0.88f, g * 0.82f, c.a);
-                o = Color.Lerp(o, new Color(0.22f, 0.19f, 0.15f), Sm(0.45f, 0.75f, Fbm(u * 4f, v * 4f)) * 0.6f); // bết bẩn
-                o = Blood(o, Sm(0.66f, 0.76f, Fbm(u * 8f + 5f, v * 8f)) * 0.7f, u, v);
+                float g = 0.016f + lum * 0.1f + 0.02f * (Fbm(u * 6f, v * 40f, 3) - 0.5f);
+                var o = new Color(g, g * 0.95f, g * 0.92f, c.a);
+                o = Color.Lerp(o, new Color(0.09f, 0.08f, 0.075f, c.a), Sm(0.5f, 0.8f, Fbm(u * 4f, v * 4f)) * 0.5f); // bết bụi
                 px[i] = o;
             }
             return Save("T_Banshee_Hair", px, 1024, true);

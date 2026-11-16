@@ -53,14 +53,16 @@ namespace KhoaHon.EditorTools
                 return m;
             }
             var headTex = orig.ContainsKey("head") ? KhoaHonBansheeTextures.Head(orig["head"].GetTexture("_BaseMap")) : null;
-            var bodyTex = orig.ContainsKey("body") ? KhoaHonBansheeTextures.Body(orig["body"].GetTexture("_BaseMap")) : null;
+            // Thân áo bó + tay dài + cổ cao: vẽ vải đen lên đúng vùng UV của áo/quần/ngực/cánh tay (bàn tay vẫn là da tử thi)
+            KhoaHonHousekeeperLook.ClothMask(girlPrefab, 2048, out var clothMask, out var trimMask);
+            var bodyTex = orig.ContainsKey("body") ? KhoaHonBansheeTextures.Body(orig["body"].GetTexture("_BaseMap"), clothMask, trimMask) : null;
             var hairTex = orig.ContainsKey("hair") ? KhoaHonBansheeTextures.Hair(orig["hair"].GetTexture("_BaseMap")) : null;
             var remap = new Dictionary<string, Material>
             {
                 { "head", Clone("M_HK_B_Head", "head", headTex, 0.5f, Color.black) },
-                { "body", Clone("M_HK_B_Body", "body", bodyTex, -1f, Color.black) },
-                { "body_skin", Clone("M_HK_B_Skin", "body_skin", bodyTex, 0.45f, Color.black) },
-                { "hair", Clone("M_HK_B_Hair", "hair", hairTex, 0.3f, Color.black) },
+                { "body", Clone("M_HK_B_Body", "body", bodyTex, 0.14f, Color.black) },
+                { "body_skin", Clone("M_HK_B_Skin", "body_skin", bodyTex, 0.3f, Color.black) },
+                { "hair", Clone("M_HK_B_Hair", "hair", hairTex, 0.35f, Color.black) },
                 { "head_eyes", Clone("M_HK_B_Eyes", "head_eyes", headTex, 0.95f, new Color(0.55f, 0.6f, 0.66f)) },
                 { "eyelahes", Clone("M_HK_B_Lashes", "eyelahes", null, -1f, Color.black) },
             };
@@ -73,12 +75,23 @@ namespace KhoaHon.EditorTools
             ctrl.AddParameter("Speed", AnimatorControllerParameterType.Float);
             var tree = new BlendTree { name = "Locomotion", blendParameter = "Speed", blendType = BlendTreeType.Simple1D, useAutomaticThresholds = false };
             AssetDatabase.AddObjectToAsset(tree, ctrl);
-            tree.AddChild(Clip("Assets/Animation/X Bot@Idle.fbx"), 0f);
-            tree.AddChild(Clip("Assets/Animation/X Bot@Walking.fbx"), 1.3f);
-            tree.AddChild(Clip("Assets/Animation/Running.fbx"), 5.5f);
+            var idleClip = Clip("Assets/Animation/X Bot@Idle.fbx");
+            var walkClip = Clip("Assets/Animation/X Bot@Walking.fbx");
+            var runClip = Clip("Assets/Animation/Running.fbx");
+            // Ngưỡng blend = tốc độ tự nhiên của từng clip (đo từ sải chân) → bước chân khớp tốc độ, không trượt
+            float walkV = MeasureClipSpeed(walkClip as AnimationClip, 1.3f);
+            float runV = MeasureClipSpeed(runClip as AnimationClip, 5.5f);
+            if (runV < walkV + 1f) runV = walkV + 1f;
+            cfg.walkClipSpeed = walkV; cfg.runClipSpeed = runV;
+            EditorUtility.SetDirty(cfg);
+            tree.AddChild(idleClip, 0f);
+            tree.AddChild(walkClip, walkV);
+            tree.AddChild(runClip, runV);
             var st = ctrl.layers[0].stateMachine.AddState("Locomotion");
             st.motion = tree;
             ctrl.layers[0].stateMachine.defaultState = st;
+            // IK Pass: quay đầu theo người chơi + giơ tay che mặt khi bị rọi đèn (HousekeeperBodyIK)
+            var layers = ctrl.layers; layers[0].iKPass = true; ctrl.layers = layers;
 
             // ---------- Cây đối tượng
             var hkRoot = new GameObject("KH_Housekeeper");
@@ -106,6 +119,8 @@ namespace KhoaHon.EditorTools
                 r.sharedMaterials = arr;
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             }
+            // Váy tang dài + khăn choàng + tóc đen dài rũ che mặt (lưới Blender, gắn vào xương gốc lúc còn ở tư thế bind)
+            string dressLog = KhoaHonHousekeeperLook.Dress(girl);
             // Dáng cao gầy, lêu nghêu
             girl.transform.localScale = new Vector3(0.96f, 1.08f, 0.96f);
             var anim = girl.GetComponent<Animator>();
@@ -161,6 +176,8 @@ namespace KhoaHon.EditorTools
             so.FindProperty("whisperRunClip").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(KhoaHonAudioSynth.Dir + "/hk_whisper_run.wav");
             so.FindProperty("mumbleLoop").objectReferenceValue = FindClip("ghost_moan_loop");
             so.FindProperty("screamClip").objectReferenceValue = FindClip("jumpscare_scream") ?? FindClip("ghost_scare_01");
+            so.FindProperty("burnHissLoop").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(KhoaHonAudioSynth.Dir + "/hk_burn_hiss_loop.wav");
+            so.FindProperty("blindShriekClip").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(KhoaHonAudioSynth.Dir + "/hk_blind_shriek.wav");
 
             // Waypoint: hành lang vòng + ghé từng phòng (tầng 2, y=18)
             var wpRoot = new GameObject("HK_Waypoints").transform;
@@ -227,7 +244,7 @@ namespace KhoaHon.EditorTools
 
             if (NavMesh.SamplePosition(hkRoot.transform.position, out var hit, 2f, 1 << NavMesh.GetAreaFromName("Floor2"))) hkRoot.transform.position = hit.position;
             PrefabUtility.SaveAsPrefabAssetAndConnect(hkRoot, Dir + "/KH_Housekeeper.prefab", InteractionMode.AutomatedAction);
-            return $"Housekeeper ok (humanoid={anim.isHuman}, head={(head ? head.name : "null")}, hips={(hips ? hips.name : "null")}, hidingSpots={spots})";
+            return dressLog + " | " + $"Housekeeper ok (humanoid={anim.isHuman}, head={(head ? head.name : "null")}, hips={(hips ? hips.name : "null")}, hidingSpots={spots})";
 
             float floorYFor(Bounds bb) => bb.min.y;
         }
@@ -282,6 +299,39 @@ namespace KhoaHon.EditorTools
                     if (Vector3.Dot(hb.center - head.position, fwd) > 0f) hair.transform.RotateAround(head.position, up, 180f);
                 }
             }
+        }
+
+        /// <summary>
+        /// Tốc độ tiến tự nhiên của clip đi/chạy (m/s) cho model civilian_girl: clip Mixamo thường "tại chỗ" nên
+        /// averageSpeed = 0 → đo sải chân (biên độ trước–sau của bàn chân so với hông) × 2 bước mỗi chu kỳ.
+        /// </summary>
+        static float MeasureClipSpeed(AnimationClip clip, float fallback)
+        {
+            if (clip == null) return fallback;
+            if (Mathf.Abs(clip.averageSpeed.z) > 0.2f) return Mathf.Abs(clip.averageSpeed.z);
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/civilian_girl/Prefabs/civilian_girl.prefab");
+            if (prefab == null) return fallback;
+            var go = Object.Instantiate(prefab);
+            go.hideFlags = HideFlags.HideAndDontSave;
+            try
+            {
+                var an = go.GetComponent<Animator>();
+                if (an == null || !an.isHuman) return fallback;
+                var foot = an.GetBoneTransform(HumanBodyBones.LeftFoot); var hip = an.GetBoneTransform(HumanBodyBones.Hips);
+                if (foot == null || hip == null) return fallback;
+                float min = float.MaxValue, max = float.MinValue;
+                const int N = 40;
+                for (int i = 0; i <= N; i++)
+                {
+                    clip.SampleAnimation(go, clip.length * i / N);
+                    float z = go.transform.InverseTransformPoint(foot.position).z - go.transform.InverseTransformPoint(hip.position).z;
+                    min = Mathf.Min(min, z); max = Mathf.Max(max, z);
+                }
+                float stride = max - min;                 // quãng bàn chân trượt trên mặt đất trong pha chống
+                float v = stride * 2f / clip.length * 1.08f; // 2 bước/chu kỳ, bù phần scale Y 1.08 của bà
+                return v > 0.3f && v < 12f ? v : fallback;
+            }
+            finally { Object.DestroyImmediate(go); }
         }
 
         static Motion Clip(string fbx) =>
