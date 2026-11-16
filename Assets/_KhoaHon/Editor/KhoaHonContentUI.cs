@@ -33,6 +33,23 @@ namespace KhoaHon.EditorTools
             ("ui.size.xlarge", "Rất lớn", "Extra large"),
             ("ui.camera_shake", "Rung camera", "Camera shake"),
 
+            ("ui.h.gameplay", "Trò chơi", "Gameplay"),
+            ("ui.difficulty", "Độ khó", "Difficulty"),
+            ("ui.diff.easy", "Dễ", "Easy"),
+            ("ui.diff.normal", "Thường", "Normal"),
+            ("ui.diff.hard", "Ác mộng", "Nightmare"),
+            ("ui.dust_motes", "Bụi trong không khí", "Airborne dust"),
+
+            // Mục tiêu theo chương + thẻ phím điều khiển
+            ("obj.title", "MỤC TIÊU", "OBJECTIVE"),
+            ("obj.0", "Vào dinh thự Blackwood.", "Enter Blackwood Manor."),
+            ("obj.1", "Lục soát tầng trệt. Tìm cách mở cửa cầu thang lên tầng hai.", "Search the ground floor. Find a way through the staircase door."),
+            ("obj.2", "Tìm các kỷ vật trên tầng hai. Đừng để Mrs. Peake bắt gặp — trốn, hoặc rọi đèn vào mặt bà ta rồi chạy.", "Find the relics upstairs. Don't let Mrs. Peake catch you — hide, or blind her with your flashlight and run."),
+            ("obj.3", "Xuống hầm. Tìm Julian.", "Go down into the cellar. Find Julian."),
+            ("obj.4", "Đến Sảnh Tế. Kết thúc lời nguyền.", "Reach the Ritual Hall. End the curse."),
+            ("ctrl.card", "W A S D   Di chuyển        Shift   Chạy\nE   Tương tác        Chuột trái   Dùng vật đang cầm\n1 – 4 / Lăn chuột   Đổi vật        Space   Nín thở khi trốn\nTab   Sổ tay        O   Mục tiêu        Esc   Tạm dừng",
+                "W A S D   Move        Shift   Run\nE   Interact        Left mouse   Use held item\n1 – 4 / Scroll   Switch item        Space   Hold breath while hiding\nTab   Notebook        O   Objective        Esc   Pause"),
+
             // Mẹo màn tải
             ("tip.1", "Mrs. Peake không xuống được tầng trệt. Cầu thang là ranh giới của bà ta.", "Mrs. Peake cannot come down to the ground floor. The stairs are her border."),
             ("tip.2", "Trốn trong tủ hoặc dưới gầm giường, giữ Space để nín thở khi bà ta lại gần.", "Hide in a wardrobe or under a bed — hold Space to hold your breath when she comes close."),
@@ -43,6 +60,9 @@ namespace KhoaHon.EditorTools
             ("tip.7", "Flash máy ảnh hoặc điện thoại có thể làm bà ta khựng lại vài giây.", "A camera or phone flash can stun her for a few seconds."),
             ("tip.8", "Ở trong bóng tối quá lâu, bạn sẽ bắt đầu thấy những thứ không có thật.", "Stay in the dark too long and you'll start seeing things that aren't there."),
             ("tip.9", "Năm xây xong chưa chắc là năm cơ nghiệp bắt đầu.", "The year it was finished isn't always the year it began."),
+            ("tip.10", "Rọi đèn pin thẳng vào mặt Mrs. Peake: bà ta chậm lại, rồi chói mắt vài giây. Hãy chạy ngay lúc đó.", "Shine your flashlight straight in Mrs. Peake's face: she slows, then goes blind for a few seconds. Run while you can."),
+            ("tip.11", "Mắt bà ta rực đỏ nghĩa là đèn pin tạm thời vô dụng. Đừng phí pin — hãy trốn.", "When her eyes burn red, your flashlight is useless for a while. Don't waste the battery — hide."),
+            ("tip.12", "Rọi đèn làm chói rất tốn pin. Pin cạn thì chỉ còn cách nín thở trong tủ.", "Blinding her drains the battery fast. Run dry and all that's left is holding your breath in a wardrobe."),
 
             // Thành tựu
             ("ach.unlocked", "Thành tựu: {0}", "Achievement: {0}"),
@@ -53,6 +73,7 @@ namespace KhoaHon.EditorTools
             ("ach.no_death.title", "Không một vết xước", "Untouched"), ("ach.no_death.desc", "Đạt kết thúc chính mà không chết lần nào.", "Reach a main ending without dying."),
             ("ach.safe_cracked.title", "Năm khai sinh", "Year of Founding"), ("ach.safe_cracked.desc", "Mở két sắt của Lord Blackwood.", "Open Lord Blackwood's safe."),
             ("ach.found_julian.title", "Mười bốn ngày", "Fourteen Days"), ("ach.found_julian.desc", "Tìm thấy Julian.", "Find Julian."),
+            ("ach.first_blind.title", "Ánh sáng cuối hành lang", "Light at the End of the Hall"), ("ach.first_blind.desc", "Làm Mrs. Peake chói mắt bằng đèn pin.", "Blind Mrs. Peake with your flashlight."),
             ("ach.first_flash.title", "Nụ cười trước ống kính", "Say Cheese"), ("ach.first_flash.desc", "Làm choáng Mrs. Peake bằng đèn flash.", "Stun Mrs. Peake with a flash."),
             ("ach.all_relics.title", "Năm Mắt Trận", "Five Eyes"), ("ach.all_relics.desc", "Thu thập đủ 5 kỷ vật.", "Collect all five relics."),
             ("ach.cellar_open.title", "Xích đứt", "Broken Chains"), ("ach.cellar_open.desc", "Mở nắp hầm dưới nhà bếp.", "Open the cellar hatch."),

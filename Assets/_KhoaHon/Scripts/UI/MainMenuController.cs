@@ -226,6 +226,27 @@ namespace KhoaHon.UI
             }
         }
 
+        private static Texture2D shadeTex;
+
+        /// <summary>Nền tối chuyển mượt từ trái (đậm, dễ đọc chữ) sang phải (trong, lộ cảnh dinh thự) + tối dần ở mép trên/dưới.</summary>
+        private static Texture2D ShadeTexture()
+        {
+            if (shadeTex != null) return shadeTex;
+            const int W = 256, H = 64;
+            shadeTex = new Texture2D(W, H, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+            var px = new Color32[W * H];
+            for (int y = 0; y < H; y++)
+                for (int x = 0; x < W; x++)
+                {
+                    float u = x / (W - 1f), v = y / (H - 1f);
+                    float left = Mathf.SmoothStep(0.86f, 0f, Mathf.InverseLerp(0.08f, 0.72f, u));
+                    float edge = Mathf.Pow(Mathf.Abs(v - 0.5f) * 2f, 3f) * 0.45f;
+                    px[y * W + x] = new Color(0f, 0f, 0f, Mathf.Clamp01(left + edge));
+                }
+            shadeTex.SetPixels32(px); shadeTex.Apply();
+            return shadeTex;
+        }
+
         private void BuildMenu()
         {
             if (menuRoot != null) Destroy(menuRoot);
@@ -233,8 +254,8 @@ namespace KhoaHon.UI
             root.SetSiblingIndex(0);
             menuRoot = root.gameObject;
             // Gradient tối bên trái để chữ dễ đọc
-            var grad = UIFactory.Panel("Shade", root, new Color(0, 0, 0, 0.78f), new Vector2(0, 0), new Vector2(0.45f, 1), Vector2.zero, Vector2.zero);
-            var grad2 = UIFactory.Panel("Shade2", root, new Color(0, 0, 0, 0.35f), new Vector2(0.45f, 0), new Vector2(0.6f, 1), Vector2.zero, Vector2.zero);
+            var shade = UIFactory.Stretch("Shade", root).gameObject.AddComponent<RawImage>();
+            shade.texture = ShadeTexture(); shade.raycastTarget = false;
 
             var top = UIKit.Label(root, T.Get("ui.title_top"), 30, UIKit.Dim, TextAlignmentOptions.BottomLeft, true);
             top.rectTransform.anchorMin = new Vector2(0, 1); top.rectTransform.anchorMax = new Vector2(1, 1);

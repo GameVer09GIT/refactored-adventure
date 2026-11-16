@@ -22,6 +22,8 @@ namespace KhoaHon.UI
         public static bool BrightnessCalibrated;
         public static bool VolumetricFog = true, CameraShakeOn = true;
         public static int SubtitleSize = 0; // 0 thường, 1 lớn, 2 rất lớn
+        public static int DifficultyLevel = 1; // 0 dễ, 1 thường, 2 ác mộng
+        public static bool DustMotesOn = true;
         public static readonly float[] SubtitleScales = { 1f, 1.25f, 1.5f };
 
         public static readonly int[] FpsCaps = { 30, 60, 120, 144, -1 };
@@ -82,6 +84,8 @@ namespace KhoaHon.UI
             VolumetricFog = PlayerPrefs.GetInt("kh_vfog", 1) == 1;
             CameraShakeOn = PlayerPrefs.GetInt("kh_shake", 1) == 1;
             SubtitleSize = Mathf.Clamp(PlayerPrefs.GetInt("kh_subsize", 0), 0, 2);
+            DifficultyLevel = Mathf.Clamp(PlayerPrefs.GetInt("kh_difficulty", 1), 0, 2);
+            DustMotesOn = PlayerPrefs.GetInt("kh_dust", 1) == 1;
         }
 
         public static void Save()
@@ -95,6 +99,7 @@ namespace KhoaHon.UI
             PlayerPrefs.SetFloat("kh_vol_amb", Ambience); PlayerPrefs.SetFloat("kh_vol_voice", Voice);
             PlayerPrefs.SetFloat("kh_sens", Sensitivity); PlayerPrefs.SetInt("kh_bright_set", BrightnessCalibrated ? 1 : 0);
             PlayerPrefs.SetInt("kh_vfog", VolumetricFog ? 1 : 0); PlayerPrefs.SetInt("kh_shake", CameraShakeOn ? 1 : 0); PlayerPrefs.SetInt("kh_subsize", SubtitleSize);
+            PlayerPrefs.SetInt("kh_difficulty", DifficultyLevel); PlayerPrefs.SetInt("kh_dust", DustMotesOn ? 1 : 0);
             PlayerPrefs.Save();
         }
 
@@ -103,7 +108,7 @@ namespace KhoaHon.UI
             ScreenMode = 1; ResolutionIndex = -1; VSync = true; FpsCapIndex = 1; Quality = QualityIndexByName("High");
             Fov = 72f; Brightness = 0f; FilmGrain = true; MotionBlur = true; ShowFps = false; Subtitles = true;
             Master = 0.9f; Music = 0.8f; Sfx = 1f; Ambience = 0.85f; Voice = 1f; Sensitivity = 15f;
-            VolumetricFog = true; CameraShakeOn = true; SubtitleSize = 0;
+            VolumetricFog = true; CameraShakeOn = true; SubtitleSize = 0; DifficultyLevel = 1; DustMotesOn = true;
         }
 
         /// <summary>Áp dụng cài đặt âm thanh/hiển thị nhẹ (gọi liên tục khi kéo slider).</summary>
@@ -129,6 +134,8 @@ namespace KhoaHon.UI
             KhoaHonHUD.SubtitlesEnabled = Subtitles;
             KhoaHonHUD.SubtitleScale = SubtitleScales[Mathf.Clamp(SubtitleSize, 0, 2)];
             KhoaHon.Horror.CameraShake.Strength = CameraShakeOn ? 1f : 0f;
+            Difficulty.Level = DifficultyLevel;
+            DustMotes.Enabled = DustMotesOn;
             ApplyFog();
             HudExtras.ShowFps = ShowFps;
         }

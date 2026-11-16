@@ -111,6 +111,7 @@ namespace KhoaHon.UI
             UIKit.SelectorRow(p, T.Get("ui.motion_blur"), OnOff(), KhoaHonSettings.MotionBlur ? 0 : 1, v => { KhoaHonSettings.MotionBlur = v == 0; KhoaHonSettings.ApplyLive(); });
             UIKit.SelectorRow(p, T.Get("ui.film_grain"), OnOff(), KhoaHonSettings.FilmGrain ? 0 : 1, v => { KhoaHonSettings.FilmGrain = v == 0; KhoaHonSettings.ApplyLive(); });
             UIKit.SelectorRow(p, T.Get("ui.volumetric_fog"), OnOff(), KhoaHonSettings.VolumetricFog ? 0 : 1, v => { KhoaHonSettings.VolumetricFog = v == 0; KhoaHonSettings.ApplyLive(); });
+            UIKit.SelectorRow(p, T.Get("ui.dust_motes"), OnOff(), KhoaHonSettings.DustMotesOn ? 0 : 1, v => { KhoaHonSettings.DustMotesOn = v == 0; KhoaHonSettings.ApplyLive(); });
             return p.gameObject;
         }
 
@@ -154,6 +155,8 @@ namespace KhoaHon.UI
         private GameObject BuildDisplay(Transform body)
         {
             var p = Page(body, "Display");
+            UIKit.Header(p, T.Get("ui.h.gameplay"));
+            UIKit.SelectorRow(p, T.Get("ui.difficulty"), new[] { T.Get("ui.diff.easy"), T.Get("ui.diff.normal"), T.Get("ui.diff.hard") }, KhoaHonSettings.DifficultyLevel, v => { KhoaHonSettings.DifficultyLevel = v; KhoaHonSettings.ApplyLive(); });
             UIKit.Header(p, T.Get("ui.h.brightness"));
             UIKit.SliderRow(p, T.Get("ui.brightness"), -1.5f, 1.5f, KhoaHonSettings.Brightness, x => (x >= 0 ? "+" : "") + x.ToString("0.0"), x => { KhoaHonSettings.Brightness = x; KhoaHonSettings.ApplyLive(); });
             UIKit.Header(p, T.Get("ui.h.hud"));

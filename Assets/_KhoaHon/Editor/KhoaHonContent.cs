@@ -38,6 +38,8 @@ namespace KhoaHon.EditorTools
             ("sub.hk_lullaby", "♪ Ngủ đi con, nến đã tàn… cửa đã cài… Bà Peake giữ chìa khóa, chẳng ai ra ngoài… ♪",
                 "♪ Hush now, child, the candle's low… the doors are barred… Mrs. Peake keeps the keys, and no one leaves at all… ♪"),
 
+            ("hint.light_repel", "Rọi thẳng đèn pin vào mặt bà ta — giữ đủ lâu, bà ta sẽ chói mắt.", "Shine your flashlight straight in her face — hold it long enough and she'll be blinded."),
+
             // Thông điệp
             ("msg.chains", "Năm sợi xích lớn nối ngầm vào tường. Không có ổ khóa nào cả.", "Five heavy chains run into the walls. There is no lock anywhere."),
             ("msg.rubble", "Đá sập kín một đường hầm khoan hẹp. Không đi tiếp được.", "Collapsed stone blocks a narrow drilled tunnel. No way through."),
