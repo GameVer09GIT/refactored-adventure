@@ -7,7 +7,7 @@
 #   HK_Skirt  — váy tang dài thời Victoria, xòe, có nếp gấp, gấu rách (skin theo chân + hông để không xuyên khi bước)
 #   HK_Hair   — tóc đen dài rũ che nửa mặt (dải tóc alpha), skin theo đầu → cổ → lưng
 #   HK_Shawl  — khăn choàng vai rách che phần cổ/vai
-# Unity (KhoaHonHousekeeperBuilder) gắn các lưới này vào đúng xương của bà theo tên.
+# Unity (BlackwoodHousekeeperBuilder) gắn các lưới này vào đúng xương của bà theo tên.
 import bpy, bmesh, math, os, random
 from mathutils import Vector, kdtree, noise
 
@@ -18,7 +18,7 @@ for cand in (SRC, os.path.join(ROOT, "Assets", "ThirdParty", "civilian_girl", "M
         SRC = cand
         break
 OUT_DIR = os.path.join(ROOT, "Tools", "Blender", "out", "characters")
-OUT = os.path.join(OUT_DIR, "KH_HK_Garments.fbx")
+OUT = os.path.join(OUT_DIR, "BW_HK_Garments.fbx")
 os.makedirs(OUT_DIR, exist_ok=True)
 random.seed(1921)
 

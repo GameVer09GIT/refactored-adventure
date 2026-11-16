@@ -1,14 +1,14 @@
-# Đạo cụ phương Tây cho "Blackwood Manor" — dùng lại helper của khoahon_props.py.
+# Đạo cụ phương Tây cho "Blackwood Manor" — dùng lại helper của props_common.py.
 #   blender.exe --background --factory-startup --python Tools/Blender/blackwood_props.py -- <output_dir> [TênModel...] [--preview]
-# Xuất FBX (mét, Y-up) tên KH_BW_*; converter Unity tự nhập từ Tools/Blender/out.
+# Xuất FBX (mét, Y-up) tên BW_*; converter Unity tự nhập từ Tools/Blender/out.
 import bpy, math, os, sys, random
 
 sys.argv_backup = list(sys.argv)
 HERE = os.path.dirname(os.path.abspath(__file__))
 # Nạp helper (reset, mat, add, lathe, join, bevel, smooth, export, M, render_preview) mà không chạy phần main
-_src = open(os.path.join(HERE, "khoahon_props.py"), encoding="utf-8").read()
+_src = open(os.path.join(HERE, "props_common.py"), encoding="utf-8").read()
 _src = _src.split("\nonly = set(")[0]
-exec(compile(_src, "khoahon_props_helpers", "exec"))
+exec(compile(_src, "props_common_helpers", "exec"))
 
 
 def apply_all(o):
@@ -60,7 +60,7 @@ def plaque(m, gilded):
             assign(r, m["brass"]); parts.append(r)
     for i in range(3):  # dòng chữ khắc (rãnh tối)
         g = add("cube", "Line", (0, -0.0225, 0.24 - i * 0.05), (0.07 - i * 0.012, 0.0008, 0.005)); assign(g, m["bronze_dark"]); parts.append(g)
-    o = join(parts, "KH_BW_Plaque" + ("_Eye" if gilded else ""))
+    o = join(parts, "BW_Plaque" + ("_Eye" if gilded else ""))
     smooth(o, 30)
 
 
@@ -79,7 +79,7 @@ def candle_stand(m):
     pan.location = (0, 0, 0.288); assign(pan, m["iron"]); parts.append(pan)
     spike = add("cone", "Spike", (0, 0, 0.318), (0.005, 0.005, 0.018), vertices=10); assign(spike, m["iron"]); parts.append(spike)
     for p in parts: apply_all(p)
-    o = join(parts, "KH_BW_CandleStand")
+    o = join(parts, "BW_CandleStand")
     smooth(o, 50)
 
 
@@ -99,7 +99,7 @@ def backpack(m):
     handle = add("torus", "Handle", (0, 0.06, 0.49), (0.035, 0.035, 0.035), (math.pi / 2, 0, 0), major_radius=1.0, minor_radius=0.18); assign(handle, m["canvas_dark"]); parts.append(handle)
     stain = add("cube", "Stain", (0.05, -0.152, 0.11), (0.04, 0.001, 0.03)); assign(stain, m["blood"]); parts.append(stain)
     for p in parts: apply_all(p)
-    o = join(parts, "KH_BW_Backpack")
+    o = join(parts, "BW_Backpack")
     smooth(o, 40)
 
 
@@ -112,7 +112,7 @@ def vademecum(m):
         rib = add("cyl", "Rib", (-0.11, y, 0.022), (0.004, 0.004, 0.024), (0, 0, 0), vertices=8); assign(rib, m["leather"]); parts.append(rib)
     clasp = add("cube", "Clasp", (0.113, 0, 0.022), (0.006, 0.02, 0.026)); assign(clasp, m["brass"]); parts.append(clasp)
     emblem = add("torus", "Emblem", (0.0, 0.0, 0.045), (0.045, 0.045, 0.045), major_radius=1.0, minor_radius=0.08); assign(emblem, m["brass"]); parts.append(emblem)
-    o = join(parts, "KH_BW_Vademecum")
+    o = join(parts, "BW_Vademecum")
     smooth(o, 40)
 
 
@@ -125,7 +125,7 @@ def relic(m):
         a = random.uniform(0, 6.28); z = random.uniform(-0.15, 0.15)
         v = add("cube", "Vein", (0.11 * math.cos(a), 0.11 * math.sin(a), z), (0.004, 0.004, random.uniform(0.04, 0.09)), (random.uniform(-0.5, 0.5), 0, a))
         assign(v, m["vein"]); parts.append(v)
-    o = join(parts, "KH_BW_Relic")
+    o = join(parts, "BW_Relic")
 
 
 # ---------------------------------------------------------------- Công cụ của Alex
@@ -137,7 +137,7 @@ def phone(m):
     l1 = add("cyl", "Lens1", (-0.022, 0.0068, 0.066), (0.005, 0.005, 0.001), (math.pi / 2, 0, 0), vertices=16); assign(l1, m["glass"])
     l2 = add("cyl", "Lens2", (-0.022, 0.0068, 0.054), (0.005, 0.005, 0.001), (math.pi / 2, 0, 0), vertices=16); assign(l2, m["glass"])
     fl = add("cyl", "Flash", (-0.012, 0.0066, 0.06), (0.0025, 0.0025, 0.0008), (math.pi / 2, 0, 0), vertices=12); assign(fl, m["wax"])
-    o = join([body, scr, cam, l1, l2, fl], "KH_BW_Phone")
+    o = join([body, scr, cam, l1, l2, fl], "BW_Phone")
     smooth(o, 30)
 
 
@@ -149,7 +149,7 @@ def camcorder(m):
     ring = add("torus", "IRRing", (0, -0.158, 0.008), (0.03, 0.03, 0.03), (math.pi / 2, 0, 0), major_radius=1.0, minor_radius=0.12); assign(ring, m["ir"])
     strap = add("cube", "Strap", (0.05, 0.0, 0.0), (0.006, 0.08, 0.035)); bevel(strap, 0.004, 2); assign(strap, m["leather"])
     lcd = add("cube", "LCD", (-0.052, -0.02, 0.01), (0.004, 0.04, 0.03)); bevel(lcd, 0.003, 2); assign(lcd, m["screen"])
-    o = join([body, lens, glass, ring, strap, lcd], "KH_BW_Camcorder")
+    o = join([body, lens, glass, ring, strap, lcd], "BW_Camcorder")
     smooth(o, 35)
 
 
@@ -169,7 +169,7 @@ def sedan(m):
         hl = add("cube", "Headlight", (sx * 0.6, -2.26, 0.62), (0.16, 0.02, 0.07)); assign(hl, m["headlight"]); parts.append(hl)
         tl = add("cube", "Taillight", (sx * 0.62, 2.26, 0.64), (0.14, 0.02, 0.06)); assign(tl, m["led"]); parts.append(tl)
     for p in parts: apply_all(p)
-    o = join(parts, "KH_BW_Sedan")
+    o = join(parts, "BW_Sedan")
     smooth(o, 35)
 
 
@@ -178,7 +178,7 @@ def signpost(m):
     post = add("cube", "Post", (0, 0, 1.1), (0.05, 0.05, 1.1)); assign(post, m["wood_dark"])
     board = add("cube", "Board", (0, -0.06, 1.85), (0.75, 0.02, 0.28)); bevel(board, 0.02, 2); assign(board, m["sign_white"])
     inner = add("cube", "Inner", (0, -0.081, 1.85), (0.71, 0.002, 0.24)); assign(inner, m["sign_green"])
-    o = join([post, board, inner], "KH_BW_Signpost")
+    o = join([post, board, inner], "BW_Signpost")
 
 
 def typewriter(m):
@@ -191,7 +191,7 @@ def typewriter(m):
         for k in range(9):
             key = add("cyl", "Key", (-0.12 + k * 0.03 + row * 0.01, -0.05 - row * 0.03 + 0.04, 0.125 - row * 0.012), (0.011, 0.011, 0.006), vertices=12)
             assign(key, m["keycap"]); parts.append(key)
-    o = join(parts, "KH_BW_Typewriter")
+    o = join(parts, "BW_Typewriter")
     smooth(o, 40)
 
 
@@ -210,23 +210,23 @@ def lord_ghost(m):
     brim = add("cyl", "Brim", (0, 0, 1.8), (0.17, 0.17, 0.008), vertices=24); assign(brim, m["ghost_dark"]); parts.append(brim)
     hat = add("cyl", "Hat", (0, 0, 1.92), (0.1, 0.1, 0.12), vertices=24); assign(hat, m["ghost_dark"]); parts.append(hat)
     for p in parts: apply_all(p)
-    o = join(parts, "KH_BW_LordGhost")
+    o = join(parts, "BW_LordGhost")
     smooth(o, 45)
 
 
 BW_BUILDERS = [
-    ("KH_BW_Plaque", lambda m: plaque(m, False)), ("KH_BW_Plaque_Eye", lambda m: plaque(m, True)),
-    ("KH_BW_CandleStand", candle_stand), ("KH_BW_Vademecum", vademecum), ("KH_BW_Relic", relic),
-    ("KH_BW_Phone", phone), ("KH_BW_Camcorder", camcorder), ("KH_BW_Sedan", sedan),
-    ("KH_BW_Signpost", signpost), ("KH_BW_Typewriter", typewriter), ("KH_BW_LordGhost", lord_ghost),
-    ("KH_BW_Backpack", backpack),
+    ("BW_Plaque", lambda m: plaque(m, False)), ("BW_Plaque_Eye", lambda m: plaque(m, True)),
+    ("BW_CandleStand", candle_stand), ("BW_Vademecum", vademecum), ("BW_Relic", relic),
+    ("BW_Phone", phone), ("BW_Camcorder", camcorder), ("BW_Sedan", sedan),
+    ("BW_Signpost", signpost), ("BW_Typewriter", typewriter), ("BW_LordGhost", lord_ghost),
+    ("BW_Backpack", backpack),
 ]
 
 only_bw = set(a for a in argv[1:] if not a.startswith("--"))
 if "--preview" in argv:
     render_preview([n for n, _ in BW_BUILDERS], os.path.join(OUT, "preview_bw.png"))
 elif "--icons" in argv:
-    render_icons(["KH_BW_Phone", "KH_BW_Camcorder"], os.path.join(OUT, "icons"))
+    render_icons(["BW_Phone", "BW_Camcorder"], os.path.join(OUT, "icons"))
 else:
     for name, fn in BW_BUILDERS:
         if only_bw and name not in only_bw:

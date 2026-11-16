@@ -111,3 +111,11 @@ InitTestScene*.unity*
 /[Aa]ssets/*report*.txt
 /[Aa]ssets/*report*.txt.meta
 /[Aa]ssets/_Recovery*
+
+# Sau khi gom thư mục (2026-11-17): scene khôi phục/backup và báo cáo chẩn đoán ở vị trí mới
+/[Aa]ssets/BlackwoodManor/Scenes/Source/Recovery/
+/[Aa]ssets/BlackwoodManor/Scenes/Source/Recovery.meta
+/[Aa]ssets/BlackwoodManor/Scenes/Source/Backup/
+/[Aa]ssets/BlackwoodManor/Scenes/Source/Backup.meta
+/[Aa]ssets/BlackwoodManor/Editor/Setup/Reports/
+/[Aa]ssets/BlackwoodManor/Editor/Setup/Reports.meta
