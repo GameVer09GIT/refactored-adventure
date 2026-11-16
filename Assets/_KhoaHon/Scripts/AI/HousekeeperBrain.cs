@@ -3,7 +3,7 @@ namespace KhoaHon.AI
     public enum HousekeeperState { Patrol, Suspicious, Hunt, Stunned, Kill, Inspect }
 
     /// <summary>Lý do vào trạng thái choáng (quyết định trạng thái sau khi hết choáng).</summary>
-    public enum StunCause { None, Flash, Comb }
+    public enum StunCause { None, Flash, Comb, Light }
 
     /// <summary>Dữ liệu cảm nhận mỗi lần cập nhật (do HousekeeperAI điền).</summary>
     public struct Perception
@@ -31,7 +31,7 @@ namespace KhoaHon.AI
         /// <summary>Đang khựng lại (chế độ yếu) trước khi lao tới.</summary>
         public bool Hesitating => State == HousekeeperState.Hunt && hesitateLeft > 0f;
 
-        private readonly float loseSightTime, flashStun, combStun, hesitate, killRange, inspectTime;
+        private readonly float loseSightTime, flashStun, combStun, hesitate, killRange, inspectTime, lightStun;
         private readonly float searchMin, searchMax;
         private float notSeenFor;
         // Đã canh xong lượt trốn hiện tại → không quay lại canh cùng chỗ cho tới khi Vy ra khỏi chỗ trốn
@@ -42,21 +42,30 @@ namespace KhoaHon.AI
         public event System.Action<HousekeeperState, HousekeeperState> Changed;
 
         public HousekeeperBrain(float loseSightTime, float searchMin, float searchMax, float flashStun, float combStun,
-                                float hesitate, float killRange, float inspectTime, int seed = 1)
+                                float hesitate, float killRange, float inspectTime, int seed = 1, float lightStun = 3.5f)
         {
             this.loseSightTime = loseSightTime; this.searchMin = searchMin; this.searchMax = searchMax;
             this.flashStun = flashStun; this.combStun = combStun; this.hesitate = hesitate;
-            this.killRange = killRange; this.inspectTime = inspectTime;
+            this.killRange = killRange; this.inspectTime = inspectTime; this.lightStun = lightStun;
             rng = new System.Random(seed);
         }
 
         public static HousekeeperBrain FromConfig(HousekeeperConfig c, int seed = 1) =>
             new HousekeeperBrain(c.loseSightTime, c.searchTime.x, c.searchTime.y, c.flashStunTime, c.combStunTime,
-                                 c.weakenedHesitate, c.killRange, c.hidingInspectTime, seed);
+                                 c.weakenedHesitate, c.killRange, c.hidingInspectTime, seed, c.lightStunTime);
 
         // ---------- Sự kiện ngoài
         /// <summary>Đèn flash máy ảnh vào mặt: choáng rồi chuyển thẳng sang Hunt.</summary>
         public void OnFlashed() { if (State != HousekeeperState.Kill) Enter(HousekeeperState.Stunned, flashStun, StunCause.Flash); }
+
+        /// <summary>
+        /// Bị rọi đèn pin vào mặt đủ lâu: chói mắt, choáng rồi mất dấu (chuyển sang Suspicious, không lao tới ngay)
+        /// — cho người chơi khoảng trống để chạy trốn.
+        /// </summary>
+        public void OnBlinded()
+        {
+            if (State != HousekeeperState.Kill && State != HousekeeperState.Stunned) Enter(HousekeeperState.Stunned, lightStun, StunCause.Light);
+        }
 
         /// <summary>Vy nhặt chiếc lược: choáng 20 s rồi về Patrol, bật chế độ yếu vĩnh viễn.</summary>
         public void OnCombTaken()
@@ -116,6 +125,7 @@ namespace KhoaHon.AI
                     if (Timer <= 0f)
                     {
                         if (Stun == StunCause.Flash) EnterHunt(skipHesitate: true);
+                        else if (Stun == StunCause.Light) Enter(HousekeeperState.Suspicious, Search(), StunCause.None);
                         else Enter(HousekeeperState.Patrol, 0f, StunCause.None);
                     }
                     break;

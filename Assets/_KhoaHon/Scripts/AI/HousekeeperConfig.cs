@@ -31,6 +31,22 @@ namespace KhoaHon.AI
         public float combStunTime = 20f;
         [Tooltip("Chế độ yếu: khựng lại mỗi lần phát hiện Vy (s)")] public float weakenedHesitate = 2f;
 
+        [Header("Chống lại bằng đèn pin (rọi thẳng vào mặt)")]
+        [Tooltip("Tầm đèn pin có tác dụng làm chói (m)")] public float lightStunRange = 8.5f;
+        [Tooltip("Nửa góc phải nhắm trúng mặt (độ) — hẹp hơn nón 'bị phát hiện'")] public float lightStunHalfAngle = 11f;
+        [Tooltip("Rọi liên tục bao lâu thì bà choáng (s)")] public float lightFillTime = 1.7f;
+        [Tooltip("Ngừng rọi bao lâu thì thanh chói về 0 (s)")] public float lightDecayTime = 2.5f;
+        [Tooltip("Hệ số tốc độ khi thanh chói gần đầy (bà chậm lại)")] [Range(0.2f, 1f)] public float lightSlowMultiplier = 0.42f;
+        [Tooltip("Thời gian choáng vì chói mắt (s)")] public float lightStunTime = 3.5f;
+        [Tooltip("Sau khi choáng, bà còn lóa mắt bao lâu (chỉ thấy trong 2,5 m) (s)")] public float lightBlindAfter = 2.2f;
+        [Tooltip("Nhờn đèn bao lâu kể từ lúc choáng — trong lúc này rọi đèn vô dụng (s)")] public float lightImmuneTime = 15f;
+        [Tooltip("% pin mất thêm mỗi giây khi đang rọi làm chói")] public float lightBatteryDrainPerSecond = 2.2f;
+
+        [Header("Chuyển động (khớp bước chân với tốc độ — tránh trượt chân)")]
+        [Tooltip("Tốc độ tự nhiên của clip đi bộ (m/s) — builder tự đo")] public float walkClipSpeed = 1.3f;
+        [Tooltip("Tốc độ tự nhiên của clip chạy (m/s) — builder tự đo")] public float runClipSpeed = 5.5f;
+        [Tooltip("Tốc độ xoay người (độ/s) khi tuần tra / truy đuổi")] public Vector2 turnSpeed = new Vector2(140f, 320f);
+
         [Header("Trốn")]
         [Tooltip("Đứng sát chỗ trốn bao lâu nếu thấy Vy chui vào (s)")] public float hidingInspectTime = 5.5f;
         [Tooltip("Thanh hơi nín thở cạn sau (s)")] public float breathHoldDuration = 7f;

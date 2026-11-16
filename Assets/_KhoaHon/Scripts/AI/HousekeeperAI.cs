@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HorrorGame.Inventory;
 using KhoaHon.Core;
 using KhoaHon.DebugTools;
+using KhoaHon.Items;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -37,10 +38,32 @@ namespace KhoaHon.AI
         [SerializeField] private AudioSource huntMusic;
         [SerializeField] private AudioClip breathLoop;
         [SerializeField] private AudioSource breathSource;
+        [Tooltip("Tiếng rít khi bị đèn pin rọi vào mặt (loop)")]
+        [SerializeField] private AudioClip burnHissLoop;
+        [Tooltip("Tiếng thét khi bị chói mắt đến choáng")]
+        [SerializeField] private AudioClip blindShriekClip;
 
         public HousekeeperState State => brain != null ? brain.State : HousekeeperState.Patrol;
         public bool Weakened => brain != null && brain.Weakened;
         public HousekeeperBrain Brain => brain;
+
+        // ---- Chống lại bằng đèn pin (đọc bởi HUD / hình ảnh / hậu kỳ)
+        /// <summary>Thanh chói mắt 0..1.</summary>
+        public float LightExposure01 => exposure != null ? exposure.Value : 0f;
+        /// <summary>Đang nhờn đèn (rọi vô dụng).</summary>
+        public bool LightImmune => exposure != null && exposure.Immune;
+        /// <summary>Tia đèn pin đang trúng mặt bà trong tầm làm chói.</summary>
+        public bool BeingLit { get; private set; }
+        /// <summary>Đang choáng vì chói mắt (khác choáng do flash / lược).</summary>
+        public bool BlindedStun => brain != null && brain.State == HousekeeperState.Stunned && brain.Stun == StunCause.Light;
+        /// <summary>Vị trí nguồn sáng (để giơ tay che mặt đúng hướng).</summary>
+        public Vector3 LightSourcePos => beamOrigin != null ? beamOrigin.position : (playerCam != null ? playerCam.position : transform.position + transform.forward);
+        /// <summary>Bà đang nhìn thấy người chơi (để quay đầu theo).</summary>
+        public bool SeesPlayer => perception.seesPlayer;
+        public Vector3 PlayerEyePos => playerCam != null ? playerCam.position : transform.position + transform.forward * 2f + Vector3.up * 1.6f;
+        /// <summary>Tốc độ phát animation để bước chân khớp tốc độ di chuyển.</summary>
+        public float LocomotionPlayback { get; private set; } = 1f;
+        public Vector3 Velocity => agent != null ? agent.velocity : Vector3.zero;
 
         private NavMeshAgent agent;
         private HousekeeperBrain brain;
@@ -61,6 +84,13 @@ namespace KhoaHon.AI
         private bool killing;
         private bool breathStarted;
         private float lookAroundT;
+        private LightExposure exposure;
+        private Transform beamOrigin;      // đèn Spot của đèn pin (chỉ đọc hướng, không sửa)
+        private float lightSlow = 1f;
+        private float blindUntil;
+        private AudioSource hissSource;
+        private float staggerLeft;
+        private static bool lightHintShown;
         private readonly RaycastHit[] hitBuf = new RaycastHit[16];
 
         public void SetWaypoints(Transform[] w) => waypoints = w;
@@ -106,6 +136,7 @@ namespace KhoaHon.AI
             }
             brain = HousekeeperBrain.FromConfig(config, GetInstanceID());
             brain.Changed += OnStateChanged;
+            RebuildExposure();
             player = FindFirstObjectByType<PlayerController>();
             if (player != null) playerCam = player.playerCamera;
             int area = NavMesh.GetAreaFromName("Floor2");
@@ -113,8 +144,11 @@ namespace KhoaHon.AI
             agent.areaMask = floor2Mask;
             agent.speed = config.patrolSpeed;
             agent.angularSpeed = 300f;
-            agent.acceleration = 12f;
+            agent.acceleration = 9f;
             agent.stoppingDistance = 0.4f;
+            agent.autoBraking = true;
+            // Tự xoay người mượt (SmoothTurn) thay vì để agent bẻ góc tức thời
+            agent.updateRotation = false;
             if (GameManager.Instance != null && GameManager.Instance.Has(StoryFlag.Relic_Tho)) brain.SetWeakened(true);
             SetupAudio();
             nextLullaby = Time.time + Random.Range(config.lullabyInterval.x, config.lullabyInterval.y);
@@ -137,6 +171,13 @@ namespace KhoaHon.AI
                 breathSource.clip = breathLoop; breathSource.loop = true; breathSource.spatialBlend = 1f;
                 breathSource.rolloffMode = AudioRolloffMode.Logarithmic; breathSource.minDistance = 1.2f; breathSource.maxDistance = 14f; breathSource.Play();
             }
+            if (burnHissLoop != null && voiceSource != null)
+            {
+                hissSource = voiceSource.gameObject.AddComponent<AudioSource>();
+                hissSource.clip = burnHissLoop; hissSource.loop = true; hissSource.playOnAwake = false; hissSource.volume = 0f;
+                hissSource.spatialBlend = 1f; hissSource.rolloffMode = AudioRolloffMode.Logarithmic;
+                hissSource.minDistance = 1.5f; hissSource.maxDistance = 18f; hissSource.dopplerLevel = 0f;
+            }
         }
 
         // =====================================================================
@@ -147,6 +188,8 @@ namespace KhoaHon.AI
             {
                 agent.isStopped = true; UpdateAnim();
                 if (huntMusic != null) huntMusic.volume = 0f;
+                if (hissSource != null) hissSource.volume = 0f;
+                BeingLit = false;
                 return;
             }
             if (killing) return;
@@ -160,9 +203,11 @@ namespace KhoaHon.AI
             p.heardNoise = pendingNoise;
             p.arrivedAtTarget = !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.25f;
             pendingNoise = false;
+            UpdateLightExposure();
             brain.Tick(Time.deltaTime, p);
             if (p.seesPlayer) lastSeenPos = player.transform.position;
             Act();
+            SmoothTurn();
             UpdateAudio();
             UpdateAnim();
         }
@@ -194,7 +239,7 @@ namespace KhoaHon.AI
                     break;
 
                 case HousekeeperState.Suspicious:
-                    agent.isStopped = false; agent.speed = config.suspiciousSpeed;
+                    agent.isStopped = false; agent.speed = config.suspiciousSpeed * lightSlow;
                     if (hasInvestigate) { SetDest(investigatePos); hasInvestigate = false; lookAroundT = 0f; }
                     if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.2f)
                     {
@@ -205,7 +250,7 @@ namespace KhoaHon.AI
 
                 case HousekeeperState.Hunt:
                     float run = player.runSpeed;
-                    agent.speed = run * (brain.Weakened ? config.weakenedHuntMultiplier : config.huntSpeedMultiplier);
+                    agent.speed = run * (brain.Weakened ? config.weakenedHuntMultiplier : config.huntSpeedMultiplier) * Difficulty.HuntSpeed * lightSlow;
                     if (brain.Hesitating)
                     {
                         agent.isStopped = true;
@@ -240,7 +285,16 @@ namespace KhoaHon.AI
 
                 case HousekeeperState.Stunned:
                     agent.isStopped = true;
-                    if (visualRoot != null)
+                    if (brain.Stun == StunCause.Light)
+                    {
+                        // Chói mắt: loạng choạng lùi lại nửa giây đầu rồi đứng ôm mặt (tư thế do HousekeeperCreep/BodyIK lo)
+                        if (staggerLeft > 0f && agent.isOnNavMesh)
+                        {
+                            staggerLeft -= Time.deltaTime;
+                            agent.Move(-transform.forward * (1.5f * Mathf.Clamp01(staggerLeft / 0.6f)) * Time.deltaTime);
+                        }
+                    }
+                    else if (visualRoot != null)
                         visualRoot.localRotation = Quaternion.Euler(18f + Mathf.Sin(Time.time * 31f) * 3f, Mathf.Sin(Time.time * 23f) * 4f, 0);
                     break;
 
@@ -264,9 +318,105 @@ namespace KhoaHon.AI
                     if (!hasInvestigate) SetInvestigate(from == HousekeeperState.Hunt ? lastSeenPos : transform.position);
                     break;
                 case HousekeeperState.Stunned:
-                    if (voiceSource != null && screamClip != null) voiceSource.PlayOneShot(screamClip, 1f);
+                    if (brain.Stun == StunCause.Light)
+                    {
+                        staggerLeft = 0.6f;
+                        var shriek = blindShriekClip != null ? blindShriekClip : screamClip;
+                        if (voiceSource != null && shriek != null) voiceSource.PlayOneShot(shriek, 1f);
+                    }
+                    else if (voiceSource != null && screamClip != null) voiceSource.PlayOneShot(screamClip, 1f);
+                    break;
+                case HousekeeperState.Hunt:
+                    // Gợi ý (tối đa 2 lần): có thể rọi đèn pin vào mặt bà để tự vệ
+                    if (!lightHintShown && FlashlightOn() && PlayerPrefs.GetInt("kh_hint_light", 0) < 2)
+                    {
+                        lightHintShown = true;
+                        PlayerPrefs.SetInt("kh_hint_light", PlayerPrefs.GetInt("kh_hint_light", 0) + 1);
+                        KhoaHonHUD.Toast(T.Get("hint.light_repel"));
+                    }
                     break;
             }
+            if (from == HousekeeperState.Stunned && wasLightStun) blindUntil = Time.time + config.lightBlindAfter;
+            wasLightStun = to == HousekeeperState.Stunned && brain.Stun == StunCause.Light;
+        }
+
+        private bool wasLightStun;
+
+        // =====================================================================
+        // Chống lại bằng đèn pin: rọi thẳng vào mặt → chậm dần → chói mắt choáng → nhờn đèn một lúc
+        private int exposureDifficulty = -1;
+
+        /// <summary>Tạo lại thanh chói theo độ khó hiện tại (đổi độ khó giữa chừng có hiệu lực ngay).</summary>
+        private void RebuildExposure()
+        {
+            exposureDifficulty = Difficulty.Level;
+            exposure = new LightExposure(config.lightFillTime * Difficulty.LightFillTime, config.lightDecayTime,
+                                         config.lightImmuneTime * Difficulty.LightImmuneTime);
+        }
+
+        private void UpdateLightExposure()
+        {
+            if (exposureDifficulty != Difficulty.Level && !exposure.Immune && exposure.Value <= 0f) RebuildExposure();
+            var st = brain.State;
+            bool can = st != HousekeeperState.Stunned && st != HousekeeperState.Kill && HidingSpot.Current == null;
+            BeingLit = can && BeamOnFace(config.lightStunRange, config.lightStunHalfAngle);
+            bool burning = BeingLit && !exposure.Immune;
+            if (burning && BatteryPool.Instance != null) BatteryPool.Instance.Drain(config.lightBatteryDrainPerSecond * Time.deltaTime);
+            float target = exposure.SpeedFactor(BeingLit, config.lightSlowMultiplier);
+            lightSlow = Mathf.MoveTowards(lightSlow, target, Time.deltaTime * (target < lightSlow ? 2.5f : 0.9f));
+            if (exposure.Tick(Time.deltaTime, BeingLit))
+            {
+                brain.OnBlinded();
+                lightSlow = 1f;
+                KhoaHon.Horror.HorrorPostFX.Instance?.Flash(0.22f);
+                AchievementService.Unlock("first_blind");
+            }
+            if (hissSource != null)
+            {
+                float hv = burning ? Mathf.Lerp(0.35f, 1f, exposure.Value) * AudioMix.Sfx : 0f;
+                hissSource.volume = Mathf.MoveTowards(hissSource.volume, hv, Time.deltaTime * 3f);
+                hissSource.pitch = 0.9f + exposure.Value * 0.35f;
+                if (hissSource.volume > 0.01f && !hissSource.isPlaying) hissSource.Play();
+                else if (hissSource.volume <= 0.01f && hissSource.isPlaying) hissSource.Stop();
+            }
+        }
+
+        /// <summary>Tia đèn pin (hướng thật của bóng đèn, không phải hướng camera) có trúng mặt bà không.</summary>
+        private bool BeamOnFace(float range, float halfAngle)
+        {
+            if (!FlashlightOn() || head == null) return false;
+            if (beamOrigin == null)
+            {
+                var l = flashlight.GetComponentInChildren<Light>(true);
+                beamOrigin = l != null ? l.transform : playerCam;
+            }
+            var face = head.position;
+            var to = face - beamOrigin.position;
+            float dist = to.magnitude;
+            if (dist > range) return false;
+            // Ở gần, mặt chiếm góc lớn hơn → nới góc nhắm để không quá khó
+            float allow = halfAngle + Mathf.Atan2(0.22f, Mathf.Max(0.3f, dist)) * Mathf.Rad2Deg;
+            if (Vector3.Angle(beamOrigin.forward, to) > allow) return false;
+            // Phải rọi từ phía trước mặt (bà quay lưng thì không chói)
+            var flat = -to; flat.y = 0;
+            var fwd = transform.forward; fwd.y = 0;
+            if (Vector3.Angle(fwd, flat) > 95f) return false;
+            return HasLineOfSight(face, beamOrigin.position);
+        }
+
+        /// <summary>Xoay người mượt theo hướng di chuyển (thay cho xoay tức thời của NavMeshAgent).</summary>
+        private void SmoothTurn()
+        {
+            if (agent.isStopped) return;
+            var v = agent.desiredVelocity; v.y = 0;
+            if (v.sqrMagnitude < 0.04f) return;
+            bool fast = brain.State == HousekeeperState.Hunt;
+            float maxDeg = (fast ? config.turnSpeed.y : config.turnSpeed.x) * Time.deltaTime;
+            var want = Quaternion.LookRotation(v);
+            // Giảm tốc khi phải quay gắt (người thật không trượt ngang khi đổi hướng)
+            float ang = Quaternion.Angle(transform.rotation, want);
+            if (ang > 70f) agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * 4f);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, want, maxDeg);
         }
 
         // =====================================================================
@@ -278,7 +428,8 @@ namespace KhoaHon.AI
             var eye = head.position;
             var to = playerCam.position - eye;
             float dist = to.magnitude;
-            float range = FlashlightOn() ? config.sightRangeLit : config.sightRangeDark;
+            float range = (FlashlightOn() ? config.sightRangeLit : config.sightRangeDark) * Difficulty.SightRange;
+            if (Time.time < blindUntil) range = Mathf.Min(range, 2.5f); // còn lóa mắt sau khi bị rọi choáng
             if (dist > range) return false;
             var fwd = transform.forward; fwd.y = 0;
             var flat = to; flat.y = 0;
@@ -434,6 +585,7 @@ namespace KhoaHon.AI
                 wpIndex = far;
             }
             brain.ResetToPatrol();
+            exposure?.Reset(); lightSlow = 1f; blindUntil = 0f; BeingLit = false;
             if (GameManager.Instance != null) GameManager.Instance.Sanity = Mathf.Max(GameManager.Instance.Sanity, 50f);
         }
 
@@ -456,7 +608,15 @@ namespace KhoaHon.AI
         private void UpdateAnim()
         {
             if (animator == null) return;
-            animator.SetFloat("Speed", agent.velocity.magnitude);
+            // Khớp bước chân với tốc độ thật: dưới tốc độ clip đi → phát chậm clip đi (không trộn với đứng yên gây trượt chân);
+            // trên tốc độ clip chạy → phát nhanh clip chạy.
+            float v = agent.velocity.magnitude;
+            float param = v, play = 1f;
+            float walkV = Mathf.Max(0.3f, config.walkClipSpeed), runV = Mathf.Max(walkV + 0.5f, config.runClipSpeed);
+            if (v > 0.35f && v < walkV) { param = walkV; play = Mathf.Clamp(v / walkV, 0.55f, 1f); }
+            else if (v > runV) { param = runV; play = Mathf.Clamp(v / runV, 1f, 1.4f); }
+            animator.SetFloat("Speed", param, 0.16f, Time.deltaTime);
+            LocomotionPlayback = Mathf.Lerp(LocomotionPlayback, play, Time.deltaTime * 6f);
         }
 
         private void Say(AudioClip clip, string subtitleKey)

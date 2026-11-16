@@ -18,7 +18,7 @@ namespace KhoaHon.Core
         public static readonly string[] All =
         {
             "end_release", "end_master", "end_coward", "both_characters", "no_death",
-            "safe_cracked", "found_julian", "first_flash", "all_relics", "cellar_open", "archivist",
+            "safe_cracked", "found_julian", "first_flash", "all_relics", "cellar_open", "archivist", "first_blind",
         };
 
         public static IAchievementBackend Backend;
