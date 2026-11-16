@@ -29,6 +29,18 @@ MonoBehaviour:
   flashStunTime: 3
   combStunTime: 20
   weakenedHesitate: 2
+  lightStunRange: 8.5
+  lightStunHalfAngle: 11
+  lightFillTime: 1.7
+  lightDecayTime: 2.5
+  lightSlowMultiplier: 0.42
+  lightStunTime: 3.5
+  lightBlindAfter: 2.2
+  lightImmuneTime: 15
+  lightBatteryDrainPerSecond: 2.2
+  walkClipSpeed: 1.6795448
+  runClipSpeed: 5.5788836
+  turnSpeed: {x: 140, y: 320}
   hidingInspectTime: 5.5
   breathHoldDuration: 7
   audioMinDistance: 2

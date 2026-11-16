@@ -43,6 +43,10 @@ Yêu cầu trực tiếp trong chat → `GEMINI.md` + skill unity-mcp-workflow �
 - Thêm `ItemType` mới **chỉ ở cuối enum**: `Recorder, FilmCamera, Crowbar`.
 - Luồng game: `GameFlow.State` (Boot → Menu → Intro → Playing ⇄ Paused). Hệ thống gameplay phải tự dừng khi `!GameFlow.IsPlaying`. Bảng Cài đặt / hộp xác nhận / menu tạm dừng nằm trên `UIKit.TopLayer` (canvas sort 95), không đặt dưới HUD (HUD bị tắt khi ở menu).
 - Font Be Vietnam Pro / Noto Serif **không có** ký tự `▮ ■ █ ● → □`. Thanh/biểu tượng vẽ bằng `Image`; mũi tên viết `>`.
+- Ngoại hình Mrs. Peake: lưới váy/khăn/tóc dựng bằng `Tools/Blender/housekeeper_garments.py` (chạy trong Blender đang mở qua MCP `blender_bridge run_python` hoặc chạy nền) → `Tools/Blender/out/characters/KH_HK_Garments.fbx`; `KhoaHonHousekeeperLook.Dress` gắn vào xương civilian_girl và tính lại bindpose. Xem trước nhanh không cần dựng scene: `KhoaHonHousekeeperLook.Preview(true)` → `Temp/KhoaHon/hk_look_*.png`.
+- Tự vệ bằng đèn pin: logic thuần ở `AI/LightExposure`, thông số ở `HousekeeperConfig` (nhóm "Chống lại bằng đèn pin"), hệ số độ khó ở `Core/Difficulty`. Chỉ đọc hướng đèn Spot của đèn pin — không sửa đèn.
+- Hệ thống không khí runtime (giông, bụi, hiện tượng khi ma ở gần, nhạc căng thẳng, objective) gắn trong `KhoaHonHorrorBuilder.WireSystems`; clip âm thanh stereo đăng ký trong `KhoaHonAudioSynth.StereoNames`.
+- Chụp chuỗi ảnh theo mốc thời gian khi Play: đăng ký `EditorApplication.update` trong `execute_code` rồi gọi `ScreenCapture.CaptureScreenshot` (mỗi lệnh MCP cách nhau vài giây nên không chụp tay kịp cảnh rượt đuổi).
 - Máu/xương/xác/hậu kỳ dựng trong `KhoaHonHorrorBuilder` (gọi từ converter). Không dán quad máu lên nhân vật: nhuộm vào texture (`Soak`).
 
 ## Font tiếng Việt (đã kiểm chứng ở Phase 0)
