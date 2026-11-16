@@ -387,6 +387,51 @@ namespace KhoaHon.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
             var music = hk.transform.Find("HuntMusic")?.GetComponent<AudioSource>();
             if (music != null) music.clip = Clip("hk_hunt_v2_loop");
+            // Bước chân nặng trên sàn gỗ + âm thanh bị tường che thì đục (nghe ra bà ở phòng bên hay ngay hành lang này)
+            if (hk.gameObject.GetComponent<HousekeeperFootsteps>() == null)
+                hk.gameObject.AddComponent<HousekeeperFootsteps>().Configure(new[] { Clip("hk_step_01"), Clip("hk_step_02"), Clip("hk_step_03"), Clip("hk_step_04") });
+            foreach (var n in new[] { "Keys", "Voice", "Breath" })
+            {
+                var t = hk.transform.Find(n);
+                if (t != null && t.GetComponent<AudioOcclusion>() == null) t.gameObject.AddComponent<AudioOcclusion>().SetIgnoreRoot(hk.transform);
+            }
+        }
+
+        /// <summary>Vật liệu hạt mềm CÓ nhận sáng (bụi trong luồng đèn, khói hơi thở): chỉ hiện khi có đèn rọi vào.</summary>
+        static Material SoftLitParticle()
+        {
+            string tp = TexDir + "/T_SoftDot.png";
+            const int S = 64;
+            var tex = new Texture2D(S, S, TextureFormat.RGBA32, false);
+            for (int y = 0; y < S; y++)
+                for (int x = 0; x < S; x++)
+                {
+                    float dx = (x + 0.5f) / S * 2f - 1f, dy = (y + 0.5f) / S * 2f - 1f;
+                    float a = Mathf.Clamp01(1f - Mathf.Sqrt(dx * dx + dy * dy)); a = a * a * (3f - 2f * a);
+                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, a));
+                }
+            tex.Apply();
+            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + tp), tex.EncodeToPNG());
+            Object.DestroyImmediate(tex);
+            AssetDatabase.ImportAsset(tp, ImportAssetOptions.ForceUpdate);
+            var ti = (TextureImporter)AssetImporter.GetAtPath(tp);
+            ti.alphaIsTransparency = true; ti.wrapMode = TextureWrapMode.Clamp; ti.SaveAndReimport();
+            string mp = MatDir + "/M_SoftLitParticle.mat";
+            var sh = Shader.Find("Universal Render Pipeline/Particles/Lit");
+            var m = AssetDatabase.LoadAssetAtPath<Material>(mp);
+            if (m == null) { m = new Material(sh); AssetDatabase.CreateAsset(m, mp); }
+            m.shader = sh;
+            m.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>(tp));
+            m.SetColor("_BaseColor", Color.white);
+            m.SetFloat("_Surface", 1f); m.SetFloat("_Blend", 0f);
+            m.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha); m.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+            m.SetFloat("_SrcBlendAlpha", (float)BlendMode.One); m.SetFloat("_DstBlendAlpha", (float)BlendMode.OneMinusSrcAlpha);
+            m.SetFloat("_ZWrite", 0f); m.SetFloat("_Smoothness", 0f);
+            m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT"); m.DisableKeyword("_ALPHATEST_ON");
+            m.SetOverrideTag("RenderType", "Transparent");
+            m.renderQueue = (int)RenderQueue.Transparent;
+            EditorUtility.SetDirty(m);
+            return m;
         }
 
         static AudioClip Clip(string n) => AssetDatabase.LoadAssetAtPath<AudioClip>(KhoaHonAudioSynth.Dir + "/" + n + ".wav");
@@ -487,6 +532,7 @@ namespace KhoaHon.EditorTools
             sys.AddComponent<PauseMenu>();
             sys.AddComponent<SettingsMenuUI>();
             sys.AddComponent<HudExtras>();
+            sys.AddComponent<ObjectiveTracker>();
             var js = sys.AddComponent<JumpscareFX>();
             var jso = new SerializedObject(js); jso.FindProperty("scareClip").objectReferenceValue = Clip("sfx_jumpscare"); jso.ApplyModifiedPropertiesWithoutUndo();
             var amb = new GameObject("HouseAmbience").AddComponent<AudioSource>(); amb.transform.SetParent(sys.transform);
@@ -500,6 +546,16 @@ namespace KhoaHon.EditorTools
             sso.FindProperty("whispers").objectReferenceValue = Clip("sfx_scare_whispers");
             sso.FindProperty("stinger").objectReferenceValue = Clip("sfx_stinger_detect");
             sso.ApplyModifiedPropertiesWithoutUndo();
+
+            // Không khí: giông bão (mưa/gió/sấm chớp), nhạc căng thẳng động, hiện tượng khi bà ở gần, bụi trong luồng đèn
+            var soft = SoftLitParticle();
+            var atmo = new GameObject("KH_Atmosphere_Runtime"); atmo.transform.SetParent(sys.transform);
+            atmo.AddComponent<StormDirector>().Configure(Clip("amb_rain_roof_loop"), Clip("amb_wind_howl_loop"),
+                new[] { Clip("sfx_thunder_01"), Clip("sfx_thunder_02"), Clip("sfx_thunder_03") });
+            atmo.AddComponent<TensionMusic>().Configure(Clip("mus_dread_drone_loop"), Clip("mus_tension_cluster_loop"));
+            atmo.AddComponent<PresenceFX>().Configure(Clip("sfx_light_buzz"), soft);
+            var dust = new GameObject("KH_Dust"); dust.transform.SetParent(sys.transform);
+            dust.AddComponent<DustMotes>().Configure(soft);
         }
     }
 }

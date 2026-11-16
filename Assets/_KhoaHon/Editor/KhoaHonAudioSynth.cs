@@ -24,6 +24,8 @@ namespace KhoaHon.EditorTools
             Write("hk_whisper_run", Whisper(1.6f));
             var extra = BuildHorror();
             extra.AddRange(BuildPuzzle());
+            extra.AddRange(BuildCombat());
+            extra.AddRange(BuildAtmos());
             AssetDatabase.Refresh();
             var names = new System.Collections.Generic.List<string> { "hk_keys_drag_loop", "hk_lullaby_hum", "hk_hunt_pulse_loop", "hk_whisper_run" };
             names.AddRange(extra);
@@ -34,7 +36,7 @@ namespace KhoaHon.EditorTools
                 var s = imp.defaultSampleSettings;
                 s.loadType = n.Contains("loop") ? AudioClipLoadType.DecompressOnLoad : AudioClipLoadType.CompressedInMemory;
                 s.compressionFormat = AudioCompressionFormat.Vorbis; s.quality = 0.7f;
-                imp.defaultSampleSettings = s; imp.forceToMono = true;
+                imp.defaultSampleSettings = s; imp.forceToMono = !StereoNames.Contains(n);
                 imp.SaveAndReimport();
             }
         }
