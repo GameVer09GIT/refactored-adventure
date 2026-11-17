@@ -49,6 +49,10 @@ Yêu cầu trực tiếp trong chat → `GEMINI.md` + skill unity-mcp-workflow �
 - Hệ thống không khí runtime (giông, bụi, hiện tượng khi ma ở gần, nhạc căng thẳng, objective) gắn trong `BlackwoodHorrorBuilder.WireSystems`; clip âm thanh stereo đăng ký trong `BlackwoodAudioSynth.StereoNames`.
 - Chụp chuỗi ảnh theo mốc thời gian khi Play: đăng ký `EditorApplication.update` trong `execute_code` rồi gọi `ScreenCapture.CaptureScreenshot` (mỗi lệnh MCP cách nhau vài giây nên không chụp tay kịp cảnh rượt đuổi).
 - Máu/xương/xác/hậu kỳ dựng trong `BlackwoodHorrorBuilder` (gọi từ converter). Không dán quad máu lên nhân vật: nhuộm vào texture (`Soak`).
+- Chất liệu đạo cụ Blender: UV chiếu hộp theo mét trong `props_common.box_uv` (`UV_DENSITY`, `UV_FIT` cho màn hình); texture PBR sinh bởi `BlackwoodPropTextures` (bảng `Specs` theo tên vật liệu — vật liệu Blender mới phải thêm một dòng `Spec`). Nhập lại model không dựng scene: `Blackwood/Build/2b. Import Blender Models`; soát nhanh: `Preview Props`.
+- Vật liệu URP tạo/sửa bằng script: bật phát sáng bằng `BlackwoodMaterialUtil.Emissive` (cờ `RealtimeEmissive`) và gọi `BlackwoodMaterialUtil.Validate` cuối cùng. Unity 6 tự tắt `_EMISSION` nếu cờ GI là `None`/`EmissiveIsBlack`.
+- Ngoại hình thân/tay người chơi theo nhân vật: `BlackwoodPlayerLook` (texture + vật liệu `Materials/Player`) và component `Characters/PlayerLook`. Không đụng `PlayerArmIK`.
+- Test nạp file lưu: chép save sang slot trống (vd. `khoahon_save_2.json`) rồi nạp slot đó. Game tự lưu đè slot đang chơi khi chết/qua checkpoint — không thử trên save thật của người dùng.
 
 ## Font tiếng Việt (đã kiểm chứng ở Phase 0)
 - UI: `Assets/BlackwoodManor/Fonts/BeVietnamPro-Regular SDF.asset` / `BeVietnamPro-SemiBold SDF.asset`.
