@@ -105,10 +105,23 @@ namespace Blackwood.UI
             controlsShown = true;
             controlsText.text = T.Get("ctrl.card");
             yield return new WaitForSecondsRealtime(1.5f);
-            while (controls.alpha < 1f) { controls.alpha = Mathf.MoveTowards(controls.alpha, 1f, Time.unscaledDeltaTime * 2f); yield return null; }
+            while (controls.alpha < 1f) { PlaceControls(); controls.alpha = Mathf.MoveTowards(controls.alpha, 1f, Time.unscaledDeltaTime * 2f); yield return null; }
             float t = 0f;
-            while (t < 11f) { if (GameFlow.IsPlaying) t += Time.unscaledDeltaTime; yield return null; }
-            while (controls.alpha > 0f) { controls.alpha = Mathf.MoveTowards(controls.alpha, 0f, Time.unscaledDeltaTime * 0.7f); yield return null; }
+            while (t < 11f) { PlaceControls(); if (GameFlow.IsPlaying) t += Time.unscaledDeltaTime; yield return null; }
+            while (controls.alpha > 0f) { PlaceControls(); controls.alpha = Mathf.MoveTowards(controls.alpha, 0f, Time.unscaledDeltaTime * 0.7f); yield return null; }
+        }
+
+        /// <summary>Khung chat livestream (Alex) chiếm góc dưới trái → thẻ phím dời sang góc dưới phải để chữ không chồng nhau.</summary>
+        private void PlaceControls()
+        {
+            bool right = Blackwood.Characters.LivestreamChat.Showing;
+            var rt = (RectTransform)controls.transform;
+            var anchor = right ? new Vector2(1, 0) : Vector2.zero;
+            if (rt.anchorMin == anchor) return;
+            rt.anchorMin = rt.anchorMax = anchor;
+            rt.offsetMin = right ? new Vector2(-620, 110) : new Vector2(48, 60);
+            rt.offsetMax = right ? new Vector2(-48, 380) : new Vector2(620, 330);
+            controlsText.alignment = right ? TextAlignmentOptions.BottomRight : TextAlignmentOptions.BottomLeft;
         }
     }
 }

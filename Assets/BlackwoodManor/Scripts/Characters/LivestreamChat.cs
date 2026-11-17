@@ -16,6 +16,8 @@ namespace Blackwood.Characters
     public class LivestreamChat : MonoBehaviour
     {
         public static LivestreamChat Instance { get; private set; }
+        /// <summary>Khung chat đang hiện trên màn hình (góc dưới trái) — UI khác tránh chỗ này.</summary>
+        public static bool Showing => Instance != null && Instance.panel != null && Instance.panel.gameObject.activeSelf;
 
         [SerializeField] private float minInterval = 2.2f, maxInterval = 5.5f;
         [SerializeField] private float nearDistance = 14f;
