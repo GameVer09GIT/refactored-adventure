@@ -62,10 +62,16 @@ namespace Blackwood.Inventory
         [SerializeField] private float ghostFlickerDistance = 10f;
 
         private bool isOn = false;
+        private bool flickerDark = false;
         private Coroutine rampCoroutine;
         private Material glassMaterialInstance;
 
         public bool IsOn => isOn;
+
+        /// <summary>Nguồn điện (do hệ thống pin gán): false = viên pin đang lắp đã cạn → không bật được.</summary>
+        public static System.Func<bool> HasPower;
+        /// <summary>Gọi khi người chơi bấm bật lúc hết pin (để HUD báo / gợi ý thay pin).</summary>
+        public static System.Action PowerDenied;
 
         protected override void Awake()
         {
@@ -119,7 +125,17 @@ namespace Blackwood.Inventory
 
         public void ToggleFlashlight()
         {
+            // Hết pin: bấm chỉ nghe tiếng công tắc, đèn không lên
+            if (!isOn && HasPower != null && !HasPower())
+            {
+                PlayOneShotSound(toggleClickClip, clickVolume, Random.Range(0.96f, 1.04f));
+                if (PlayerArmIK.Instance != null) PlayerArmIK.Instance.TriggerThumbPress(true, 0.08f, 25f);
+                SetLightStateImmediate(false);
+                PowerDenied?.Invoke();
+                return;
+            }
             isOn = !isOn;
+            flickerDark = false;
 
             // Phát âm thanh click
             PlayOneShotSound(toggleClickClip, clickVolume, Random.Range(0.96f, 1.04f));
@@ -175,28 +191,38 @@ namespace Blackwood.Inventory
                 yield return null;
             }
 
-            if (PlayerArmIK.Instance != null)
-            {
-                PlayerArmIK.Instance.SetFlashlightIntensity(targetIntensity);
-            }
-            if (glassMaterialInstance != null && glassMaterialInstance.HasProperty("_EmissionColor"))
-            {
-                glassMaterialInstance.SetColor("_EmissionColor", targetEmission);
-            }
-
+            // Kết thúc theo trạng thái HIỆN TẠI (có thể đã bị tắt giữa chừng vì hết pin/cất đèn) chứ không theo đích ban đầu
             rampCoroutine = null;
+            ApplyOutput();
         }
 
         public void SetLightStateImmediate(bool enabledState)
         {
+            // Dừng chuyển sáng đang chạy, nếu không nó sẽ đặt lại độ sáng tối đa sau khi đèn đã bị tắt
+            if (rampCoroutine != null) { StopCoroutine(rampCoroutine); rampCoroutine = null; }
             isOn = enabledState;
+            flickerDark = false;
+            ApplyOutput();
+        }
+
+        /// <summary>Chập chờn (pin yếu / ma ở gần): tối/sáng tạm thời, KHÔNG đổi trạng thái bật–tắt của người chơi.</summary>
+        public void SetFlicker(bool dark)
+        {
+            if (flickerDark == dark) return;
+            flickerDark = dark;
+            if (rampCoroutine == null) ApplyOutput();
+        }
+
+        private void ApplyOutput()
+        {
+            bool lit = isOn && !flickerDark;
             if (PlayerArmIK.Instance != null)
             {
-                PlayerArmIK.Instance.SetFlashlightIntensity(isOn ? maxIntensity : 0f);
+                PlayerArmIK.Instance.SetFlashlightIntensity(lit ? maxIntensity : 0f);
             }
             if (glassMaterialInstance != null && glassMaterialInstance.HasProperty("_EmissionColor"))
             {
-                glassMaterialInstance.SetColor("_EmissionColor", isOn ? glassEmissionOn : Color.black);
+                glassMaterialInstance.SetColor("_EmissionColor", lit ? glassEmissionOn : Color.black);
             }
         }
 

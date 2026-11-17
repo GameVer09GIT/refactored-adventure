@@ -1,12 +1,12 @@
+using Blackwood.Core;
 using Blackwood.Inventory;
 using UnityEngine;
 
 namespace Blackwood.Items
 {
     /// <summary>
-    /// Hook tiêu hao pin cho đèn pin có sẵn (Slot 1) mà KHÔNG sửa FlashlightItem:
-    /// chỉ đọc IsOn và gọi API public SetLightStateImmediate khi hết pin / chập chờn.
-    /// Không đụng IK, pose, offset hay thông số đèn.
+    /// Pin của đèn pin (Slot 1, pin đại D): trừ điện khi đèn sáng, cạn thì TẮT hẳn (bấm lại chỉ nghe tiếng công tắc),
+    /// pin yếu thì chập chờn. Chỉ dùng API bật/tắt của FlashlightItem — không đụng IK, tư thế, vị trí hay thông số đèn.
     /// </summary>
     public class FlashlightBatteryDrain : MonoBehaviour
     {
@@ -18,6 +18,18 @@ namespace Blackwood.Items
         private float nextFlicker;
         private float flickerRestoreAt = -1f;
 
+        private void OnEnable()
+        {
+            FlashlightItem.HasPower = () => BatteryPool.Instance == null || !BatteryPool.Instance.IsEmptyCell(CellType.D);
+            FlashlightItem.PowerDenied = () => BatteryReload.AnnounceDead(CellType.D);
+        }
+
+        private void OnDisable()
+        {
+            FlashlightItem.HasPower = null;
+            FlashlightItem.PowerDenied = null;
+        }
+
         private void Update()
         {
             if (flashlight == null)
@@ -27,34 +39,32 @@ namespace Blackwood.Items
             }
 
             var pool = BatteryPool.Instance;
-            var cfg = Blackwood.Core.GameManager.Instance != null ? Blackwood.Core.GameManager.Instance.Tools : null;
+            var cfg = GameManager.Instance != null ? GameManager.Instance.Tools : null;
             if (pool == null || cfg == null) return;
 
-            // Đang tắt tạm vì chập chờn → bật lại đúng lúc
-            if (flickerRestoreAt > 0f)
+            // Hết nhịp chập chờn → sáng lại (chỉ khi người chơi vẫn đang bật)
+            if (flickerRestoreAt > 0f && Time.time >= flickerRestoreAt)
             {
-                if (Time.time >= flickerRestoreAt)
-                {
-                    flickerRestoreAt = -1f;
-                    if (!pool.IsEmpty && flashlight.IsEquipped) flashlight.SetLightStateImmediate(true);
-                }
-                return;
+                flickerRestoreAt = -1f;
+                flashlight.SetFlicker(false);
             }
 
             if (!flashlight.IsOn) return;
 
-            if (pool.IsEmpty)
+            if (pool.IsEmptyCell(CellType.D))
             {
+                flickerRestoreAt = -1f;
                 flashlight.SetLightStateImmediate(false);
+                BatteryReload.AnnounceDead(CellType.D);
                 return;
             }
 
-            pool.Drain(cfg.flashlightDrainPerSecond * Time.deltaTime);
+            if (GameFlow.IsPlaying) pool.Drain(CellType.D, cfg.flashlightDrainPerSecond * Time.deltaTime);
 
-            if (pool.IsLow && Time.time >= nextFlicker)
+            if (pool.IsLowCell(CellType.D) && flickerRestoreAt < 0f && Time.time >= nextFlicker)
             {
                 nextFlicker = Time.time + Random.Range(flickerInterval.x, flickerInterval.y);
-                flashlight.SetLightStateImmediate(false);
+                flashlight.SetFlicker(true);
                 flickerRestoreAt = Time.time + Random.Range(flickerOffDuration.x, flickerOffDuration.y);
             }
         }

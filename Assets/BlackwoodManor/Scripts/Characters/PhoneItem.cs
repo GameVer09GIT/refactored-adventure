@@ -26,14 +26,51 @@ namespace Blackwood.Characters
             base.OnUnequip();
         }
 
+        private void Update()
+        {
+            // Màn hình livestream sáng suốt lúc cầm → hao sạc dự phòng chậm; cạn thì tối màn hình, không flash được
+            if (!isEquipped || !GameFlow.IsPlaying) return;
+            var cfg = GameManager.Instance != null ? GameManager.Instance.Tools : null;
+            var pool = BatteryPool.Instance;
+            if (cfg == null || pool == null) return;
+            bool was = pool.IsEmptyCell(CellType.PhonePack);
+            pool.Drain(CellType.PhonePack, cfg.phoneIdleDrainPerSecond * Time.deltaTime);
+            if (!was && pool.IsEmptyCell(CellType.PhonePack)) BatteryReload.AnnounceDead(CellType.PhonePack);
+            SetScreen(!pool.IsEmptyCell(CellType.PhonePack));
+        }
+
+        private Renderer[] screens;
+        private bool screenOn = true;
+
+        /// <summary>Bật/tắt phát sáng màn hình (vật liệu màn hình là ô thứ có chữ "Screen").</summary>
+        private void SetScreen(bool on)
+        {
+            if (screenOn == on) return;
+            screenOn = on;
+            screens ??= GetComponentsInChildren<Renderer>(true);
+            foreach (var r in screens)
+            {
+                var mats = r.sharedMaterials;
+                for (int i = 0; i < mats.Length; i++)
+                {
+                    if (mats[i] == null || !mats[i].name.Contains("Screen")) continue;
+                    var mpb = new MaterialPropertyBlock();
+                    r.GetPropertyBlock(mpb, i);
+                    mpb.SetColor("_EmissionColor", on ? mats[i].GetColor("_EmissionColor") : Color.black);
+                    mpb.SetColor("_BaseColor", on ? mats[i].GetColor("_BaseColor") : new Color(0.02f, 0.02f, 0.025f));
+                    r.SetPropertyBlock(mpb, i);
+                }
+            }
+        }
+
         public override void OnPrimaryUse()
         {
             if (Time.time < nextFlash || player == null) return;
             var cfg = GameManager.Instance != null ? GameManager.Instance.Tools : null;
             var pool = BatteryPool.Instance;
-            float cost = cfg != null ? cfg.phoneFlashBatteryCost : 6f;
-            if (pool != null && pool.Current < cost) { BlackwoodHUD.Toast(T.Get("toast.no_battery")); return; }
-            pool?.Drain(cost);
+            float cost = cfg != null ? cfg.phoneFlashBatteryCost : 4f;
+            if (pool != null && pool.Charge(CellType.PhonePack) < cost) { BatteryReload.AnnounceDead(CellType.PhonePack); return; }
+            pool?.Drain(CellType.PhonePack, cost);
             nextFlash = Time.time + (cfg != null ? cfg.flashCooldown : 1.5f);
             PlayOneShotSound(flashClip, 0.8f);
             bool stunned = FlashUtil.Fire(player.playerCamera, this);

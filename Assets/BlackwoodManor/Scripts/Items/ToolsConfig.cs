@@ -6,17 +6,24 @@ namespace Blackwood.Items
     [CreateAssetMenu(menuName = "Blackwood/Config/Tools", fileName = "BW_ToolsConfig")]
     public class ToolsConfig : ScriptableObject
     {
-        [Header("Pin (dùng chung đèn pin + máy ghi âm)")]
+        [Header("Pin — mỗi dụng cụ một loại (đèn pin: D · máy ghi âm: AA · điện thoại: sạc dự phòng · kính nhìn đêm: pin máy quay)")]
         public float batteryMax = 100f;
+        [Tooltip("% điện của viên đang lắp khi bắt đầu")]
         public float batteryStart = 100f;
-        [Tooltip("% pin mất mỗi giây khi đèn pin bật (1% / 3 s)")]
-        public float flashlightDrainPerSecond = 1f / 3f;
-        [Tooltip("% pin mất mỗi giây khi máy ghi âm đang nghe (1% / 2 s)")]
-        public float recorderDrainPerSecond = 0.5f;
-        [Tooltip("Dưới mức này đèn pin chập chờn")]
+        [Tooltip("% pin D mất mỗi giây khi đèn pin bật (0,167 ≈ 10 phút một viên)")]
+        public float flashlightDrainPerSecond = 1f / 6f;
+        [Tooltip("% pin AA mất mỗi giây khi máy ghi âm đang nghe (0,2 ≈ 8 phút)")]
+        public float recorderDrainPerSecond = 0.2f;
+        [Tooltip("Dưới mức này đèn pin chập chờn / HUD báo đỏ")]
         public float lowBatteryThreshold = 15f;
-        [Tooltip("% pin mỗi viên pin tiểu")]
+        [Tooltip("(cũ) % pin mỗi viên — nay mỗi vật nhặt là một viên dự phòng đầy")]
         public float batteryPickupAmount = 50f;
+        [Tooltip("Số viên dự phòng mang theo lúc đầu")]
+        public int startSparesD = 1, startSparesAA = 1, startSparesPhone = 1, startSparesCam = 1;
+        [Tooltip("Thời gian thay pin (giây) — trong lúc thay dụng cụ tắt")]
+        public float batterySwapTime = 1.1f;
+        [Tooltip("% sạc dự phòng mất mỗi giây khi đang cầm điện thoại (màn hình livestream)")]
+        public float phoneIdleDrainPerSecond = 0.06f;
 
         [Header("Phim")]
         public int filmStart = 8;
@@ -30,11 +37,11 @@ namespace Blackwood.Items
         [Tooltip("Nửa góc nón flash (độ)")]
         public float flashStunHalfAngle = 30f;
         [Tooltip("% pin mỗi lần flash điện thoại")]
-        public float phoneFlashBatteryCost = 6f;
+        public float phoneFlashBatteryCost = 4f;
 
         [Header("Kính nhìn đêm (Alex)")]
-        [Tooltip("% pin tiêu hao mỗi giây khi bật")]
-        public float nightVisionDrainPerSecond = 1.1f;
+        [Tooltip("% pin máy quay tiêu hao mỗi giây khi bật (0,42 ≈ 4 phút)")]
+        public float nightVisionDrainPerSecond = 0.42f;
 
         [Header("EVP định hướng (Evelyn)")]
         [Tooltip("Tầm máy ghi âm bắt được bước chân Mrs. Peake (m)")]

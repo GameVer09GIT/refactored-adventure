@@ -22,6 +22,9 @@ namespace Blackwood.Interaction
         [SerializeField] private float batteryAmount = 0f;
         [Tooltip("Số kiểu phim cộng thêm (0 = không)")]
         [SerializeField] private int filmAmount = 0;
+        [Tooltip("Loại pin dự phòng cho (-1 = không; 0 D đèn pin, 1 AA máy ghi âm, 2 sạc dự phòng điện thoại, 3 pin máy quay)")]
+        [SerializeField] private int cellType = -1;
+        [SerializeField] private int cellCount = 0;
         [SerializeField] private StoryFlag[] flags = new StoryFlag[0];
         [Tooltip("Tài liệu / băng / kỷ vật thêm vào Sổ tay")]
         [SerializeField] private NotebookSource[] notebookSources = new NotebookSource[0];
@@ -35,6 +38,13 @@ namespace Blackwood.Interaction
 
         public string PickupId => pickupId;
         public bool Collected => collected;
+
+        /// <summary>Pin cho một dụng cụ mà nhân vật này không mang thì không xuất hiện.</summary>
+        private bool Relevant => cellType < 0 || BatteryPool.PlayerHasTool(BatteryPool.ToolFor((CellType)cellType));
+
+        public void SetCell(CellType t, int count) { cellType = (int)t; cellCount = count; }
+
+        private void Start() { if (!Relevant) gameObject.SetActive(false); }
 
         public void Configure(string id, string nameKey)
         {
@@ -60,6 +70,7 @@ namespace Blackwood.Interaction
 
             if (!string.IsNullOrEmpty(giveKeyId)) KeyRing.Instance?.Add(giveKeyId);
             if (batteryAmount > 0f) BatteryPool.Instance?.Add(batteryAmount);
+            if (cellType >= 0 && cellCount > 0) BatteryPool.Instance?.AddSpare((CellType)cellType, cellCount);
             if (filmAmount > 0) FilmStock.Instance?.Add(filmAmount);
             foreach (var f in flags) GameManager.Instance?.SetFlag(f);
 
@@ -90,7 +101,7 @@ namespace Blackwood.Interaction
         public void Restore(SaveData data)
         {
             collected = data.collected.Contains(pickupId);
-            gameObject.SetActive(!collected);
+            gameObject.SetActive(!collected && Relevant);
         }
     }
 }

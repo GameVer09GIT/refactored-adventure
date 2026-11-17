@@ -362,7 +362,7 @@ namespace Blackwood.AI
             bool can = st != HousekeeperState.Stunned && st != HousekeeperState.Kill && HidingSpot.Current == null;
             BeingLit = can && BeamOnFace(config.lightStunRange, config.lightStunHalfAngle);
             bool burning = BeingLit && !exposure.Immune;
-            if (burning && BatteryPool.Instance != null) BatteryPool.Instance.Drain(config.lightBatteryDrainPerSecond * Time.deltaTime);
+            if (burning && BatteryPool.Instance != null) BatteryPool.Instance.Drain(CellType.D, config.lightBatteryDrainPerSecond * Time.deltaTime);
             float target = exposure.SpeedFactor(BeingLit, config.lightSlowMultiplier);
             lightSlow = Mathf.MoveTowards(lightSlow, target, Time.deltaTime * (target < lightSlow ? 2.5f : 0.9f));
             if (exposure.Tick(Time.deltaTime, BeingLit))

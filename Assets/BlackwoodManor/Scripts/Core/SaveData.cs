@@ -34,6 +34,9 @@ namespace Blackwood.Core
         public float battery = 100f;
         public int film = 8;
         public float sanity = 100f;
+        // Pin riêng từng dụng cụ (thêm sau; save cũ không có thì null → dùng "battery" cho đèn pin)
+        public float[] cellCharge;
+        public int[] cellSpares;
 
         public string ToJson(bool pretty = true) => JsonUtility.ToJson(this, pretty);
 

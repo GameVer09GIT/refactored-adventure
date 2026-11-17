@@ -1406,8 +1406,62 @@ MonoBehaviour:
     text: "W A S D   Di chuy\u1EC3n        Shift   Ch\u1EA1y\nE   T\u01B0\u01A1ng
       t\xE1c        Chu\u1ED9t tr\xE1i   D\xF9ng v\u1EADt \u0111ang c\u1EA7m\n1 \u2013
       4 / L\u0103n chu\u1ED9t   \u0110\u1ED5i v\u1EADt        Space   N\xEDn th\u1EDF
-      khi tr\u1ED1n\nTab   S\u1ED5 tay        O   M\u1EE5c ti\xEAu        Esc   T\u1EA1m
-      d\u1EEBng"
+      khi tr\u1ED1n\nTab   S\u1ED5 tay        O   M\u1EE5c ti\xEAu        R   Thay
+      pin\nEsc   T\u1EA1m d\u1EEBng"
     en: "W A S D   Move        Shift   Run\nE   Interact        Left mouse   Use
       held item\n1 \u2013 4 / Scroll   Switch item        Space   Hold breath while
-      hiding\nTab   Notebook        O   Objective        Esc   Pause"
+      hiding\nTab   Notebook        O   Objective        R   Swap battery\nEsc  
+      Pause"
+  - key: item.battery_d
+    text: "pin \u0111\u1EA1i (D) cho \u0111\xE8n pin"
+    en: a D-cell battery for the flashlight
+  - key: item.battery_aa
+    text: "pin ti\u1EC3u (AA) cho m\xE1y ghi \xE2m"
+    en: AA batteries for the recorder
+  - key: item.powerbank
+    text: "s\u1EA1c d\u1EF1 ph\xF2ng cho \u0111i\u1EC7n tho\u1EA1i"
+    en: a power bank for the phone
+  - key: item.cam_pack
+    text: "pin m\xE1y quay cho k\xEDnh nh\xECn \u0111\xEAm"
+    en: a camcorder battery for the night-vision camera
+  - key: cell.0
+    text: "pin \u0111\u1EA1i (D)"
+    en: D-cell battery
+  - key: cell.1
+    text: "pin ti\u1EC3u (AA)"
+    en: AA batteries
+  - key: cell.2
+    text: "s\u1EA1c d\u1EF1 ph\xF2ng"
+    en: power bank
+  - key: cell.3
+    text: "pin m\xE1y quay"
+    en: camcorder battery
+  - key: tip.13
+    text: "M\u1ED7i d\u1EE5ng c\u1EE5 d\xF9ng m\u1ED9t lo\u1EA1i pin ri\xEAng: \u0111\xE8n
+      pin pin \u0111\u1EA1i, m\xE1y ghi \xE2m pin ti\u1EC3u, \u0111i\u1EC7n tho\u1EA1i
+      s\u1EA1c d\u1EF1 ph\xF2ng, k\xEDnh nh\xECn \u0111\xEAm pin m\xE1y quay. Nh\u1EA5n
+      R \u0111\u1EC3 thay khi c\xF2n pin d\u1EF1 ph\xF2ng."
+    en: 'Every tool takes its own battery: the flashlight a D cell, the recorder
+      AAs, the phone a power bank, the night-vision camera a camcorder pack. Press
+      R to swap in a spare.'
+  - key: hud.spare
+    text: "d\u1EF1 ph\xF2ng {0}"
+    en: spare {0}
+  - key: hud.swapping
+    text: "\u0110ANG THAY PIN\u2026"
+    en: "SWAPPING BATTERY\u2026"
+  - key: hint.swap
+    text: "H\u1EBFt {0} \u2014 nh\u1EA5n [R] \u0111\u1EC3 thay"
+    en: "{0} is dead \u2014 press [R] to swap"
+  - key: hint.find
+    text: "H\u1EBFt {0} \u2014 ph\u1EA3i t\xECm th\xEAm"
+    en: "{0} is dead \u2014 find another"
+  - key: toast.swapped
+    text: "\u0110\xE3 thay {0} m\u1EDBi (c\xF2n {1} d\u1EF1 ph\xF2ng)"
+    en: Fresh {0} in ({1} spare left)
+  - key: toast.no_spare
+    text: "Kh\xF4ng c\xF2n {0} d\u1EF1 ph\xF2ng"
+    en: No spare {0}
+  - key: toast.battery_full
+    text: "Pin v\u1EABn c\xF2n g\u1EA7n \u0111\u1EA7y"
+    en: The battery is still nearly full

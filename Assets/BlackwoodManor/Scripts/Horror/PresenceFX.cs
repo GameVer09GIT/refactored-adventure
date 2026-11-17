@@ -9,7 +9,7 @@ namespace Blackwood.Horror
     /// <summary>
     /// "Hiện tượng" báo Mrs. Peake đang ở gần mà chưa thấy bạn: đèn pin nhiễu chập chờn kèm tiếng rè điện, hơi thở người chơi
     /// hóa khói lạnh. Càng gần càng dày. Tắt khi bà đang truy đuổi / đang bị rọi đèn (không phá cơ chế tự vệ bằng đèn pin).
-    /// Chỉ dùng API public của đèn pin (SetLightStateImmediate) — không sửa đèn, IK hay tư thế cầm.
+    /// Chỉ dùng API chập chờn của đèn pin (SetFlicker — không đổi trạng thái bật/tắt) — không sửa đèn, IK hay tư thế cầm.
     /// </summary>
     public class PresenceFX : MonoBehaviour
     {
@@ -54,8 +54,7 @@ namespace Blackwood.Horror
             if (restoreAt > 0f && Time.time >= restoreAt)
             {
                 restoreAt = -1f;
-                bool empty = BatteryPool.Instance != null && BatteryPool.Instance.IsEmpty;
-                if (flashlight != null && flashlight.IsEquipped && !empty) flashlight.SetLightStateImmediate(true);
+                if (flashlight != null) flashlight.SetFlicker(false);
             }
 
             float target = 0f;
@@ -78,7 +77,7 @@ namespace Blackwood.Horror
             if (restoreAt < 0f && Time.time >= nextFlick && flashlight != null && flashlight.IsOn && flashlight.IsEquipped)
             {
                 nextFlick = Time.time + Mathf.Lerp(3.2f, 0.4f, Level) * Random.Range(0.6f, 1.5f);
-                flashlight.SetLightStateImmediate(false);
+                flashlight.SetFlicker(true);
                 restoreAt = Time.time + Random.Range(0.04f, 0.14f) * (Random.value < 0.2f ? 3f : 1f);
                 if (buzzClip != null) { buzz.pitch = Random.Range(0.85f, 1.2f); buzz.PlayOneShot(buzzClip, 0.4f * Level * AudioMix.Sfx); }
             }

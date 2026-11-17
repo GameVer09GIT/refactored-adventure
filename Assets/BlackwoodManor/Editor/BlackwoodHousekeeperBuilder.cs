@@ -82,6 +82,7 @@ namespace Blackwood.EditorTools
             float runV = MeasureClipSpeed(runClip as AnimationClip, 5.5f);
             if (runV < walkV + 1f) runV = walkV + 1f;
             cfg.walkClipSpeed = walkV; cfg.runClipSpeed = runV;
+            cfg.lightBatteryDrainPerSecond = 0.5f; // rọi làm chói hao thêm pin D (trước 2,2%/s — cạn quá nhanh)
             EditorUtility.SetDirty(cfg);
             tree.AddChild(idleClip, 0f);
             tree.AddChild(walkClip, walkV);

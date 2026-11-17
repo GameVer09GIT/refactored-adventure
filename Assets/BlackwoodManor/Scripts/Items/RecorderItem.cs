@@ -45,7 +45,7 @@ namespace Blackwood.Items
 
         public override void OnPrimaryUse()
         {
-            if (!listening && BatteryPool.Instance != null && BatteryPool.Instance.IsEmpty) return;
+            if (!listening && BatteryPool.Instance != null && BatteryPool.Instance.IsEmptyCell(CellType.AA)) { PlayOneShotSound(toggleClip, 0.5f); BatteryReload.AnnounceDead(CellType.AA); return; }
             SetListening(!listening);
             PlayOneShotSound(toggleClip, 0.8f);
         }
@@ -78,8 +78,8 @@ namespace Blackwood.Items
             var pool = BatteryPool.Instance;
             if (cfg != null && pool != null)
             {
-                pool.Drain(cfg.recorderDrainPerSecond * Time.deltaTime);
-                if (pool.IsEmpty) { SetListening(false); return; }
+                if (GameFlow.IsPlaying) pool.Drain(CellType.AA, cfg.recorderDrainPerSecond * Time.deltaTime);
+                if (pool.IsEmptyCell(CellType.AA)) { SetListening(false); BatteryReload.AnnounceDead(CellType.AA); return; }
             }
             TrackHousekeeper(cfg != null ? cfg.evpRange : 30f);
         }

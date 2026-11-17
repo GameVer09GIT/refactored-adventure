@@ -37,7 +37,7 @@ MonoBehaviour:
   lightStunTime: 3.5
   lightBlindAfter: 2.2
   lightImmuneTime: 15
-  lightBatteryDrainPerSecond: 2.2
+  lightBatteryDrainPerSecond: 0.5
   walkClipSpeed: 1.6795448
   runClipSpeed: 5.5788836
   turnSpeed: {x: 140, y: 320}

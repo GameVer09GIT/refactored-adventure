@@ -296,6 +296,8 @@ namespace Blackwood.EditorTools
                 Shot(tag + "_00_gate");
             }, After(1.5f));
 
+            AddBatteryChecks(who);
+
             // Giai đoạn 1 — cửa chính sập sau lưng
             Add("Vào nhà: cửa chính sập", () => Teleport(new Vector3(80.7f, GF, 10.4f), 0f), () => GM.Has(StoryFlag.EnteredHouse), 6f,
                 () => GM.Stage != GameStage.Stage1_GroundFloor ? "chương " + GM.Stage : null);
@@ -334,7 +336,9 @@ namespace Blackwood.EditorTools
                 CloseReader();
                 return Notebook.NotebookManager.Instance.Contains("DOC_2009_BienBan") ? null : "sổ tay chưa có DOC_2009_BienBan";
             });
-            Add("Nhặt pin ở sảnh", () => Use("Pickup_Battery_Hall"), After(0.5f));
+            int sparesBefore = 0;
+            Add("Nhặt pin ở sảnh (+1 pin D dự phòng)", () => { sparesBefore = Items.BatteryPool.Instance.Spares(Items.CellType.D); var e = Use("Pickup_Battery_Hall"); if (e != null) Log("  " + e); }, After(0.5f),
+                () => Items.BatteryPool.Instance.Spares(Items.CellType.D) == sparesBefore + 1 ? null : "số pin D dự phòng không tăng (" + sparesBefore + " → " + Items.BatteryPool.Instance.Spares(Items.CellType.D) + ")");
             Add("Đọc bảng đồng 1921", () => Use("Doc_BangDong1921"), After(0.8f), () => { CloseReader(); return null; });
             Add("Nhặt ba lô của Julian (xà beng)", () => Use("Pickup_QuanBackpack"), After(1f), () => { CloseReader(); return Expect(StoryFlag.GotQuanBackpack, StoryFlag.HasCrowbar); });
             foreach (var n in new[] { "Doc_ThiepTanGia1978", "Doc_DiThuLam1996", "Pickup_MauBao1953", "Pickup_Film_Study", "Pickup_Tape2" })
@@ -427,6 +431,74 @@ namespace Blackwood.EditorTools
                 () => Find("BW_EndingCanvas") != null, 150f,
                 () => Expect(ending == EndingId.Release ? StoryFlag.Ending1 : StoryFlag.Ending2));
             AddEndingTail();
+        }
+
+        // ------------------------------------------------------------------ pin
+        static float SpotIntensity() => Inventory.PlayerArmIK.Instance != null && Inventory.PlayerArmIK.Instance.CameraSpotLight != null
+            ? Inventory.PlayerArmIK.Instance.CameraSpotLight.intensity : -1f;
+
+        static void AddBatteryChecks(PlayerCharacter who)
+        {
+            Inventory.FlashlightItem fl = null;
+            var pool = (System.Func<Items.BatteryPool>)(() => Items.BatteryPool.Instance);
+            Add("Pin: đèn pin bật rồi cạn pin thì tắt hẳn", () =>
+            {
+                Inventory.HotbarInventory.Instance.SelectSlot(0);
+                fl = PC.GetComponentInChildren<Inventory.FlashlightItem>(true);
+                pool().SetCharge(Items.CellType.D, 100f);
+            }, After(1.0f));
+            Add("  bật đèn", () => { if (!fl.IsOn) fl.ToggleFlashlight(); }, After(0.5f),
+                () => fl.IsOn && SpotIntensity() > 1f ? null : "đèn không sáng khi còn pin (intensity " + SpotIntensity() + ")");
+            Add("  rút cạn pin", () => pool().SetCharge(Items.CellType.D, 0f), After(0.8f),
+                () => !fl.IsOn && SpotIntensity() <= 0.01f ? null : "hết pin mà đèn vẫn sáng (isOn=" + fl.IsOn + ", intensity " + SpotIntensity() + ")");
+            Add("  bấm bật khi hết pin", () => fl.ToggleFlashlight(), After(0.6f),
+                () => !fl.IsOn && SpotIntensity() <= 0.01f ? null : "bấm khi hết pin đèn lại sáng (intensity " + SpotIntensity() + ")");
+            Add("Pin: nhấn R thay pin D dự phòng", () =>
+            {
+                pool().SetSpares(Items.CellType.D, 1);
+                if (!Items.BatteryReload.Instance.TrySwap(Items.CellType.D)) Log("  TrySwap trả về false");
+            }, After(1.6f), () =>
+            {
+                Shot(tag + "_bat_swapped");
+                return pool().Charge(Items.CellType.D) >= 99f && pool().Spares(Items.CellType.D) == 0 ? null
+                    : "thay pin không đúng (điện " + pool().Charge(Items.CellType.D) + ", dự phòng " + pool().Spares(Items.CellType.D) + ")";
+            });
+            Add("Pin: hết dự phòng thì không thay được", () => { pool().SetCharge(Items.CellType.D, 20f); Items.BatteryReload.Instance.TrySwap(Items.CellType.D); }, After(1.6f),
+                () => pool().Charge(Items.CellType.D) <= 20.01f ? null : "thay được dù không còn pin dự phòng");
+            Add("Pin: thay lúc đèn còn sáng (pin yếu) thì lắp xong tự sáng lại", () =>
+            {
+                pool().SetCharge(Items.CellType.D, 30f); pool().SetSpares(Items.CellType.D, 1);
+                if (!fl.IsOn) fl.ToggleFlashlight();
+            }, After(0.5f));
+            Add("  nhấn R", () => Items.BatteryReload.Instance.TrySwap(Items.CellType.D), After(1.9f), () =>
+            {
+                if (!(fl.IsOn && SpotIntensity() > 1f)) return "thay pin xong đèn không sáng lại (isOn=" + fl.IsOn + ", intensity " + SpotIntensity() + ")";
+                return pool().Charge(Items.CellType.D) >= 99f ? null : "pin chưa đầy sau khi thay (" + pool().Charge(Items.CellType.D) + ")";
+            });
+            Add("Pin: đèn đang sáng, đổi sang slot khác thì tắt", () => { pool().SetCharge(Items.CellType.D, 100f); if (!fl.IsOn) fl.ToggleFlashlight(); }, After(0.5f));
+            Add("  đổi slot", () => Inventory.HotbarInventory.Instance.SelectSlot(1), After(1.2f),
+                () => SpotIntensity() <= 0.01f ? null : "đổi slot mà đèn pin vẫn chiếu (intensity " + SpotIntensity() + ")");
+            if (who == PlayerCharacter.Alex)
+            {
+                Characters.NightVisionItem nv = null;
+                Add("Pin: kính nhìn đêm cạn pin máy quay thì tắt", () =>
+                {
+                    Inventory.HotbarInventory.Instance.SelectSlot(2);
+                    nv = PC.GetComponentInChildren<Characters.NightVisionItem>(true);
+                    pool().SetCharge(Items.CellType.CamPack, 100f);
+                }, After(1.0f));
+                Add("  bật kính", () => { if (!nv.IsOn) nv.OnPrimaryUse(); }, After(0.4f), () => nv.IsOn ? null : "kính không bật khi còn pin");
+                Add("  rút cạn pin máy quay", () => pool().SetCharge(Items.CellType.CamPack, 0f), After(0.6f), () => !nv.IsOn ? null : "hết pin mà kính vẫn bật");
+                Add("  pin đèn pin không bị ảnh hưởng", null, After(0.1f), () => pool().Charge(Items.CellType.D) > 90f ? null : "kính nhìn đêm ăn vào pin đèn pin");
+            }
+            Add("Pin: trả về như đầu game", () =>
+            {
+                var cfg = GM.Tools;
+                for (int i = 0; i < Items.PowerCells.Count; i++) pool().SetCharge((Items.CellType)i, 100f);
+                pool().SetSpares(Items.CellType.D, cfg.startSparesD); pool().SetSpares(Items.CellType.AA, cfg.startSparesAA);
+                pool().SetSpares(Items.CellType.PhonePack, cfg.startSparesPhone); pool().SetSpares(Items.CellType.CamPack, cfg.startSparesCam);
+                Inventory.HotbarInventory.Instance.SelectSlot(0);
+            }, After(0.8f));
         }
 
         static void AddEndingTail()

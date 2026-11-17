@@ -129,6 +129,13 @@ namespace Blackwood.Core
         {
             if (subtitleRoutine != null) StopCoroutine(subtitleRoutine);
             if (subtitleText != null) subtitleText.text = "";
+            if (subBg != null) subBg.gameObject.SetActive(false); // không để lại ô nền trống
+        }
+
+        /// <summary>Xóa phụ đề chỉ khi nó đúng là dòng này (không cắt ngang thoại cốt truyện đang chạy).</summary>
+        public static void ClearSubtitleIf(string text)
+        {
+            if (Instance != null && !string.IsNullOrEmpty(text) && Instance.subtitleText != null && Instance.subtitleText.text == text) Instance.ClearSubtitle();
         }
 
         private IEnumerator ToastRoutine()

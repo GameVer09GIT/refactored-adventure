@@ -54,6 +54,16 @@ namespace Blackwood.EditorTools
             EditorUtility.SetDirty(r.style);
 
             r.tools = LoadOrCreate<ToolsConfig>(DataDir + "/Configs/BW_ToolsConfig.asset");
+            // Pin riêng từng dụng cụ — đặt cứng ở đây vì giá trị đã serialize trong asset cũ sẽ đè giá trị mặc định trong code
+            var tc = r.tools;
+            tc.batteryMax = 100f; tc.batteryStart = 100f; tc.lowBatteryThreshold = 15f;
+            tc.flashlightDrainPerSecond = 1f / 6f;   // ≈10 phút một viên pin D
+            tc.recorderDrainPerSecond = 0.2f;        // ≈8 phút một cặp pin AA
+            tc.nightVisionDrainPerSecond = 0.42f;    // ≈4 phút một pin máy quay
+            tc.phoneFlashBatteryCost = 4f; tc.phoneIdleDrainPerSecond = 0.06f;
+            tc.startSparesD = 1; tc.startSparesAA = 1; tc.startSparesPhone = 1; tc.startSparesCam = 1;
+            tc.batterySwapTime = 1.1f;
+            EditorUtility.SetDirty(tc);
 
             BuildDocuments(r);
             BuildTapes(r);

@@ -101,11 +101,13 @@ namespace Blackwood.UI
             if (hb != null && hb.CurrentItem != null && GameFlow.IsPlaying)
             {
                 var type = hb.CurrentItem.ItemType;
-                if ((type == ItemType.Flashlight || type == ItemType.Recorder) && BatteryPool.Instance != null)
+                if (BatteryPool.Instance != null && BatteryPool.CellFor(type, out var cell))
                 {
-                    float b = BatteryPool.Instance.Current;
-                    bars = Mathf.CeilToInt(b / 20f);
-                    txt = T.Get("hud.battery");
+                    // Pin của chính dụng cụ đang cầm + số viên dự phòng
+                    var pool = BatteryPool.Instance;
+                    bars = Mathf.CeilToInt(pool.Fraction(cell) * 5f - 0.001f);
+                    txt = T.Get("hud.battery") + "   " + T.Format("hud.spare", pool.Spares(cell));
+                    if (BatteryReload.Swapping) txt = T.Get("hud.swapping");
                 }
                 else if (type == ItemType.FilmCamera && FilmStock.Instance != null)
                     txt = T.Get("hud.film") + "  " + FilmStock.Instance.Current;

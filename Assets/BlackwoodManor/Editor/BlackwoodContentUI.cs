@@ -47,8 +47,8 @@ namespace Blackwood.EditorTools
             ("obj.2", "Tìm các kỷ vật trên tầng hai. Đừng để Mrs. Peake bắt gặp — trốn, hoặc rọi đèn vào mặt bà ta rồi chạy.", "Find the relics upstairs. Don't let Mrs. Peake catch you — hide, or blind her with your flashlight and run."),
             ("obj.3", "Xuống hầm. Tìm Julian.", "Go down into the cellar. Find Julian."),
             ("obj.4", "Đến Sảnh Tế. Kết thúc lời nguyền.", "Reach the Ritual Hall. End the curse."),
-            ("ctrl.card", "W A S D   Di chuyển        Shift   Chạy\nE   Tương tác        Chuột trái   Dùng vật đang cầm\n1 – 4 / Lăn chuột   Đổi vật        Space   Nín thở khi trốn\nTab   Sổ tay        O   Mục tiêu        Esc   Tạm dừng",
-                "W A S D   Move        Shift   Run\nE   Interact        Left mouse   Use held item\n1 – 4 / Scroll   Switch item        Space   Hold breath while hiding\nTab   Notebook        O   Objective        Esc   Pause"),
+            ("ctrl.card", "W A S D   Di chuyển        Shift   Chạy\nE   Tương tác        Chuột trái   Dùng vật đang cầm\n1 – 4 / Lăn chuột   Đổi vật        Space   Nín thở khi trốn\nTab   Sổ tay        O   Mục tiêu        R   Thay pin\nEsc   Tạm dừng",
+                "W A S D   Move        Shift   Run\nE   Interact        Left mouse   Use held item\n1 – 4 / Scroll   Switch item        Space   Hold breath while hiding\nTab   Notebook        O   Objective        R   Swap battery\nEsc   Pause"),
 
             // Mẹo màn tải
             ("tip.1", "Mrs. Peake không xuống được tầng trệt. Cầu thang là ranh giới của bà ta.", "Mrs. Peake cannot come down to the ground floor. The stairs are her border."),
@@ -62,6 +62,14 @@ namespace Blackwood.EditorTools
             ("tip.9", "Năm xây xong chưa chắc là năm cơ nghiệp bắt đầu.", "The year it was finished isn't always the year it began."),
             ("tip.10", "Rọi đèn pin thẳng vào mặt Mrs. Peake: bà ta chậm lại, rồi chói mắt vài giây. Hãy chạy ngay lúc đó.", "Shine your flashlight straight in Mrs. Peake's face: she slows, then goes blind for a few seconds. Run while you can."),
             ("tip.11", "Mắt bà ta rực đỏ nghĩa là đèn pin tạm thời vô dụng. Đừng phí pin — hãy trốn.", "When her eyes burn red, your flashlight is useless for a while. Don't waste the battery — hide."),
+            ("tip.13", "Mỗi dụng cụ dùng một loại pin riêng: đèn pin pin đại, máy ghi âm pin tiểu, điện thoại sạc dự phòng, kính nhìn đêm pin máy quay. Nhấn R để thay khi còn pin dự phòng.", "Every tool takes its own battery: the flashlight a D cell, the recorder AAs, the phone a power bank, the night-vision camera a camcorder pack. Press R to swap in a spare."),
+            ("hud.spare", "dự phòng {0}", "spare {0}"),
+            ("hud.swapping", "ĐANG THAY PIN…", "SWAPPING BATTERY…"),
+            ("hint.swap", "Hết {0} — nhấn [R] để thay", "{0} is dead — press [R] to swap"),
+            ("hint.find", "Hết {0} — phải tìm thêm", "{0} is dead — find another"),
+            ("toast.swapped", "Đã thay {0} mới (còn {1} dự phòng)", "Fresh {0} in ({1} spare left)"),
+            ("toast.no_spare", "Không còn {0} dự phòng", "No spare {0}"),
+            ("toast.battery_full", "Pin vẫn còn gần đầy", "The battery is still nearly full"),
             ("tip.12", "Rọi đèn làm chói rất tốn pin. Pin cạn thì chỉ còn cách nín thở trong tủ.", "Blinding her drains the battery fast. Run dry and all that's left is holding your breath in a wardrobe."),
 
             // Thành tựu

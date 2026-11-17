@@ -14,10 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KhoaHon.Items.ToolsConfig
   batteryMax: 100
   batteryStart: 100
-  flashlightDrainPerSecond: 0.33333334
-  recorderDrainPerSecond: 0.5
+  flashlightDrainPerSecond: 0.16666667
+  recorderDrainPerSecond: 0.2
   lowBatteryThreshold: 15
   batteryPickupAmount: 50
+  startSparesD: 1
+  startSparesAA: 1
+  startSparesPhone: 1
+  startSparesCam: 1
+  batterySwapTime: 1.1
+  phoneIdleDrainPerSecond: 0.06
   filmStart: 8
   filmPerRoll: 6
   flashCooldown: 1.5
+  flashStunRange: 9
+  flashStunHalfAngle: 30
+  phoneFlashBatteryCost: 4
+  nightVisionDrainPerSecond: 0.42
+  evpRange: 30

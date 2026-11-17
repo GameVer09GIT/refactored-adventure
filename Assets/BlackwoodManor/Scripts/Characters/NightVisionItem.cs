@@ -23,7 +23,7 @@ namespace Blackwood.Characters
 
         public override void OnPrimaryUse()
         {
-            if (!on && BatteryPool.Instance != null && BatteryPool.Instance.IsEmpty) { BlackwoodHUD.Toast(T.Get("toast.no_battery")); return; }
+            if (!on && BatteryPool.Instance != null && BatteryPool.Instance.IsEmptyCell(CellType.CamPack)) { PlayOneShotSound(toggleClip, 0.5f); BatteryReload.AnnounceDead(CellType.CamPack); return; }
             Set(!on);
             PlayOneShotSound(toggleClip, 0.8f);
         }
@@ -58,8 +58,8 @@ namespace Blackwood.Characters
             var pool = BatteryPool.Instance;
             if (cfg != null && pool != null)
             {
-                pool.Drain(cfg.nightVisionDrainPerSecond * Time.deltaTime);
-                if (pool.IsEmpty) { Set(false); BlackwoodHUD.Toast(T.Get("toast.no_battery")); }
+                if (GameFlow.IsPlaying) pool.Drain(CellType.CamPack, cfg.nightVisionDrainPerSecond * Time.deltaTime);
+                if (pool.IsEmptyCell(CellType.CamPack)) { Set(false); BatteryReload.AnnounceDead(CellType.CamPack); }
             }
         }
 
