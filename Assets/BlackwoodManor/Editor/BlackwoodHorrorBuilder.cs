@@ -430,7 +430,7 @@ namespace Blackwood.EditorTools
             m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT"); m.DisableKeyword("_ALPHATEST_ON");
             m.SetOverrideTag("RenderType", "Transparent");
             m.renderQueue = (int)RenderQueue.Transparent;
-            EditorUtility.SetDirty(m);
+            BlackwoodMaterialUtil.Validate(m);
             return m;
         }
 

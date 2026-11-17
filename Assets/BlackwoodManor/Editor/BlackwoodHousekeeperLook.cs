@@ -35,7 +35,7 @@ namespace Blackwood.EditorTools
         /// Rasterize tam giác UV của các lưới thân: cloth[i] = 1 ở vùng phải thành vải đen (áo, quần, ngực trên, cánh tay tới cổ tay),
         /// trim[i] = 1 ở viền cổ tay / cổ áo (ren trắng ngà bẩn).
         /// </summary>
-        public static void ClothMask(GameObject girl, int size, out float[] cloth, out float[] trim)
+        public static void ClothMask(GameObject girl, int size, out float[] cloth, out float[] trim, string[] only = null)
         {
             cloth = new float[size * size]; trim = new float[size * size];
             var covered = new bool[size * size];
@@ -47,6 +47,7 @@ namespace Blackwood.EditorTools
                 bool arm = n.StartsWith("hand_");
                 bool boot = n.StartsWith("boot_");
                 if (!whole && !chest && !arm && !boot) continue;
+                if (only != null && !only.Any(o => n.StartsWith(o))) continue; // chỉ lấy vài phần (áo khoác người chơi)
                 var mesh = smr.sharedMesh;
                 var uv = mesh.uv; var tris = mesh.triangles; var bw = mesh.boneWeights; var bones = smr.bones;
                 if (uv == null || uv.Length == 0) continue;
@@ -262,7 +263,7 @@ namespace Blackwood.EditorTools
             m.SetOverrideTag("RenderType", "TransparentCutout");
             m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
             m.DisableKeyword("_EMISSION");
-            EditorUtility.SetDirty(m);
+            BlackwoodMaterialUtil.Validate(m);
             return m;
         }
 

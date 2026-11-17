@@ -45,11 +45,10 @@ namespace Blackwood.EditorTools
                 if (smooth >= 0f) m.SetFloat("_Smoothness", smooth);
                 if (emit.maxColorComponent > 0f)
                 {
-                    m.EnableKeyword("_EMISSION"); m.SetColor("_EmissionColor", emit); m.SetTexture("_EmissionMap", baseMap);
-                    m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+                    BlackwoodMaterialUtil.Emissive(m, emit, baseMap); // cờ RealtimeEmissive: không thì URP tắt phát sáng (mắt không đỏ/lóe được)
                 }
                 else m.DisableKeyword("_EMISSION");
-                EditorUtility.SetDirty(m);
+                BlackwoodMaterialUtil.Validate(m);
                 return m;
             }
             var headTex = orig.ContainsKey("head") ? BlackwoodBansheeTextures.Head(orig["head"].GetTexture("_BaseMap")) : null;
