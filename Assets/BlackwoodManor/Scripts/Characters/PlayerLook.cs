@@ -4,9 +4,9 @@ using UnityEngine;
 namespace Blackwood.Characters
 {
     /// <summary>
-    /// Ngoại hình cơ thể người chơi theo nhân vật: Evelyn mặc áo khoác dài tay, Alex áo thun tay trần.
-    /// Chỉ đổi vật liệu của lưới thân/tay (kể cả bộ tay góc nhìn thứ nhất) — không đụng xương, IK, tư thế hay đèn.
-    /// Vật liệu do công cụ BlackwoodPlayerLook tạo trong Assets/BlackwoodManor/Materials/Player.
+    /// Ngoại hình cơ thể người chơi theo nhân vật: Evelyn mặc áo khoác len dài tay, Alex áo nỉ xám than + găng tay da.
+    /// Chỉ đổi vật liệu của lưới thân/tay (kể cả tay áo/găng 3D gắn thêm) và bật/tắt găng — không đụng xương, IK, tư thế hay đèn.
+    /// Vật liệu do công cụ BlackwoodPlayerLook tạo trong Assets/BlackwoodManor/Materials/Player, lưới tay áo/găng do BlackwoodPlayerGarments.
     /// </summary>
     [DefaultExecutionOrder(-140)]
     public class PlayerLook : MonoBehaviour
@@ -15,6 +15,8 @@ namespace Blackwood.Characters
         [SerializeField] private Material[] bodyMaterials = new Material[2];
         [Tooltip("Vật liệu da/tay (thay cho 'body_skin') theo thứ tự enum PlayerCharacter")]
         [SerializeField] private Material[] skinMaterials = new Material[2];
+        [Tooltip("Renderer chỉ hiện khi chơi Alex (găng tay)")]
+        [SerializeField] private Renderer[] alexOnly = new Renderer[0];
 
         private Renderer[] bodyRenderers, skinRenderers;
         private int[] bodySlots, skinSlots;
@@ -60,6 +62,9 @@ namespace Blackwood.Characters
             int k = (int)c;
             Swap(bodyRenderers, bodySlots, bodyMaterials != null && k < bodyMaterials.Length ? bodyMaterials[k] : null);
             Swap(skinRenderers, skinSlots, skinMaterials != null && k < skinMaterials.Length ? skinMaterials[k] : null);
+            if (alexOnly != null)
+                foreach (var r in alexOnly)
+                    if (r != null) r.enabled = c == PlayerCharacter.Alex;
         }
 
         private static void Swap(Renderer[] rs, int[] slots, Material m)
