@@ -17,7 +17,7 @@ Yêu cầu trực tiếp trong chat → `GEMINI.md` + skill unity-mcp-workflow �
 
 ## Không được làm
 - Không sửa các scene gốc trong `Assets/BlackwoodManor/Scenes/Source/` (`MapKinhDi*.unity`, `SampleScene.unity`) và scene demo của asset pack. Không **lưu** scene MapKinhDi đang mở, kể cả khi nó đang dirty.
-- Không sửa `Scripts/Ghost/GhostAI.cs`, không sửa IK/pose/offset/light của Slot 1 (Flashlight) và Slot 2 (Radar).
+- Không sửa `Scripts/Ghost/GhostAI.cs`, không sửa IK/pose/offset/light của Slot 1 (Flashlight). Radar (Slot 2 cũ) đã gỡ khỏi thanh đồ — người dùng cho phép sửa thoải mái (2026-11-17).
 - Không sửa nội dung file trong asset pack bên thứ ba: mọi thứ trong `Assets/ThirdParty/` (`Flooded_Grounds`, `Abandoned_Asylum`, `ZNS3D`, `civilian_girl`, `FpsHorrorKit`), cùng `Assets/TextMesh Pro`, `Assets/Plugins`. Cần biến thể thì tạo Prefab Variant/material trong `Assets/BlackwoodManor/`.
   - Lưu ý: gọi `HasCharacters(..., searchFallbacks: true)` hoặc dùng font LiberationSans với ký tự lạ sẽ làm Unity tự ghi vào `LiberationSans SDF - Fallback.asset`. Nếu `git status` thấy file này bị sửa thì `git checkout` lại.
 - Không đổi Asset Serialization, render pipeline, phiên bản package, Input System backend khi chưa hỏi.
@@ -53,6 +53,10 @@ Yêu cầu trực tiếp trong chat → `GEMINI.md` + skill unity-mcp-workflow �
 - Vật liệu URP tạo/sửa bằng script: bật phát sáng bằng `BlackwoodMaterialUtil.Emissive` (cờ `RealtimeEmissive`) và gọi `BlackwoodMaterialUtil.Validate` cuối cùng. Unity 6 tự tắt `_EMISSION` nếu cờ GI là `None`/`EmissiveIsBlack`.
 - Ngoại hình thân/tay người chơi theo nhân vật: `BlackwoodPlayerLook` (texture + vật liệu `Materials/Player`) và component `Characters/PlayerLook`. Không đụng `PlayerArmIK`.
 - Test nạp file lưu: chép save sang slot trống (vd. `khoahon_save_2.json`) rồi nạp slot đó. Game tự lưu đè slot đang chơi khi chết/qua checkpoint — không thử trên save thật của người dùng.
+- Chơi thử tự động (phải đang Play ở menu chính): `BlackwoodPlaytest.Start(PlayerCharacter, EndingId, extraHiding)` / `StartWalk()` hoặc menu `Blackwood/Test/...` — chạy trên slot 2, kết quả `PLAYTEST ...` trong Console + `Temp/Blackwood/playtest_report.txt`, ảnh `pt_*.png`. Kết thúc game ghi thành tích vào PlayerPrefs của Editor (registry `HKCU/Software/Unity/UnityEditor/DefaultCompany/Blackwood Manor` — sao lưu trước nếu cần giữ nguyên). Quét lỗi vặt không cần Play: `BlackwoodAudit.Run()` (khóa chữ + vật lơ lửng/lún).
+- Đặt vật lên sàn/bàn trong converter: model Blender có tâm ở giữa vật → thêm tên vào danh sách `Settle` trong `FixPlacement`. Đồ nhặt nhỏ dùng model thật qua `SwapModel` (hộp `PickupBox` chỉ còn làm vùng tương tác).
+- Ghi file vào `Assets` từ công cụ: `BlackwoodDataBuilder.WriteBytesIfChanged` (Windows hay khóa PNG đang mở → IOException 1224 làm converter dừng giữa chừng).
+- Bóng đổ của đèn điểm/đèn chiếu do `Rendering/ShadowBudget` điều phối (atlas 4096 = 16 ô 1024 px; đèn điểm chiếm 6 ô). Đèn cần luôn có bóng thì đặt làm con của Player hoặc tăng ngân sách có tính toán.
 
 ## Font tiếng Việt (đã kiểm chứng ở Phase 0)
 - UI: `Assets/BlackwoodManor/Fonts/BeVietnamPro-Regular SDF.asset` / `BeVietnamPro-SemiBold SDF.asset`.
