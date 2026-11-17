@@ -456,6 +456,55 @@ def newspaper(m):
     smooth(o, 40)
 
 
+
+def battery_aa(m):
+    """Cặp pin tiểu AA cột dây thun: thân xanh lá có băng đồng, hai đầu thép."""
+    P = []
+    for x in (-0.0075, 0.0075):
+        body = add("cyl", "Body", (x, 0, 0.0255), (0.0072, 0.0072, 0.0235), vertices=20); assign(body, m["sign_green"]); P.append(body)
+        band = add("cyl", "Band", (x, 0, 0.038), (0.0073, 0.0073, 0.006), vertices=20); assign(band, m["brass"]); P.append(band)
+        cap = add("cyl", "Cap", (x, 0, 0.0498), (0.0068, 0.0068, 0.0008), vertices=20); assign(cap, m["chrome"]); P.append(cap)
+        nub = add("cyl", "Nub", (x, 0, 0.0512), (0.0025, 0.0025, 0.0009), vertices=10); assign(nub, m["chrome"]); P.append(nub)
+        bot = add("cyl", "Bottom", (x, 0, 0.0012), (0.0068, 0.0068, 0.0012), vertices=20); assign(bot, m["chrome"]); P.append(bot)
+    rubber = add("torus", "RubberBand", (0, 0, 0.022), (0.0155, 0.0085, 0.006), major_radius=1.0, minor_radius=0.12, major_segments=24, minor_segments=6)
+    assign(rubber, m["plastic_red"]); P.append(rubber)
+    for p_ in P: apply_all(p_)
+    o = join(P, "BW_BatteryAA")
+    smooth(o, 35)
+
+
+def power_bank(m):
+    """Sạc dự phòng: khối nhựa bo góc, 4 đèn LED báo dung lượng, cổng USB, dây cáp cuộn ngắn."""
+    P = []
+    body = add("cube", "Body", (0, 0, 0.0115), (0.035, 0.07, 0.0115)); bevel(body, 0.006, 4); assign(body, m["plastic"]); P.append(body)
+    face = add("cube", "Face", (0, 0, 0.0231), (0.031, 0.064, 0.0003)); bevel(face, 0.004, 2); assign(face, m["chrome"]); P.append(face)
+    for k in range(4):
+        led = add("cyl", "Led", (-0.012 + k * 0.008, -0.058, 0.0236), (0.0016, 0.0016, 0.0004), vertices=10); assign(led, m["screen"]); P.append(led)
+    port = add("cube", "Port", (0, 0.0705, 0.0115), (0.0055, 0.0008, 0.0022)); assign(port, m["iron"]); P.append(port)
+    plug = add("cube", "Plug", (0.0, 0.078, 0.0115), (0.006, 0.007, 0.003)); bevel(plug, 0.0015, 1); assign(plug, m["plastic"]); P.append(plug)
+    cable = add("torus", "Cable", (0.012, 0.095, 0.004), (0.02, 0.016, 0.02), major_radius=1.0, minor_radius=0.09, major_segments=28, minor_segments=6)
+    assign(cable, m["plastic"]); P.append(cable)
+    for p_ in P: apply_all(p_)
+    o = join(P, "BW_PowerBank")
+    smooth(o, 35)
+
+
+def cam_pack(m):
+    """Pin máy quay (Li-ion): hộp đen gân, nhãn giấy, 3 tiếp điểm đồng, ngàm trượt."""
+    P = []
+    body = add("cube", "Body", (0, 0, 0.012), (0.019, 0.034, 0.012)); bevel(body, 0.003, 3); assign(body, m["plastic"]); P.append(body)
+    label = add("cube", "Label", (0, -0.004, 0.0242), (0.015, 0.022, 0.0003)); assign(label, m["paper"]); P.append(label)
+    for k in range(5):
+        rib = add("cube", "Rib", (0, 0.022 + k * 0.0025, 0.0242), (0.016, 0.0006, 0.0004)); assign(rib, m["plastic"]); P.append(rib)
+    for k in range(3):
+        c = add("cube", "Contact", (-0.008 + k * 0.008, -0.0342, 0.012), (0.0018, 0.0006, 0.0035)); assign(c, m["brass"]); P.append(c)
+    for x in (-0.0195, 0.0195):
+        rail = add("cube", "Rail", (x, 0, 0.006), (0.0008, 0.03, 0.0015)); assign(rail, m["iron"]); P.append(rail)
+    for p_ in P: apply_all(p_)
+    o = join(P, "BW_CamPack")
+    smooth(o, 30)
+
+
 BW_BUILDERS = [
     ("BW_Plaque", lambda m: plaque(m, False)), ("BW_Plaque_Eye", lambda m: plaque(m, True)),
     ("BW_CandleStand", candle_stand), ("BW_Vademecum", vademecum), ("BW_Relic", relic),
@@ -463,6 +512,7 @@ BW_BUILDERS = [
     ("BW_Signpost", signpost), ("BW_Typewriter", typewriter), ("BW_LordGhost", lord_ghost),
     ("BW_Backpack", backpack),
     ("BW_Cassette", cassette), ("BW_Battery", battery), ("BW_FilmRoll", film_roll), ("BW_Newspaper", newspaper),
+    ("BW_BatteryAA", battery_aa), ("BW_PowerBank", power_bank), ("BW_CamPack", cam_pack),
 ]
 
 only_bw = set(a for a in argv[1:] if not a.startswith("--"))

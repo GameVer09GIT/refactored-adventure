@@ -77,8 +77,13 @@ namespace Blackwood.EditorTools
             var player = GameObject.Find("Player");
             GB.ConfigurePlayer(player, GameObject.Find("Canvas"), GameObject.Find("SpawnPoint"), systems, new Vector3(80.7f, 10f, -6f), 0f, false);
             if (player.GetComponent<Blackwood.Characters.CharacterLoadout>() == null) player.AddComponent<Blackwood.Characters.CharacterLoadout>();
+            // Thay pin bằng phím R (mỗi dụng cụ một loại pin)
+            var reload = player.GetComponent<Blackwood.Items.BatteryReload>();
+            if (reload == null) reload = player.AddComponent<Blackwood.Items.BatteryReload>();
+            reload.Configure(Sfx("sfx_battery_eject"), Sfx("sfx_battery_insert"));
             if (player.GetComponent<Blackwood.Interaction.PlayerPushProps>() == null) player.AddComponent<Blackwood.Interaction.PlayerPushProps>();
             log.Add(BlackwoodPlayerLook.Build(player));
+            log.Add(BlackwoodPlayerGarments.Build(player)); // tay áo + găng 3D (sau PlayerLook: cần component để khai báo găng)
             // Camera người chơi: bật hậu kỳ (bản MapKinhDi để tắt) + tag MainCamera
             var pcam = player.GetComponent<PlayerController>().playerCamera.GetComponent<Camera>();
             pcam.tag = "MainCamera";
@@ -932,7 +937,8 @@ namespace Blackwood.EditorTools
             var wcol = win.gameObject.AddComponent<BoxCollider>(); wcol.size = new Vector3(1.8f, 2.4f, 0.2f);
             win.gameObject.AddComponent<Blackwood.Puzzles.PryableWindow>().Configure(Sfx("sfx_window_pry"));
 
-            GB.PickupBox(c, "Pickup_Battery_Hall", new Vector3(84.2f, GF + 0.05f, 9.0f), new Vector3(0.05f, 0.1f, 0.05f), "item.battery", battery: 50f);
+            GB.PickupBox(c, "Pickup_Battery_Hall", new Vector3(84.2f, GF + 0.05f, 9.0f), new Vector3(0.05f, 0.1f, 0.05f), "item.battery_d")
+                .SetCell(Blackwood.Items.CellType.D, 1);
 
             // ---------- Phòng Khách: ảnh gia tộc + bảng đồng
             var portrait = Place(P("Assets/ThirdParty/Flooded_Grounds/Prefabs/Props/Prop_Painting_A.prefab"), c, new Vector3(66.95f, GF + 2.6f, 11.5f), 90f, 1.6f, "AnhGiaToc_Trinh");
@@ -1080,12 +1086,36 @@ namespace Blackwood.EditorTools
                 g.name = model + "_Model";
                 foreach (var r in g.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             }
-            SwapModel("Pickup_Battery_Hall", "BW_Battery", 0f);
+            SwapModel("Pickup_Battery_Hall", "BW_Battery", 25f);
             SwapModel("Pickup_Film_Study", "BW_FilmRoll", 35f);
             SwapModel("Pickup_Tape2", "BW_Cassette", 20f);
             SwapModel("Pickup_Tape3", "BW_Cassette", -35f);
             SwapModel("Pickup_MauBao1953", "BW_Newspaper", 8f);
+            // Pin dự phòng rải khắp nhà (mỗi dụng cụ một loại; pin của dụng cụ nhân vật không mang sẽ tự ẩn khi chơi)
+            var cellsPlaced = new List<string>();
+            void Cell(string id, Vector3 near, Blackwood.Items.CellType type, string nameKey, string model)
+            {
+                if (!NavMesh.SamplePosition(near, out var hit, 2f, NavMesh.AllAreas)) { log.Add("WARN: không có sàn cho " + id); return; }
+                var pos = hit.position;
+                // Đặt sát mép tường/đồ đạc gần nhất cho tự nhiên (không nằm giữa phòng)
+                if (NavMesh.FindClosestEdge(pos, out var edge, NavMesh.AllAreas) && edge.distance < 2.5f) pos = edge.position + edge.normal * 0.28f;
+                var pk = GB.PickupBox(c, id, pos + Vector3.up * 0.05f, new Vector3(0.08f, 0.06f, 0.08f), nameKey);
+                pk.SetCell(type, 1);
+                SwapModel(id, model, Random.Range(0f, 360f));
+                cellsPlaced.Add(id);
+            }
+            Cell("Pickup_CellD_Servant", new Vector3(71.8f, F2, 11.6f), Blackwood.Items.CellType.D, "item.battery_d", "BW_Battery");
+            Cell("Pickup_CellD_Cellar", new Vector3(58.7f, 1.0f, 20.5f), Blackwood.Items.CellType.D, "item.battery_d", "BW_Battery");
+            Cell("Pickup_CellAA_Study", new Vector3(100.5f, GF, 11.6f), Blackwood.Items.CellType.AA, "item.battery_aa", "BW_BatteryAA");
+            Cell("Pickup_CellAA_Master", new Vector3(105.2f, F2, 11.8f), Blackwood.Items.CellType.AA, "item.battery_aa", "BW_BatteryAA");
+            Cell("Pickup_CellAA_Cellar", new Vector3(58.0f, 1.0f, 17.5f), Blackwood.Items.CellType.AA, "item.battery_aa", "BW_BatteryAA");
+            Cell("Pickup_PowerBank_Kitchen", new Vector3(71.5f, GF, 22.5f), Blackwood.Items.CellType.PhonePack, "item.powerbank", "BW_PowerBank");
+            Cell("Pickup_PowerBank_Guest", new Vector3(106.5f, F2, 21.5f), Blackwood.Items.CellType.PhonePack, "item.powerbank", "BW_PowerBank");
+            Cell("Pickup_CamPack_Library", new Vector3(108.0f, GF, 14.5f), Blackwood.Items.CellType.CamPack, "item.cam_pack", "BW_CamPack");
+            Cell("Pickup_CamPack_Child", new Vector3(69.6f, F2, 22.8f), Blackwood.Items.CellType.CamPack, "item.cam_pack", "BW_CamPack");
+            Cell("Pickup_CamPack_Cellar", new Vector3(59.4f, 1.0f, 19.0f), Blackwood.Items.CellType.CamPack, "item.cam_pack", "BW_CamPack");
             int settled = 0;
+            foreach (var n in cellsPlaced) if (Settle(FindDeep(root, n))) settled++;
             foreach (var n in new[] { "KetSat", "Relic_Moc", "Relic_Tho", "Relic_Kim", "Relic_Hoa", "Relic_Thuy", "Pickup_Tape3", "Pickup_Tape2", "DenBan", "Pickup_QuanBackpack",
                                       "Pickup_Battery_Hall", "Pickup_Film_Study", "Pickup_MauBao1953" })
                 if (Settle(FindDeep(root, n))) settled++;
