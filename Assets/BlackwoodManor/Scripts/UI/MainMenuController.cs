@@ -460,9 +460,29 @@ namespace Blackwood.UI
         }
 
         /// <summary>Hộp xác nhận dùng chung.</summary>
+        /// <summary>Đang có hộp xác nhận mở (menu tạm dừng nhường phím Esc cho hộp này).</summary>
+        public static bool IsConfirmOpen => confirmCount > 0;
+        private static int confirmCount;
+
         public static void Confirm(string message, System.Action yes)
         {
+            // Trong lúc chơi/tạm dừng: chặn điều khiển + mở khóa chuột qua ModalUI, nếu không người chơi không bấm được nút
+            // (PlayerController khóa lại chuột mỗi lần bấm). Ở menu chính thì không: người chơi đang tắt, ModalUI sẽ bật lại nó.
+            bool inGame = GameFlow.State == FlowState.Playing || GameFlow.State == FlowState.Paused;
+            var owner = new object();
+            if (inGame) ModalUI.Open(owner);
+            confirmCount++;
             var dim = UIFactory.Panel("Confirm", UIKit.TopLayer, new Color(0, 0, 0, 0.75f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            bool closed = false;
+            void Close()
+            {
+                if (closed) return;
+                closed = true;
+                confirmCount = Mathf.Max(0, confirmCount - 1);
+                if (dim != null) Destroy(dim.gameObject);
+                if (inGame) ModalUI.Close(owner);
+            }
+            dim.gameObject.AddComponent<ConfirmDialogKeys>().Cancel = Close;
             dim.transform.SetAsLastSibling();
             var box = UIFactory.Panel("Box", dim.transform, UIKit.Panel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-420, -150), new Vector2(420, 150));
             UIFactory.Panel("Edge", box.transform, UIKit.Blood, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -3), Vector2.zero);
@@ -470,8 +490,8 @@ namespace Blackwood.UI
             msg.rectTransform.offsetMin = new Vector2(40, 100); msg.rectTransform.offsetMax = new Vector2(-40, -30);
             var row = UIFactory.Rect("Row", box.transform, new Vector2(0, 0), new Vector2(1, 0), new Vector2(40, 30), new Vector2(-40, 90));
             var hl = row.gameObject.AddComponent<HorizontalLayoutGroup>(); hl.spacing = 30; hl.childAlignment = TextAnchor.MiddleCenter; hl.childForceExpandWidth = false;
-            UIKit.SmallButton(row, T.Get("ui.no"), () => Destroy(dim.gameObject));
-            UIKit.SmallButton(row, T.Get("ui.yes"), () => { Destroy(dim.gameObject); yes?.Invoke(); });
+            UIKit.SmallButton(row, T.Get("ui.no"), Close);
+            UIKit.SmallButton(row, T.Get("ui.yes"), () => { Close(); yes?.Invoke(); });
         }
 
         // ------------------------------------------------------------------ Bắt đầu

@@ -15,6 +15,7 @@ namespace Blackwood.UI
         private void Update()
         {
             if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
+            if (MainMenuController.IsConfirmOpen) return; // Esc thuộc về hộp xác nhận đang mở
             if (SettingsMenuUI.Instance != null && SettingsMenuUI.Instance.IsOpen) { SettingsMenuUI.Instance.Close(); return; }
             if (IsOpen) { Resume(); return; }
             if (GameFlow.State != FlowState.Playing || ModalUI.IsAnyOpen || PlayerState.IsHiding || Time.frameCount == ModalUI.LastClosedFrame) return;
