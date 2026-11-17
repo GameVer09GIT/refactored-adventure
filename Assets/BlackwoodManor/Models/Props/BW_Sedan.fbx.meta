@@ -22,6 +22,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_BW_SignWhite
+    second: {fileID: 2100000, guid: c987a39e65e1eb74fac2ba9644471704, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_BW_Tyre
     second: {fileID: 2100000, guid: 6d94d70b1120ded4781dd0b139a4b072, type: 2}
   - first:
@@ -34,6 +39,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: M_LedRed
     second: {fileID: 2100000, guid: 9b5c614d352aeb345bf9772a0d7babcc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_PlasticBlack
+    second: {fileID: 2100000, guid: 11144e523408ede44a9f9edecba54667, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Wax
+    second: {fileID: 2100000, guid: c7ac27a1d84ebf64ab5442350483a0f8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

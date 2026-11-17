@@ -102,6 +102,80 @@ def join(objs, name):
     return o
 
 
+# Mật độ UV (số lần lặp texture trên 1 mét) theo vật liệu — texture PBR do Unity sinh
+# (BlackwoodPropTextures) lặp theo kích thước thật nên vật to/nhỏ đều cùng độ nét.
+UV_DENSITY = {
+    "M_WoodDark": 1.6, "M_BW_Oak": 1.6, "M_LacquerRed": 3.0, "M_StoneAltar": 2.0,
+    "M_Iron": 3.0, "M_Rust": 3.0, "M_SteelSafe": 2.5, "M_BW_Typewriter": 4.0,
+    "M_Bronze": 4.0, "M_BronzeDark": 4.0, "M_BW_Brass": 4.0, "M_BW_BrassDull": 4.0, "M_Gilt": 4.0, "M_Chrome": 5.0,
+    "M_ClothBeige": 5.0, "M_ClothRed": 5.0, "M_RagBlood": 5.0, "M_Shroud": 4.0, "M_ShroudBlood": 4.0, "M_ShroudDirt": 4.0,
+    "M_BW_Canvas": 5.0, "M_BW_CanvasDark": 5.0, "M_AoBaBa": 5.0, "M_Rope": 8.0, "M_BW_Leather": 6.0,
+    "M_PlasticBlack": 8.0, "M_PlasticRed": 8.0, "M_BW_Keycap": 8.0, "M_BW_Tyre": 5.0,
+    "M_BW_SignWhite": 3.0, "M_BW_SignGreen": 3.0, "M_BW_CarPaint": 1.5,
+    "M_PaperOld": 4.0, "M_Wax": 5.0, "M_BoneOld": 5.0, "M_Horn": 5.0, "M_DollSkin": 5.0, "M_CorpseHand": 5.0,
+    "M_BloodDried": 4.0,
+}
+# Vật nhỏ (lược, còi, ấn…) cần hoa văn mịn hơn: bảo đảm ít nhất chừng này lần lặp trên chiều dài nhất của model.
+UV_MIN_TILES = 2.5
+UV_OBJECT_SIZE = [1.0]
+# Màn hình: UV vừa khít 0..1 trên từng mảnh để Unity dán ảnh giao diện (điện thoại, màn lật máy quay).
+UV_FIT = ("M_BW_Screen",)
+GRAIN_ALONG_LENGTH = ("M_WoodDark", "M_BW_Oak", "M_Rope", "M_BoneOld", "M_Horn")
+
+
+def box_uv(obj):
+    """UV chiếu hộp theo kích thước thật (mét × mật độ của vật liệu). Mỗi mảnh rời tự xoay
+    để trục U chạy dọc chiều dài mảnh (vân gỗ, thớ xương chạy đúng hướng)."""
+    me = obj.data
+    if not me.polygons:
+        return
+    mw = obj.matrix_world
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    uv = bm.loops.layers.uv.verify()
+    bm.faces.ensure_lookup_table()
+    names = [s.material.name if s.material else "" for s in obj.material_slots]
+    seen = set()
+    for f0 in bm.faces:
+        if f0.index in seen:
+            continue
+        island, stack = [], [f0]
+        seen.add(f0.index)
+        while stack:
+            f = stack.pop()
+            island.append(f)
+            for v in f.verts:
+                for g in v.link_faces:
+                    if g.index not in seen:
+                        seen.add(g.index)
+                        stack.append(g)
+        cos = [mw @ v.co for f in island for v in f.verts]
+        ext = [max(c[i] for c in cos) - min(c[i] for c in cos) for i in range(3)]
+        long_axis = ext.index(max(ext))
+        lo = [min(c[i] for c in cos) for i in range(3)]
+        rot = mw.to_3x3()
+        for f in island:
+            n = rot @ f.normal
+            ax = max(range(3), key=lambda i: abs(n[i]))
+            a, b = [i for i in range(3) if i != ax]
+            mname = names[f.material_index] if f.material_index < len(names) else ""
+            if b == long_axis and mname in GRAIN_ALONG_LENGTH:
+                a, b = b, a
+            if mname in UV_FIT:
+                flip = (ax == 1 and n[1] > 0) or (ax == 0 and n[0] < 0)
+                for l in f.loops:
+                    w = mw @ l.vert.co
+                    u = (w[a] - lo[a]) / max(ext[a], 1e-6)
+                    l[uv].uv = (1 - u if flip else u, (w[b] - lo[b]) / max(ext[b], 1e-6))
+                continue
+            d = max(UV_DENSITY.get(mname, 3.0), UV_MIN_TILES / UV_OBJECT_SIZE[0])
+            for l in f.loops:
+                w = mw @ l.vert.co
+                l[uv].uv = (w[a] * d, w[b] * d)
+    bm.to_mesh(me)
+    bm.free()
+
+
 def export(name):
     for o in bpy.context.scene.objects:
         for m in list(o.modifiers):
@@ -110,6 +184,12 @@ def export(name):
                 bpy.ops.object.modifier_apply(modifier=m.name)
             except Exception:
                 pass
+    meshes = [o for o in bpy.context.scene.objects if o.type == "MESH" and o.data.vertices]
+    pts = [o.matrix_world @ v.co for o in meshes for v in o.data.vertices]
+    if pts:
+        UV_OBJECT_SIZE[0] = max(0.02, max(max(p[i] for p in pts) - min(p[i] for p in pts) for i in range(3)))
+    for o in meshes:
+        box_uv(o)
     path = os.path.join(OUT, name + ".fbx")
     bpy.ops.export_scene.fbx(filepath=path, use_selection=False, apply_unit_scale=True,
                              apply_scale_options="FBX_SCALE_ALL", axis_forward="-Z", axis_up="Y",

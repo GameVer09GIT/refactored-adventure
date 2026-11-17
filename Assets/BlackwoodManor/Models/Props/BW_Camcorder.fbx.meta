@@ -22,6 +22,21 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_Chrome
+    second: {fileID: 2100000, guid: 12f7d4a04fb2e404984d99a3b94b8720, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Iron
+    second: {fileID: 2100000, guid: a0c86e985326c86479c7c43524ffa09f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_LedRed
+    second: {fileID: 2100000, guid: 9b5c614d352aeb345bf9772a0d7babcc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_LensGlass
     second: {fileID: 2100000, guid: 8b87c0c897ad1bf41b6f53c062d41a7c, type: 2}
   - first:

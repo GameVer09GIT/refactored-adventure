@@ -78,6 +78,7 @@ namespace Blackwood.EditorTools
             GB.ConfigurePlayer(player, GameObject.Find("Canvas"), GameObject.Find("SpawnPoint"), systems, new Vector3(80.7f, 10f, -6f), 0f, false);
             if (player.GetComponent<Blackwood.Characters.CharacterLoadout>() == null) player.AddComponent<Blackwood.Characters.CharacterLoadout>();
             if (player.GetComponent<Blackwood.Interaction.PlayerPushProps>() == null) player.AddComponent<Blackwood.Interaction.PlayerPushProps>();
+            log.Add(BlackwoodPlayerLook.Build(player));
             // Camera người chơi: bật hậu kỳ (bản MapKinhDi để tắt) + tag MainCamera
             var pcam = player.GetComponent<PlayerController>().playerCamera.GetComponent<Camera>();
             pcam.tag = "MainCamera";
@@ -145,6 +146,17 @@ namespace Blackwood.EditorTools
                 n++;
             }
             log.Add("Imported Blender models: " + n);
+            log.Add(BlackwoodPropTextures.Apply());
+        }
+
+        /// <summary>Chỉ nhập lại model Blender + chất liệu PBR (không dựng lại scene).</summary>
+        [MenuItem("Blackwood/Build/2b. Import Blender Models")]
+        public static void ImportModelsMenu()
+        {
+            if (EditorApplication.isPlaying) { Debug.Log("Đang Play."); return; }
+            log.Clear();
+            ImportBlenderModels();
+            Debug.Log(string.Join("\n", log));
         }
 
         /// <summary>Icon hotbar render từ Blender + thay khối primitive của vật cầm tay bằng model Blender.</summary>
@@ -173,7 +185,7 @@ namespace Blackwood.EditorTools
             }
             Icon(data.recorder, "BW_MayGhiAm"); Icon(data.filmCamera, "BW_MayAnh"); Icon(data.crowbar, "BW_XaBeng");
 
-            void Held(string prefabPath, string model, Vector3 euler, string ledChild, float scale = 1f)
+            void Held(string prefabPath, string model, Vector3 euler, string ledChild, float scale = 1f, Material screen = null)
             {
                 var root = PrefabUtility.LoadPrefabContents(prefabPath);
                 for (int i = root.transform.childCount - 1; i >= 0; i--) Object.DestroyImmediate(root.transform.GetChild(i).gameObject);
@@ -182,7 +194,15 @@ namespace Blackwood.EditorTools
                 {
                     var g = (GameObject)PrefabUtility.InstantiatePrefab(m, root.transform);
                     g.transform.localPosition = Vector3.zero; g.transform.localRotation = Quaternion.Euler(euler); g.transform.localScale = Vector3.one * scale;
-                    foreach (var r in g.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    foreach (var r in g.GetComponentsInChildren<Renderer>())
+                    {
+                        r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                        if (screen == null) continue;
+                        // màn hình thiết bị: thay ô phát sáng trơn bằng ảnh giao diện riêng của từng món
+                        var ms = r.sharedMaterials;
+                        for (int k = 0; k < ms.Length; k++) if (ms[k] != null && ms[k].name == "M_BW_Screen") ms[k] = screen;
+                        r.sharedMaterials = ms;
+                    }
                     if (ledChild != null)
                     {
                         var led = g.GetComponentsInChildren<Renderer>().FirstOrDefault(r => r.name.Contains(ledChild));
@@ -196,8 +216,8 @@ namespace Blackwood.EditorTools
             Held("Assets/BlackwoodManor/Prefabs/Items/BW_Recorder.prefab", "BW_MayGhiAm", new Vector3(0, 180, 0), "LED");
             Held("Assets/BlackwoodManor/Prefabs/Items/BW_FilmCamera.prefab", "BW_MayAnh", new Vector3(0, 180, 0), null);
             Held("Assets/BlackwoodManor/Prefabs/Items/BW_Crowbar.prefab", "BW_XaBeng", Vector3.zero, null);
-            Held("Assets/BlackwoodManor/Prefabs/Items/BW_Phone.prefab", "BW_Phone", new Vector3(0, 0, 0), null, 0.9f);
-            Held("Assets/BlackwoodManor/Prefabs/Items/BW_NightVision.prefab", "BW_Camcorder", new Vector3(0, 180, 0), null, 0.6f);
+            Held("Assets/BlackwoodManor/Prefabs/Items/BW_Phone.prefab", "BW_Phone", new Vector3(0, 0, 0), null, 0.9f, BlackwoodPropTextures.ScreenMaterial(true));
+            Held("Assets/BlackwoodManor/Prefabs/Items/BW_NightVision.prefab", "BW_Camcorder", new Vector3(0, 180, 0), null, 0.6f, BlackwoodPropTextures.ScreenMaterial(false));
             Icon(data.phone, "BW_Phone"); Icon(data.nightVision, "BW_Camcorder");
             // Âm thanh công cụ (prefab)
             void Clips(string prefabPath, System.Action<GameObject> f)
@@ -443,13 +463,14 @@ namespace Blackwood.EditorTools
                     string gp = "Assets/BlackwoodManor/Materials/M_LordGhost.mat";
                     var gm = AssetDatabase.LoadAssetAtPath<Material>(gp);
                     if (gm == null) { gm = new Material(Shader.Find("Universal Render Pipeline/Lit")); AssetDatabase.CreateAsset(gm, gp); }
-                    gm.SetFloat("_Surface", 1f); gm.SetFloat("_Blend", 0f);
+                    // Additive (_Blend = 2): URP tự đặt SrcAlpha/One — sáng mờ như hơi lạnh, không che tối cảnh phía sau
+                    gm.SetFloat("_Surface", 1f); gm.SetFloat("_Blend", 2f); gm.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                     gm.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha); gm.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
                     gm.SetFloat("_ZWrite", 0f); gm.EnableKeyword("_SURFACE_TYPE_TRANSPARENT"); gm.renderQueue = 3000;
                     gm.SetColor("_BaseColor", new Color(0.55f, 0.65f, 0.85f, 0.28f));
-                    gm.EnableKeyword("_EMISSION"); gm.SetColor("_EmissionColor", new Color(0.18f, 0.26f, 0.42f));
+                    BlackwoodMaterialUtil.Emissive(gm, new Color(0.18f, 0.26f, 0.42f));
                     gm.SetFloat("_Smoothness", 0.2f);
-                    EditorUtility.SetDirty(gm);
+                    BlackwoodMaterialUtil.Validate(gm);
                     foreach (var r in lord.GetComponentsInChildren<Renderer>())
                     {
                         r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;

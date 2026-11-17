@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_BW_Brass
+    second: {fileID: 2100000, guid: be607c34c269d21429ea1d93cca65f29, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_BW_Keycap
     second: {fileID: 2100000, guid: 60c462523e7222943842ecbcea338553, type: 2}
   - first:
@@ -17,8 +22,23 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_Chrome
+    second: {fileID: 2100000, guid: 12f7d4a04fb2e404984d99a3b94b8720, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Iron
+    second: {fileID: 2100000, guid: a0c86e985326c86479c7c43524ffa09f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_PaperOld
     second: {fileID: 2100000, guid: 9b2335eb8210484498c197bc68ac1614, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_PlasticBlack
+    second: {fileID: 2100000, guid: 11144e523408ede44a9f9edecba54667, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

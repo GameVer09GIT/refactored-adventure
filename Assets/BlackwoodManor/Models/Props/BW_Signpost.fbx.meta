@@ -17,6 +17,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_Iron
+    second: {fileID: 2100000, guid: a0c86e985326c86479c7c43524ffa09f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_WoodDark
     second: {fileID: 2100000, guid: 4b3b1745de80e9a4cb23dada29939763, type: 2}
   materials:
