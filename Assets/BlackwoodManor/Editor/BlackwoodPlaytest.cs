@@ -433,8 +433,14 @@ namespace Blackwood.EditorTools
         {
             Add("Màn chữ kết thúc", null, After(4f), () => { Shot(tag + "_07_ending"); return null; });
             Add("Nhấn phím", () => KeySpace(true), After(0.3f));
-            Add("Nhả phím → về menu, xóa save", () => KeySpace(false), () => GameFlow.State == FlowState.Menu, 90f,
-                () => SaveSystem.SlotExists(TestSlot) ? "save slot " + TestSlot + " chưa bị xóa sau kết thúc" : null);
+            // Input System của dự án bỏ qua bàn phím khi Unity/Game view không được focus (chạy nền) → không thử được bước này
+            Add("Nhả phím → về menu, xóa save", () => KeySpace(false),
+                () => GameFlow.State == FlowState.Menu || !Application.isFocused, 90f,
+                () =>
+                {
+                    if (GameFlow.State != FlowState.Menu && !Application.isFocused) { Log("  (bỏ qua: Unity không được focus, phím giả lập bị Input System chặn)"); return null; }
+                    return SaveSystem.SlotExists(TestSlot) ? "save slot " + TestSlot + " chưa bị xóa sau kết thúc" : null;
+                });
         }
 
         // ------------------------------------------------------------------ trốn tủ
