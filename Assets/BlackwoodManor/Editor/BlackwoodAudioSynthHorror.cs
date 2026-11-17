@@ -218,7 +218,8 @@ namespace Blackwood.EditorTools
                 float strings = 0; foreach (var f in st) strings += (Mathf.Repeat(f * t, 1f) * 2 - 1) * 0.05f;
                 float bar = (t % (beat * 4f)) / (beat * 4f);
                 float brass = ((Mathf.Repeat(73.4f * t, 1f) * 2 - 1) + (Mathf.Repeat(77.8f * t, 1f) * 2 - 1)) * 0.12f * (bar < 0.5f ? 1f : 0.4f);
-                float drone = Mathf.Sin(TAU * 36.7f * t) * 0.35f;
+                // 36,7 Hz gần như không phát được trên loa laptop/tai nghe rẻ → thêm quãng tám 73,4 Hz cho nghe được nền trầm
+                float drone = Mathf.Sin(TAU * 36.7f * t) * 0.22f + Mathf.Sin(TAU * 73.4f * t) * 0.14f;
                 b[i] = (float)System.Math.Tanh((kick + off + strings * trem + brass + drone) * 1.3f);
             }
             return LoopFade(Normalize(b, 0.85f), 0.05f);

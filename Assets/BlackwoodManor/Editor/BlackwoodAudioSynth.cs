@@ -65,14 +65,14 @@ namespace Blackwood.EditorTools
                 float start = (float)(rng.NextDouble() * seconds);
                 float step = start % 1.4f;
                 if (rng.NextDouble() > (step < 0.5f || (step > 0.75f && step < 1.0f) ? 0.95 : 0.25)) continue;
-                float f = 2200f + (float)rng.NextDouble() * 4200f;
+                float f = 1500f + (float)rng.NextDouble() * 2600f;
                 float amp = 0.08f + (float)rng.NextDouble() * 0.12f;
                 int s0 = (int)(start * SR);
                 for (int i = 0; i < SR * 0.25f && s0 + i < n; i++)
                 {
                     float t = (float)i / SR;
                     float e = Mathf.Exp(-t * (18f + f / 600f));
-                    b[s0 + i] += amp * e * (Mathf.Sin(2 * Mathf.PI * f * t) + 0.5f * Mathf.Sin(2 * Mathf.PI * f * 2.76f * t));
+                    b[s0 + i] += amp * e * (Mathf.Sin(2 * Mathf.PI * f * t) + 0.3f * Mathf.Sin(2 * Mathf.PI * f * 2.76f * t));
                 }
             }
             return LoopFade(Normalize(b, 0.7f), 0.05f);
@@ -194,8 +194,72 @@ namespace Blackwood.EditorTools
             foreach (var ch in channels) if (ch != null) for (int i = 0; i < ch.Length; i++) ch[i] *= g;
         }
 
+        /// <summary>Trần độ to tức thời (cửa sổ 400 ms, trọng số K xấp xỉ) cho các stinger quá gắt — dB LUFS.</summary>
+        static readonly System.Collections.Generic.Dictionary<string, float> LoudCap = new System.Collections.Generic.Dictionary<string, float>
+        {
+            { "sfx_jumpscare", -7f }, { "hk_scream", -7.5f }, { "hk_blind_shriek", -8.5f }, { "sfx_brake_skid", -9f },
+        };
+
+        /// <summary>
+        /// Hoàn thiện trước master (soát bằng phổ + đo độ to): lọc thông cao 24 Hz bỏ hạ âm vô ích (vòng lặp lọc vòng tròn để
+        /// mối nối không giật); âm một lần thì vào 1 ms + tắt dần 8 ms (hết tiếng "tách" ở đầu/cuối); stinger gắt thì hạ về trần.
+        /// </summary>
+        internal static void Polish(string name, float[] b)
+        {
+            bool loop = name.Contains("loop");
+            HighPass(b, 24f, loop);
+            if (!loop)
+            {
+                int a = Mathf.Min(b.Length / 4, (int)(0.001f * SR)), z = Mathf.Min(b.Length / 4, (int)(0.008f * SR));
+                for (int i = 0; i < a; i++) b[i] *= (float)i / a;
+                for (int i = 0; i < z; i++) b[b.Length - 1 - i] *= (float)i / z;
+            }
+            if (LoudCap.TryGetValue(name, out float cap))
+            {
+                float m = MomentaryMax(b);
+                if (m > cap) { float g = Mathf.Pow(10f, (cap - m) / 20f); for (int i = 0; i < b.Length; i++) b[i] *= g; }
+            }
+        }
+
+        /// <summary>Lọc thông cao bậc 2 (Butterworth). Vòng lặp: chạy 2 vòng để trạng thái lọc khớp đầu-cuối.</summary>
+        internal static void HighPass(float[] b, float fc, bool circular)
+        {
+            double w0 = 2 * System.Math.PI * fc / SR, cs = System.Math.Cos(w0), al = System.Math.Sin(w0) / (2 * 0.7071);
+            double a0 = 1 + al, b0 = (1 + cs) / 2 / a0, b1 = -(1 + cs) / a0, b2 = b0, a1 = -2 * cs / a0, a2 = (1 - al) / a0;
+            double x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+            int passes = circular ? 2 : 1;
+            for (int p = 0; p < passes; p++)
+                for (int i = 0; i < b.Length; i++)
+                {
+                    double x = b[i], y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+                    x2 = x1; x1 = x; y2 = y1; y1 = y;
+                    if (p == passes - 1) b[i] = (float)y;
+                }
+        }
+
+        /// <summary>Độ to tức thời lớn nhất (≈ LUFS, cửa sổ 400 ms, nhấn ~ +4 dB trên 2 kHz như trọng số K).</summary>
+        static float MomentaryMax(float[] b)
+        {
+            var k = (float[])b.Clone();
+            HighPass(k, 60f, false);
+            // kệ cao: cộng thêm thành phần thông cao 2 kHz ≈ +4 dB
+            var hi = (float[])k.Clone(); HighPass(hi, 2000f, false);
+            for (int i = 0; i < k.Length; i++) k[i] += hi[i] * 0.58f;
+            int win = (int)(0.4f * SR), hop = (int)(0.1f * SR);
+            double best = 1e-12;
+            for (int s = 0; s + win <= k.Length || s == 0; s += hop)
+            {
+                double sum = 0; int e = Mathf.Min(k.Length, s + win);
+                for (int i = s; i < e; i++) sum += k[i] * k[i];
+                best = System.Math.Max(best, sum / Mathf.Max(1, e - s));
+                if (e >= k.Length) break;
+            }
+            return (float)(-0.691 + 10 * System.Math.Log10(best));
+        }
+
         internal static void Write(string name, float[] samples)
         {
+            Polish(name, samples);
             Master(samples);
             string path = Path.Combine(Application.dataPath, "../" + Dir + "/" + name + ".wav");
             using (var fs = new FileStream(path, FileMode.Create))

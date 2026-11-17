@@ -16,7 +16,7 @@ namespace Blackwood.EditorTools
             W("sfx_tape_click", MechClick(0.22f, 1400f, 3));
             W("sfx_safe_tick", MechClick(0.06f, 3200f, 11));
             W("sfx_safe_open", SafeOpen());
-            W("sfx_safe_wrong", WrongThud());
+            W("sfx_safe_wrong", WrongCode());
             W("sfx_rumble", Rumble(4.5f));
             W("sfx_chains_break", ChainsBreak());
             W("sfx_candle_ignite", CandleIgnite());
@@ -95,6 +95,34 @@ namespace Blackwood.EditorTools
                 b[i] = (Mathf.Sin(TAU * 70f * t) + 0.5f * Mathf.Sin(TAU * 73f * t) + Noise(r) * 0.2f) * Mathf.Exp(-t * 7f);
             }
             return Normalize(b, 0.75f);
+        }
+
+        // Sai mã két: tay nắm bị chốt chặn — hai cú "cạch" kim loại khô + tiếng chốt rung lạch cạch, kết bằng tiếng "đùng" trầm
+        static float[] WrongCode()
+        {
+            float sec = 0.62f; int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(19);
+            float bp1 = 0, bp1v = 0, bp2 = 0, bp2v = 0;
+            float[] hits = { 0f, 0.11f };
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SR, v = 0f;
+                foreach (var h in hits)
+                {
+                    float u = t - h; if (u < 0f) continue;
+                    float e = Mathf.Exp(-u * 70f);
+                    v += Noise(r) * e * 0.45f + Mathf.Sin(TAU * 1250f * u) * Mathf.Exp(-u * 45f) * 0.35f + Mathf.Sin(TAU * 1830f * u) * Mathf.Exp(-u * 60f) * 0.2f;
+                }
+                // chốt rung lạch cạch sau cú thứ hai
+                float rattle = t > 0.13f ? Mathf.Exp(-(t - 0.13f) * 9f) * (0.5f + 0.5f * Mathf.Sign(Mathf.Sin(TAU * 38f * t))) : 0f;
+                v += Noise(r) * rattle * 0.25f;
+                // "đùng" trầm của cửa két dày
+                float u2 = t - 0.11f;
+                if (u2 > 0f) v += Mathf.Sin(TAU * (95f + 40f * Mathf.Exp(-u2 * 30f)) * u2) * Mathf.Exp(-u2 * 11f) * 0.9f;
+                Resonate(v, 2400f, 0.93f, ref bp1, ref bp1v);
+                Resonate(v, 640f, 0.95f, ref bp2, ref bp2v);
+                b[i] = v * 0.5f + bp1 * 0.04f + bp2 * 0.05f;
+            }
+            return Normalize(b, 0.9f);
         }
 
         // Rung nhà: tiếng ầm trầm + gỗ kẽo kẹt + bụi rơi
@@ -235,17 +263,35 @@ namespace Blackwood.EditorTools
             return Normalize(LoopFade(b, 0.5f), 0.55f);
         }
 
+        // Cào móng tay lên gỗ: nhiễu dải giữa (≈ 900 Hz – 5 kHz) bị "dính-trượt" (xung hạt 50–140 Hz), từng đường cào dài ngắn
+        // khác nhau, thân gỗ cộng hưởng trầm — thay cho bản cũ chỉ là tiếng xì cao chói.
         static float[] Scratch(float sec)
         {
-            int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(405); float hp = 0, prev = 0;
+            int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(405);
+            float lp1 = 0, lp2 = 0, hp = 0, body = 0, bodyV = 0, grainPh = 0;
+            // 5 đường cào: (bắt đầu, độ dài, tốc độ hạt)
+            float[,] strokes = { { 0.15f, 0.75f, 95f }, { 1.15f, 0.55f, 120f }, { 1.95f, 0.95f, 70f }, { 3.2f, 0.6f, 110f }, { 4.05f, 0.7f, 85f } };
             for (int i = 0; i < n; i++)
             {
-                float t = (float)i / SR;
-                float w = Noise(r); hp = w - prev; prev = w;
-                float stroke = Mathf.Pow(Mathf.Max(0f, Mathf.Sin(TAU * 0.9f * t + Mathf.Sin(t))), 2f);
-                b[i] = hp * stroke * 0.6f;
+                float t = (float)i / SR, env = 0f, rate = 90f;
+                for (int k = 0; k < strokes.GetLength(0); k++)
+                {
+                    float u = (t - strokes[k, 0]) / strokes[k, 1];
+                    if (u < 0f || u > 1f) continue;
+                    env = Mathf.Max(env, Mathf.Sin(Mathf.PI * u) * Mathf.Sin(Mathf.PI * Mathf.Pow(u, 0.6f)));
+                    rate = strokes[k, 2] * (1f + 0.3f * Mathf.Sin(TAU * 1.7f * t));
+                }
+                grainPh += rate / SR;
+                float grain = Mathf.Pow(Mathf.Abs(Mathf.Sin(Mathf.PI * grainPh)), 6f) * (0.6f + 0.4f * Mathf.PerlinNoise(t * 40f, 3f));
+                float w = Noise(r);
+                lp1 += (w - lp1) * 0.45f; lp2 += (lp1 - lp2) * 0.45f;   // thông thấp ~5 kHz
+                hp += (lp2 - hp) * 0.12f;                                // trừ phần trầm → dải giữa
+                float band = lp2 - hp;
+                float scr = band * (0.25f + 0.75f * grain) * env;
+                Resonate(scr, 210f, 0.992f, ref body, ref bodyV);       // gỗ cửa ngân trầm
+                b[i] = scr * 1.4f + body * 0.03f;
             }
-            return Normalize(LoopFade(b, 0.3f), 0.5f);
+            return Normalize(LoopFade(b, 0.12f), 0.6f);
         }
 
         static float[] Shatter()

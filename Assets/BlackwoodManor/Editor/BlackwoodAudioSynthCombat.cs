@@ -15,14 +15,50 @@ namespace Blackwood.EditorTools
             void W(string n, float[] d) { Write(n, d); made.Add(n); }
             W("hk_burn_hiss_loop", BurnHiss(3.6f));
             W("hk_blind_shriek", BlindShriek(2.3f));
+            W("sfx_battery_eject", BatteryClick(false));
+            W("sfx_battery_insert", BatteryClick(true));
             return made;
+        }
+
+        /// <summary>
+        /// Thay pin: nắp nhựa bật ra (tiếng "cạch" cao) + viên pin trượt trong khoang (nhiễu băng hẹp quét xuống);
+        /// lắp vào thì ngược lại, kết bằng tiếng "tách" lò xo chạm cực.
+        /// </summary>
+        static float[] BatteryClick(bool insert)
+        {
+            float sec = 0.55f; int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(insert ? 913 : 557);
+            float bp = 0, bpv = 0;
+            void Click(float at, float freq, float amp, float decay)
+            {
+                int s0 = (int)(at * SR);
+                for (int i = s0; i < n && i < s0 + (int)(SR * 0.06f); i++)
+                {
+                    float t = (float)(i - s0) / SR;
+                    b[i] += amp * Mathf.Exp(-t * decay) * (Mathf.Sin(TAU * freq * t) * 0.6f + Noise(r) * 0.4f);
+                }
+            }
+            float slideA = insert ? 0.05f : 0.12f, slideB = insert ? 0.32f : 0.40f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SR;
+                if (t < slideA || t > slideB) continue;
+                float u = (t - slideA) / (slideB - slideA);
+                float f = Mathf.Lerp(insert ? 1800f : 2600f, insert ? 2600f : 1500f, u);
+                float w = TAU * f / SR, q = 0.08f;
+                float x = Noise(r);
+                bpv += (x - bp) * w - bpv * q; bp += bpv * w; // bộ lọc thông dải đơn giản
+                b[i] += bp * 0.22f * Mathf.Sin(Mathf.PI * u);
+            }
+            if (insert) { Click(0.33f, 3200f, 0.55f, 160f); Click(0.36f, 1400f, 0.35f, 90f); }
+            else { Click(0.02f, 2900f, 0.55f, 170f); Click(0.43f, 900f, 0.3f, 70f); }
+            return Normalize(b, 0.7f);
         }
 
         // Rít + xèo: nhiễu thông cao bị điều biên gấp (da cháy xèo) chồng tiếng gầm gừ cổ họng (răng cưa trầm qua 2 formant)
         static float[] BurnHiss(float sec)
         {
             int n = (int)(SR * sec); var b = new float[n]; var r = new System.Random(311);
-            float hp = 0, prev = 0, lp = 0, f1 = 0, f1v = 0, f2 = 0, f2v = 0, ph = 0, crackle = 0;
+            float hp = 0, prev = 0, lp = 0, f1 = 0, f1v = 0, f2 = 0, f2v = 0, ph = 0, crackle = 0, hissLp = 0;
             for (int i = 0; i < n; i++)
             {
                 float t = (float)i / SR;
@@ -30,7 +66,8 @@ namespace Blackwood.EditorTools
                 // thông cao bậc 1
                 hp = 0.92f * (hp + w - prev); prev = w;
                 float flutter = 0.55f + 0.45f * Mathf.PerlinNoise(t * 17f, 0.3f);
-                float hiss = hp * 0.5f * flutter;
+                hissLp += (hp - hissLp) * 0.55f; // bớt rít trên ~9 kHz (soát phổ: >50% năng lượng nằm trên 10 kHz)
+                float hiss = hissLp * 0.62f * flutter;
                 // lách tách ngẫu nhiên
                 if (r.NextDouble() < 0.0016) crackle = 1f;
                 crackle *= 0.985f;
