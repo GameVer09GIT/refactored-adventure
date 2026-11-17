@@ -358,6 +358,17 @@ namespace Blackwood.EditorTools
         /// Bake từng reflection probe thành cubemap riêng (chế độ Custom) trong Assets/BlackwoodManor/Textures/Probes,
         /// không cần LightingData và không ghi vào asset pack.
         /// </summary>
+        /// <summary>Thử mở độc quyền file (chờ tối đa ~3 s). False = vẫn bị tiến trình khác giữ.</summary>
+        static bool WaitWritable(string path)
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                try { using (new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None)) { } return true; }
+                catch (IOException) { System.Threading.Thread.Sleep(150); }
+            }
+            return false;
+        }
+
         static void BakeReflectionProbes()
         {
             const string dir = "Assets/BlackwoodManor/Textures/Probes";
@@ -372,6 +383,15 @@ namespace Blackwood.EditorTools
                 p.boxProjection = true;
                 p.mode = UnityEngine.Rendering.ReflectionProbeMode.Baked;
                 string path = $"{dir}/BW_Probe_{i:00}.exr";
+                // File đang bị Windows khóa/ánh xạ thì Unity bật hộp thoại "Opening file failed" và treo cả converter:
+                // chờ một lúc, vẫn khóa thì giữ ảnh probe cũ (ánh sáng đổi ít, lần dựng sau sẽ bake lại)
+                if (File.Exists(path) && !WaitWritable(path))
+                {
+                    var old = AssetDatabase.LoadAssetAtPath<Texture>(path);
+                    if (old != null) { p.mode = UnityEngine.Rendering.ReflectionProbeMode.Custom; p.customBakedTexture = old; ok++; }
+                    log.Add("Probe " + i + ": file đang bị khóa, giữ bản cũ");
+                    continue;
+                }
                 if (Lightmapping.BakeReflectionProbe(p, path))
                 {
                     AssetDatabase.ImportAsset(path);
@@ -467,8 +487,8 @@ namespace Blackwood.EditorTools
                     gm.SetFloat("_Surface", 1f); gm.SetFloat("_Blend", 2f); gm.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                     gm.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha); gm.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
                     gm.SetFloat("_ZWrite", 0f); gm.EnableKeyword("_SURFACE_TYPE_TRANSPARENT"); gm.renderQueue = 3000;
-                    gm.SetColor("_BaseColor", new Color(0.55f, 0.65f, 0.85f, 0.28f));
-                    BlackwoodMaterialUtil.Emissive(gm, new Color(0.18f, 0.26f, 0.42f));
+                    gm.SetColor("_BaseColor", new Color(0.55f, 0.65f, 0.85f, 0.15f)); // additive: cận cảnh không cháy trắng
+                    BlackwoodMaterialUtil.Emissive(gm, new Color(0.07f, 0.11f, 0.19f));
                     gm.SetFloat("_Smoothness", 0.2f);
                     BlackwoodMaterialUtil.Validate(gm);
                     foreach (var r in lord.GetComponentsInChildren<Renderer>())
@@ -967,7 +987,8 @@ namespace Blackwood.EditorTools
             GB.PickupBox(c, "Pickup_Film_Study", new Vector3(101.9f, deskTop + 0.03f, 9.4f), new Vector3(0.05f, 0.05f, 0.05f), "item.film", film: 6);
             GB.PickupBox(c, "Pickup_Tape2", new Vector3(109.0f, GF + 0.02f, 12.9f), new Vector3(0.1f, 0.02f, 0.065f), "item.tape",
                 sources: new NotebookSource[] { data.sources["TAPE_2"] });
-            Place(P("Assets/ThirdParty/ZNS3D/Prefabs/antique_light.prefab"), c, new Vector3(102.2f, deskTop, 9.9f), 0, 1f, "DenBan");
+            // Đèn bàn = cây nến trên đế đồng (prefab antique_light là đèn chùm treo, gốc ở đỉnh → đặt lên bàn thì tụt xuống gầm)
+            Place(Model("BW_Nen"), c, new Vector3(102.2f, deskTop, 9.9f), 0, 1f, "DenBan");
 
             // ---------- Tầng 2: 5 phòng Mắt Trận + Phòng Thờ
             // Trẻ Em (Mộc): tủ áo + giường + búp bê
@@ -1031,12 +1052,44 @@ namespace Blackwood.EditorTools
                 if (mr != null && mr.sharedMaterial != null && mr.sharedMaterial.name.Contains("Paper")) mr.sharedMaterial = paper;
             }
             var doc = c.Find("Doc_BienBan2009");
-            if (doc != null && SnapToSurface(doc, Vector3.back, 0.005f))
+            if (doc != null && SnapToSurface(doc, Vector3.back, 0.005f, out var docHit))
             {
                 doc.rotation = Quaternion.Euler(0f, 0f, -3.5f);
                 Nail(doc, doc.position + Vector3.up * 0.18f + Vector3.forward * 0.006f, Vector3.back);
-                log.Add("Doc_BienBan2009 -> " + doc.position.ToString("F3"));
+                // Dán lên mặt trong cánh cửa chính → phải là con của bản lề, nếu không cửa mở thì tờ giấy đứng giữa khung cửa
+                var leaf = docHit != null ? docHit.GetComponentInParent<DoorInteractable>() : null;
+                if (leaf != null) doc.SetParent(leaf.transform, true);
+                log.Add("Doc_BienBan2009 -> " + doc.position.ToString("F3") + (leaf != null ? " (gắn vào " + leaf.name + ")" : " (KHÔNG thấy cánh cửa)"));
             }
+            // Model Blender có tâm ở giữa vật: đặt theo tâm tại mặt sàn/bàn là lún nửa dưới (búp bê chỉ ló đầu, két chìm nửa).
+            // Hạ/nâng từng món cho đáy chạm đúng mặt đỡ. Búa của Thomas nằm nghiêng trên sàn thay vì cắm đứng.
+            var hammer = FindDeep(root, "Relic_Kim");
+            if (hammer != null) hammer.rotation = Quaternion.Euler(0f, 75f, 90f);
+            // Đồ nhặt nhỏ: thay hộp giữ chỗ bằng model Blender (hộp chỉ còn làm vùng tương tác, như ba lô)
+            void SwapModel(string pickup, string model, float yaw)
+            {
+                var pk = FindDeep(root, pickup); var mdl = Model(model);
+                if (pk == null || mdl == null) { log.Add("WARN: thiếu " + pickup + " / " + model); return; }
+                var box = pk.GetComponent<Renderer>();
+                var bottom = box != null ? new Vector3(box.bounds.center.x, box.bounds.min.y, box.bounds.center.z) : pk.position;
+                foreach (var r in pk.GetComponentsInChildren<MeshRenderer>()) r.enabled = false;
+                var g = (GameObject)PrefabUtility.InstantiatePrefab(mdl, pk);
+                g.transform.SetPositionAndRotation(bottom, Quaternion.Euler(0f, yaw, 0f));
+                var ls = pk.lossyScale;
+                g.transform.localScale = new Vector3(1f / ls.x, 1f / ls.y, 1f / ls.z);
+                g.name = model + "_Model";
+                foreach (var r in g.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            }
+            SwapModel("Pickup_Battery_Hall", "BW_Battery", 0f);
+            SwapModel("Pickup_Film_Study", "BW_FilmRoll", 35f);
+            SwapModel("Pickup_Tape2", "BW_Cassette", 20f);
+            SwapModel("Pickup_Tape3", "BW_Cassette", -35f);
+            SwapModel("Pickup_MauBao1953", "BW_Newspaper", 8f);
+            int settled = 0;
+            foreach (var n in new[] { "KetSat", "Relic_Moc", "Relic_Tho", "Relic_Kim", "Relic_Hoa", "Relic_Thuy", "Pickup_Tape3", "Pickup_Tape2", "DenBan", "Pickup_QuanBackpack",
+                                      "Pickup_Battery_Hall", "Pickup_Film_Study", "Pickup_MauBao1953" })
+                if (Settle(FindDeep(root, n))) settled++;
+            log.Add("Settled on surface: " + settled);
             var win = c.Find("HallWindow_Pryable");
             if (win != null)
             {
@@ -1068,12 +1121,36 @@ namespace Blackwood.EditorTools
             }
         }
 
-        static bool SnapToSurface(Transform t, Vector3 dir, float halfThick)
+        static Transform FindDeep(Transform parent, string name) =>
+            parent == null ? null : parent.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == name);
+
+        /// <summary>Dời vật theo trục Y để đáy (bounds các renderer đang bật) chạm mặt đỡ gần nhất bên dưới (bỏ qua chính nó và trigger).</summary>
+        static bool Settle(Transform t)
         {
+            if (t == null) return false;
+            var rs = t.GetComponentsInChildren<Renderer>().Where(r => r.enabled && !(r is ParticleSystemRenderer)).ToArray();
+            if (rs.Length == 0) return false;
+            var b = rs[0].bounds; foreach (var r in rs) b.Encapsulate(r.bounds);
+            Physics.SyncTransforms();
+            float best = float.MinValue;
+            foreach (var off in new[] { Vector3.zero, new Vector3(b.extents.x * 0.5f, 0, 0), new Vector3(-b.extents.x * 0.5f, 0, 0), new Vector3(0, 0, b.extents.z * 0.5f), new Vector3(0, 0, -b.extents.z * 0.5f) })
+                foreach (var h in Physics.RaycastAll(new Vector3(b.center.x, b.max.y + 0.3f, b.center.z) + off, Vector3.down, b.size.y + 2f, ~0, QueryTriggerInteraction.Ignore))
+                    if (!h.collider.transform.IsChildOf(t) && h.point.y <= b.max.y && h.point.y > best) best = h.point.y;
+            if (best == float.MinValue) return false;
+            t.position += Vector3.up * (best - b.min.y + 0.003f);
+            return true;
+        }
+
+        static bool SnapToSurface(Transform t, Vector3 dir, float halfThick) => SnapToSurface(t, dir, halfThick, out _);
+
+        static bool SnapToSurface(Transform t, Vector3 dir, float halfThick, out Collider surface)
+        {
+            surface = null;
             var hits = Physics.RaycastAll(t.position - dir * 0.6f, dir, 2f, ~0, QueryTriggerInteraction.Ignore)
                 .Where(h => !h.collider.transform.IsChildOf(t)).OrderBy(h => h.distance).ToArray();
             if (hits.Length == 0) return false;
             t.position = hits[0].point - dir * (halfThick + 0.002f);
+            surface = hits[0].collider;
             return true;
         }
 
@@ -1146,7 +1223,7 @@ namespace Blackwood.EditorTools
                 }
             var tex = new Texture2D(W, H, TextureFormat.RGBA32, false);
             tex.SetPixels32(px); tex.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + tp), tex.EncodeToPNG());
+            BlackwoodDataBuilder.WriteBytesIfChanged(tp, tex.EncodeToPNG());
             Object.DestroyImmediate(tex);
             AssetDatabase.ImportAsset(tp, ImportAssetOptions.ForceUpdate);
             var m = AssetDatabase.LoadAssetAtPath<Material>(mp);
@@ -1383,6 +1460,12 @@ namespace Blackwood.EditorTools
             Object.DestroyImmediate(land.GetComponent<MeshRenderer>());
             land.transform.position = new Vector3(104.7f, 14.65f, 17.8f); land.transform.localScale = new Vector3(4.2f, 0.1f, 1.6f);
             land.isStatic = true;
+            // Vách giữa hai vế thang: đoạn sát chiếu nghỉ chỉ cao hơn vế 1 ~0,57 m nên NavMesh (leo 0,75 m) cho Mrs. Peake
+            // đi tắt trèo qua. Chặn bằng tấm vô hình cao tới trần dọc đúng vách (x 104,56–104,79), không lấn vào hai vế thang.
+            var div = GameObject.CreatePrimitive(PrimitiveType.Cube); div.name = "Divider_Block"; div.transform.SetParent(g);
+            Object.DestroyImmediate(div.GetComponent<MeshRenderer>());
+            div.transform.position = new Vector3(104.675f, 15.2f, 21.11f); div.transform.localScale = new Vector3(0.22f, 8.4f, 5.0f);
+            div.isStatic = true;
         }
 
         // =====================================================================
@@ -1428,9 +1511,11 @@ namespace Blackwood.EditorTools
 
         static void FixBuildSettings()
         {
+            // BW_Main phải đứng đầu (scene khởi động của bản build); các scene cũ (SampleScene demo) giữ trong danh sách nhưng tắt
             var list = EditorBuildSettings.scenes.Where(s => File.Exists(s.path)).ToList();
             list.RemoveAll(s => s.path == GB.ScenePath || s.path == GreyboxPath);
-            list.Add(new EditorBuildSettingsScene(GB.ScenePath, true));
+            foreach (var s in list) s.enabled = false;
+            list.Insert(0, new EditorBuildSettingsScene(GB.ScenePath, true));
             EditorBuildSettings.scenes = list.ToArray();
             log.Add("Build settings: " + string.Join(", ", list.Select(s => s.path)));
         }

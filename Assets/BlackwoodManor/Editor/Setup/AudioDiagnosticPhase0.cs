@@ -13,7 +13,7 @@ namespace Blackwood.PlayerAudio.Editor
     {
         static AudioDiagnosticPhase0()
         {
-            EditorApplication.delayCall += RunDiagnosticsOnce;
+            // Công cụ cũ: không tự chạy khi mở Editor nữa (từng sửa + lưu đè BW_Main mỗi khi Temp/ bị dọn, ví dụ sau crash). Chạy tay qua menu.
         }
 
         [MenuItem("Tools/Audio/Run Phase 0 Diagnostics", false, 10)]

@@ -385,7 +385,7 @@ namespace Blackwood.EditorTools
             string path = Dir + "/" + name + ".png";
             var tex = new Texture2D(n, n, TextureFormat.RGBA32, false, normal);
             tex.SetPixels32(px); tex.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + path), tex.EncodeToPNG());
+            BlackwoodDataBuilder.WriteBytesIfChanged(path, tex.EncodeToPNG());
             Object.DestroyImmediate(tex);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
             var ti = (TextureImporter)AssetImporter.GetAtPath(path);

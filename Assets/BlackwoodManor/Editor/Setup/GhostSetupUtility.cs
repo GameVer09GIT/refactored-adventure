@@ -13,7 +13,7 @@ public class GhostSetupUtility : EditorWindow
 {
     static GhostSetupUtility()
     {
-        EditorApplication.delayCall += AutoInit;
+        // Công cụ cũ: không tự chạy khi mở Editor nữa (từng sửa + lưu đè BW_Main mỗi khi Temp/ bị dọn, ví dụ sau crash). Chạy tay qua menu.
     }
 
     private static void AutoInit()

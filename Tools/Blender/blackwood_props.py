@@ -374,21 +374,86 @@ def lord_ghost(m):
         o.data.remesh_voxel_size = 0.009
         bpy.ops.object.voxel_remesh()
         o = bpy.context.active_object
-        sm = o.modifiers.new("Soften", "SMOOTH"); sm.factor = 0.6; sm.iterations = 4
+        sm = o.modifiers.new("Soften", "SMOOTH"); sm.factor = 0.7; sm.iterations = 9
         dec = o.modifiers.new("Reduce", "DECIMATE"); dec.ratio = 0.2
         apply_all(o)
-        # giữ đủ 2 ô vật liệu như bản cũ (Unity gán cùng một vật liệu ma cho cả hai): băng mũ dùng ô thứ hai
-        while len(o.data.materials) < 2:
-            o.data.materials.append(G)
-        o.data.materials[0] = D
-        o.data.materials[1] = G
+        # Một vật liệu duy nhất (Unity gán vật liệu ma trong suốt cho mọi ô): chia ô sau remesh để lại viền răng cưa
+        o.data.materials.clear()
+        o.data.materials.append(D)
         for poly in o.data.polygons:
-            poly.material_index = 1 if 1.822 < poly.center.z < 1.848 else 0
+            poly.material_index = 0
         bpy.ops.object.shade_smooth()
     except Exception as e:
         print("REMESH FAILED", e)
         smooth(o, 50)
     o.name = "BW_LordGhost"
+
+
+
+# ---------------------------------------------------------------- Đồ nhặt nhỏ (thay hộp giữ chỗ)
+def cassette(m):
+    """Băng cassette: vỏ nhựa đen, nhãn giấy cũ, ô kính nhìn hai lõi trắng, khe đầu từ."""
+    P = []
+    shell = add("cube", "Shell", (0, 0, 0.006), (0.05, 0.0315, 0.006)); bevel(shell, 0.0018, 2); assign(shell, m["plastic"]); P.append(shell)
+    label = add("cube", "Label", (0, 0.004, 0.0121), (0.042, 0.017, 0.0003)); assign(label, m["paper"]); P.append(label)
+    win = add("cube", "Window", (0, 0.004, 0.0124), (0.02, 0.006, 0.0003)); assign(win, m["glass"]); P.append(win)
+    for x in (-0.017, 0.017):
+        reel = add("cyl", "Reel", (x, 0.004, 0.0122), (0.0065, 0.0065, 0.0004), vertices=16); assign(reel, m["wax"]); P.append(reel)
+        hub = add("cyl", "Hub", (x, 0.004, 0.0126), (0.003, 0.003, 0.0003), vertices=6); assign(hub, m["plastic"]); P.append(hub)
+    head = add("cube", "HeadSlot", (0, -0.026, 0.006), (0.026, 0.0045, 0.0062)); bevel(head, 0.001, 1); assign(head, m["plastic"]); P.append(head)
+    for p_ in P: apply_all(p_)
+    o = join(P, "BW_Cassette")
+    smooth(o, 30)
+
+
+def battery(m):
+    """Pin cỡ D cũ: thân đỏ có băng vàng, hai đầu thép, cực dương nhô."""
+    P = []
+    body = add("cyl", "Body", (0, 0, 0.0305), (0.0166, 0.0166, 0.028), vertices=24); bevel(body, 0.0015, 2); assign(body, m["plastic_red"]); P.append(body)
+    band = add("cyl", "Band", (0, 0, 0.042), (0.0168, 0.0168, 0.007), vertices=24); assign(band, m["brass"]); P.append(band)
+    bot = add("cyl", "Bottom", (0, 0, 0.0015), (0.0162, 0.0162, 0.0015), vertices=24); assign(bot, m["chrome"]); P.append(bot)
+    top = add("cyl", "Top", (0, 0, 0.0595), (0.0162, 0.0162, 0.0015), vertices=24); assign(top, m["chrome"]); P.append(top)
+    nub = add("cyl", "Nub", (0, 0, 0.0625), (0.0045, 0.0045, 0.0018), vertices=12); assign(nub, m["chrome"]); P.append(nub)
+    for p_ in P: apply_all(p_)
+    o = join(P, "BW_Battery")
+    smooth(o, 35)
+
+
+def film_roll(m):
+    """Hộp phim 35 mm: lon kim loại đen, nắp xám, đoạn phim kéo ra khỏi khe."""
+    P = []
+    can = add("cyl", "Can", (0, 0, 0.024), (0.0125, 0.0125, 0.022), vertices=24); bevel(can, 0.001, 1); assign(can, m["iron"]); P.append(can)
+    cap = add("cyl", "Cap", (0, 0, 0.0475), (0.0135, 0.0135, 0.0025), vertices=24); bevel(cap, 0.001, 1); assign(cap, m["chrome"]); P.append(cap)
+    spool = add("cyl", "Spool", (0, 0, 0.0525), (0.004, 0.004, 0.003), vertices=10); assign(spool, m["plastic"]); P.append(spool)
+    lab = add("cyl", "Label", (0, 0, 0.024), (0.0127, 0.0127, 0.012), vertices=24); assign(lab, m["brass"]); P.append(lab)
+    leader = add("cube", "Leader", (0.016, 0.0, 0.024), (0.006, 0.0006, 0.0115), (0, 0, 0.25)); assign(leader, m["plastic"]); P.append(leader)
+    for p_ in P: apply_all(p_)
+    o = join(P, "BW_FilmRoll")
+    smooth(o, 35)
+
+
+def newspaper(m):
+    """Tờ báo cũ gấp đôi, mép hơi quăn (chữ do texture giấy)."""
+    me = bpy.data.meshes.new("Paper")
+    import bmesh as _bm
+    bm = _bm.new()
+    nx, ny = 16, 12
+    vs = []
+    for j in range(ny + 1):
+        row = []
+        for i in range(nx + 1):
+            x = (i / nx - 0.5) * 0.30; y = (j / ny - 0.5) * 0.22
+            z = 0.004 * (abs(i / nx - 0.5) * 2) ** 3 + 0.003 * math.sin(j / ny * math.pi) * (i / nx)
+            row.append(bm.verts.new((x, y, z + 0.001)))
+        vs.append(row)
+    for j in range(ny):
+        for i in range(nx):
+            bm.faces.new((vs[j][i], vs[j][i + 1], vs[j + 1][i + 1], vs[j + 1][i]))
+    _bm.ops.solidify(bm, geom=bm.faces[:], thickness=0.0012)
+    bm.normal_update(); bm.to_mesh(me); bm.free()
+    o = bpy.data.objects.new("BW_Newspaper", me); bpy.context.collection.objects.link(o)
+    assign(o, m["paper"])
+    smooth(o, 40)
 
 
 BW_BUILDERS = [
@@ -397,6 +462,7 @@ BW_BUILDERS = [
     ("BW_Phone", phone), ("BW_Camcorder", camcorder), ("BW_Sedan", sedan),
     ("BW_Signpost", signpost), ("BW_Typewriter", typewriter), ("BW_LordGhost", lord_ghost),
     ("BW_Backpack", backpack),
+    ("BW_Cassette", cassette), ("BW_Battery", battery), ("BW_FilmRoll", film_roll), ("BW_Newspaper", newspaper),
 ]
 
 only_bw = set(a for a in argv[1:] if not a.startswith("--"))

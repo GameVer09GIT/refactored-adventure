@@ -332,6 +332,25 @@ namespace Blackwood.EditorTools
             return a;
         }
 
+        /// <summary>
+        /// Ghi file vào project an toàn: bỏ qua nếu nội dung không đổi (không reimport thừa), thử lại khi Windows báo file đang
+        /// bị khóa/ánh xạ (IOException 1224 — Unity hoặc trình quét đang mở texture). Trả về true nếu đã ghi.
+        /// </summary>
+        public static bool WriteBytesIfChanged(string path, byte[] data)
+        {
+            string full = System.IO.Path.GetFullPath(path.StartsWith("Assets") ? System.IO.Path.Combine(Application.dataPath, "../" + path) : path);
+            if (System.IO.File.Exists(full))
+            {
+                var old = System.IO.File.ReadAllBytes(full);
+                if (old.Length == data.Length && System.Linq.Enumerable.SequenceEqual(old, data)) return false;
+            }
+            for (int i = 0; ; i++)
+            {
+                try { System.IO.File.WriteAllBytes(full, data); return true; }
+                catch (System.IO.IOException) when (i < 40) { System.Threading.Thread.Sleep(150); }
+            }
+        }
+
         public static void EnsureFolder(string path)
         {
             if (AssetDatabase.IsValidFolder(path)) return;

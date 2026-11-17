@@ -451,7 +451,7 @@ namespace Blackwood.EditorTools
             string path = TexDir + "/" + name + ".png";
             var t = new Texture2D(S, S, TextureFormat.RGBA32, false);
             t.SetPixels(px); t.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + path), t.EncodeToPNG());
+            BlackwoodDataBuilder.WriteBytesIfChanged(path, t.EncodeToPNG());
             Object.DestroyImmediate(t);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
             var ti = (TextureImporter)AssetImporter.GetAtPath(path);
@@ -501,7 +501,7 @@ namespace Blackwood.EditorTools
             var px = Normal(Class(cls).h, strength);
             var t = new Texture2D(S, S, TextureFormat.RGBA32, false);
             t.SetPixels(px); t.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + path), t.EncodeToPNG());
+            BlackwoodDataBuilder.WriteBytesIfChanged(path, t.EncodeToPNG());
             Object.DestroyImmediate(t);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
             var ti = (TextureImporter)AssetImporter.GetAtPath(path);
@@ -679,7 +679,7 @@ namespace Blackwood.EditorTools
             string tp = TexDir + "/T_Prop_" + name + ".png";
             var t = new Texture2D(w, h, TextureFormat.RGBA32, false);
             t.SetPixels(px); t.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + tp), t.EncodeToPNG());
+            BlackwoodDataBuilder.WriteBytesIfChanged(tp, t.EncodeToPNG());
             Object.DestroyImmediate(t);
             AssetDatabase.ImportAsset(tp, ImportAssetOptions.ForceUpdate);
             var ti = (TextureImporter)AssetImporter.GetAtPath(tp);
