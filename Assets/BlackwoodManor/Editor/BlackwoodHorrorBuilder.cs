@@ -363,7 +363,7 @@ namespace Blackwood.EditorTools
                 }
             var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
             tex.SetPixels32(px); tex.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + path), tex.EncodeToPNG());
+            BlackwoodDataBuilder.WriteBytesIfChanged(path, tex.EncodeToPNG());
             Object.DestroyImmediate(tex);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
             var ti = (TextureImporter)AssetImporter.GetAtPath(path);
@@ -411,7 +411,7 @@ namespace Blackwood.EditorTools
                     tex.SetPixel(x, y, new Color(1f, 1f, 1f, a));
                 }
             tex.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + tp), tex.EncodeToPNG());
+            BlackwoodDataBuilder.WriteBytesIfChanged(tp, tex.EncodeToPNG());
             Object.DestroyImmediate(tex);
             AssetDatabase.ImportAsset(tp, ImportAssetOptions.ForceUpdate);
             var ti = (TextureImporter)AssetImporter.GetAtPath(tp);
@@ -511,7 +511,7 @@ namespace Blackwood.EditorTools
                     px[y * size + x] = new Color(a, a * 0.97f, a * 0.92f, 1f);
                 }
             tex.SetPixels(px); tex.Apply();
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../" + path), tex.EncodeToPNG());
+            BlackwoodDataBuilder.WriteBytesIfChanged(path, tex.EncodeToPNG());
             Object.DestroyImmediate(tex);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
             return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
@@ -550,6 +550,7 @@ namespace Blackwood.EditorTools
             // Không khí: giông bão (mưa/gió/sấm chớp), nhạc căng thẳng động, hiện tượng khi bà ở gần, bụi trong luồng đèn
             var soft = SoftLitParticle();
             var atmo = new GameObject("BW_Atmosphere_Runtime"); atmo.transform.SetParent(sys.transform);
+            atmo.AddComponent<Blackwood.Rendering.ShadowBudget>(); // giới hạn số đèn đổ bóng cùng lúc (atlas bóng)
             atmo.AddComponent<StormDirector>().Configure(Clip("amb_rain_roof_loop"), Clip("amb_wind_howl_loop"),
                 new[] { Clip("sfx_thunder_01"), Clip("sfx_thunder_02"), Clip("sfx_thunder_03") });
             atmo.AddComponent<TensionMusic>().Configure(Clip("mus_dread_drone_loop"), Clip("mus_tension_cluster_loop"));

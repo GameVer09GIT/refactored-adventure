@@ -173,7 +173,8 @@ namespace Blackwood.AI
             }
             if (burnHissLoop != null && voiceSource != null)
             {
-                hissSource = voiceSource.gameObject.AddComponent<AudioSource>();
+                foreach (var a in voiceSource.GetComponents<AudioSource>()) if (a != voiceSource) { hissSource = a; break; }
+                if (hissSource == null) hissSource = voiceSource.gameObject.AddComponent<AudioSource>();
                 hissSource.clip = burnHissLoop; hissSource.loop = true; hissSource.playOnAwake = false; hissSource.volume = 0f;
                 hissSource.spatialBlend = 1f; hissSource.rolloffMode = AudioRolloffMode.Logarithmic;
                 hissSource.minDistance = 1.5f; hissSource.maxDistance = 18f; hissSource.dopplerLevel = 0f;

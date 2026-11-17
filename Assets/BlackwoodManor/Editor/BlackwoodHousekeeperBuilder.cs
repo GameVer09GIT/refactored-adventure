@@ -153,6 +153,8 @@ namespace Blackwood.EditorTools
             }
             var keysSrc = Src("Keys", hkRoot.transform);
             var voiceSrc = Src("Voice", hkRoot.transform);
+            // Nguồn tiếng rít khi bị rọi đèn: tạo sẵn (playOnAwake = false). AddComponent lúc chạy sẽ tự phát khi chưa có clip.
+            voiceSrc.gameObject.AddComponent<AudioSource>().playOnAwake = false;
             var music = Src("HuntMusic", hkRoot.transform);
             music.clip = AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/hk_hunt_pulse_loop.wav");
 

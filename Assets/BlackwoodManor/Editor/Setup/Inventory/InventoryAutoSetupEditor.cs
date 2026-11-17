@@ -466,6 +466,7 @@ namespace Blackwood.Inventory.Editor
                 matRadarScreen.SetColor("_BaseColor", new Color(0.04f, 0.12f, 0.05f, 1f));
                 matRadarScreen.EnableKeyword("_EMISSION");
                 matRadarScreen.SetColor("_EmissionColor", new Color(0.05f, 0.25f, 0.08f));
+                matRadarScreen.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive; // Unity 6: thiếu cờ này URP tắt phát sáng
                 matRadarScreen.SetFloat("_Smoothness", 0.85f);
                 AssetDatabase.CreateAsset(matRadarScreen, pathRs);
             }

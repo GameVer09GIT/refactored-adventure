@@ -121,7 +121,7 @@ namespace Blackwood.Sequences
             var gm = GameManager.Instance;
             bool canRelease = EndingRules.CanRelease(gm.Has);
             bool canClaim = EndingRules.CanClaim(gm.Has);
-            var dim = UIFactory.Panel("BW_RitualChoice", UIKit.TopLayer, new Color(0, 0, 0, 0.55f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var dim = UIFactory.Panel("BW_RitualChoice", UIKit.TopLayer, new Color(0, 0, 0, 0.78f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             choiceUI = dim.gameObject;
             var title = UIKit.Label(dim.transform, T.Get("ritual.choose"), 40, UIKit.Ink, TextAlignmentOptions.Center, true, true);
             title.rectTransform.anchorMin = new Vector2(0.1f, 0.62f); title.rectTransform.anchorMax = new Vector2(0.9f, 0.74f);
