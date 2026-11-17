@@ -178,8 +178,25 @@ namespace Blackwood.EditorTools
             return b;
         }
 
+        /// <summary>Tầng master trước khi ghi file: khử lệch DC rồi giới hạn đỉnh ở −1 dBFS (không bao giờ cắt đỉnh 16-bit).</summary>
+        internal static void Master(params float[][] channels)
+        {
+            const float ceiling = 0.891f; // −1 dBFS
+            float peak = 1e-6f;
+            foreach (var ch in channels)
+            {
+                if (ch == null || ch.Length == 0) continue;
+                double mean = 0; foreach (var x in ch) mean += x; mean /= ch.Length;
+                for (int i = 0; i < ch.Length; i++) { ch[i] -= (float)mean; peak = Mathf.Max(peak, Mathf.Abs(ch[i])); }
+            }
+            if (peak <= ceiling) return;
+            float g = ceiling / peak;
+            foreach (var ch in channels) if (ch != null) for (int i = 0; i < ch.Length; i++) ch[i] *= g;
+        }
+
         internal static void Write(string name, float[] samples)
         {
+            Master(samples);
             string path = Path.Combine(Application.dataPath, "../" + Dir + "/" + name + ".wav");
             using (var fs = new FileStream(path, FileMode.Create))
             using (var w = new BinaryWriter(fs))

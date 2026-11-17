@@ -219,6 +219,7 @@ namespace Blackwood.EditorTools
 
         internal static void WriteStereo(string name, float[] l, float[] r)
         {
+            Master(l, r);
             int n = Mathf.Min(l.Length, r.Length);
             string path = Path.Combine(Application.dataPath, "../" + Dir + "/" + name + ".wav");
             using (var fs = new FileStream(path, FileMode.Create))
