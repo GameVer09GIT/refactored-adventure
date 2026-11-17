@@ -18,6 +18,7 @@ namespace Blackwood.UI
         private TextMeshProUGUI head, body, controlsText;
         private Coroutine routine;
         private bool built, controlsShown;
+        private int shownStage = -1;
         private static bool controlsShownThisSession;
 
         private void OnEnable()
@@ -67,6 +68,9 @@ namespace Blackwood.UI
         private void Update()
         {
             if (!GameFlow.IsPlaying || ModalUI.IsAnyOpen) return;
+            // Nạp file lưu đặt chương sau khi đã vào Playing (không bắn StageChanged) → dòng mục tiêu phải tự bắt kịp
+            var gm = GameManager.Instance;
+            if (gm != null && shownStage >= 0 && !gm.IsRestoring && (int)gm.Stage != shownStage) Show();
             if (Keyboard.current != null && Keyboard.current.oKey.wasPressedThisFrame) Show();
         }
 
@@ -78,6 +82,7 @@ namespace Blackwood.UI
             int stage = gm != null ? (int)gm.Stage : 0;
             string key = "obj." + stage;
             if (T.Table == null || !T.Table.Has(key)) return;
+            shownStage = stage;
             head.text = T.Get("obj.title");
             body.text = T.Get(key);
             if (routine != null) StopCoroutine(routine);
