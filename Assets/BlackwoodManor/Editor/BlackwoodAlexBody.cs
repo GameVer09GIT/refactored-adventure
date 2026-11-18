@@ -50,7 +50,7 @@ namespace Blackwood.EditorTools
             if (tp != null)
             {
                 var ti = (TextureImporter)AssetImporter.GetAtPath(tp);
-                ti.sRGBTexture = true; ti.mipmapEnabled = true; ti.maxTextureSize = 2048;
+                ti.sRGBTexture = true; ti.mipmapEnabled = true; ti.maxTextureSize = 4096; // TRELLIS.2: texture 4096
                 ti.anisoLevel = 4; ti.textureCompression = TextureImporterCompression.CompressedHQ;
                 ti.SaveAndReimport();
                 tex = AssetDatabase.LoadAssetAtPath<Texture2D>(tp);

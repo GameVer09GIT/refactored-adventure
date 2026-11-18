@@ -230,3 +230,19 @@
   - Trong Play với Alex: cúi 75° chỉ thấy bụng áo nỉ, giày, tay cầm đèn pin; hết cục vai lấn góc màn hình. Bóng đổ đủ người.
   - Chơi thử tự động Alex 48/48 và Evelyn 44/44, 0 lỗi Console, 0 lần chết.
   - Ảnh: `Temp/Blackwood/alexfp2_down.png`, `alex3p2_*.png`.
+
+## Blackwood T — Alex dựng lại bằng TRELLIS.2 (2026-11-18)
+- Model Alex tạo lại bằng **TRELLIS.2** (Microsoft, MIT; Space `microsoft/TRELLIS.2`, độ phân giải 1536, 20 bước lấy mẫu, texture PBR 4096) với token Hugging Face miễn phí của người dùng (lưu ngoài repo).
+  - Chi tiết hơn hẳn bản TRELLIS 1: mặt rõ, tóc xoăn, dây rút áo, ba lô, giày buộc dây, nếp quần jean.
+  - Không còn tấm nền dưới chân.
+- `alex_body.py`:
+  - Giảm 400k → 70k tam giác.
+  - Lấy đúng ảnh nối vào Base Color (model PBR có nhiều ảnh).
+  - Chỉ cắt tấm nền khi có.
+  - Tràn màu texture ra nền đen giữa các mảnh UV (hết đường nứt đen khi mipmap).
+  - Unity nhập texture 4096.
+- Sửa: `BlackwoodAudioSynth.WriteStereo` ghi qua `WriteBytesIfChanged`. Converter từng dừng vì Windows khóa `sfx_thunder_02.wav` (IOException 1224).
+- Kiểm chứng:
+  - Converter dựng lại `BW_Main`.
+  - Trong Play với Alex: góc nhìn thứ nhất sạch, nhìn từ ngoài rõ chi tiết, không còn đường nứt.
+  - Chơi thử tự động Alex 48/48. Evelyn lần đầu hỏng 3 bước kiểm tra pin đèn pin (Unity không focus, đèn chưa kịp sáng), chạy lại 44/44. 0 lỗi Console.

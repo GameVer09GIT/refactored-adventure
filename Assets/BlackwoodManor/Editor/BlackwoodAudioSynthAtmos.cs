@@ -222,9 +222,10 @@ namespace Blackwood.EditorTools
             HighPass(l, 24f, name.Contains("loop")); HighPass(r, 24f, name.Contains("loop"));
             Master(l, r);
             int n = Mathf.Min(l.Length, r.Length);
-            string path = Path.Combine(Application.dataPath, "../" + Dir + "/" + name + ".wav");
-            using (var fs = new FileStream(path, FileMode.Create))
-            using (var w = new BinaryWriter(fs))
+            string path = Dir + "/" + name + ".wav";
+            // Ghi qua WriteBytesIfChanged: Windows hay khóa file wav Unity đang mở (IOException 1224) — nội dung không đổi thì bỏ qua
+            using (var ms = new MemoryStream())
+            using (var w = new BinaryWriter(ms))
             {
                 int dataLen = n * 4;
                 w.Write(new[] { 'R', 'I', 'F', 'F' }); w.Write(36 + dataLen); w.Write(new[] { 'W', 'A', 'V', 'E' });
@@ -236,6 +237,8 @@ namespace Blackwood.EditorTools
                     w.Write((short)Mathf.Clamp(l[i] * 32767f, -32768f, 32767f));
                     w.Write((short)Mathf.Clamp(r[i] * 32767f, -32768f, 32767f));
                 }
+                w.Flush();
+                BlackwoodDataBuilder.WriteBytesIfChanged(path, ms.ToArray());
             }
         }
     }

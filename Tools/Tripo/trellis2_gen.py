@@ -2,6 +2,7 @@
 # qua Hugging Face Space miễn phí microsoft/TRELLIS.2.
 #   python -I Tools/Tripo/trellis2_gen.py <ảnh vuông> <file.glb> [seed] [resolution 512|1024|1536] [texture]
 import os, shutil, sys, time
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from gradio_client import Client, handle_file
 
 src, out = sys.argv[1], sys.argv[2]

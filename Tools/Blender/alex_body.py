@@ -13,7 +13,8 @@ from mathutils import Vector, Matrix, kdtree
 
 ROOT = r"D:/refactored-adventure"
 GIRL = os.path.join(ROOT, "Assets", "ThirdParty", "civilian_girl", "Models", "civilian_girl.FBX")
-SRC = os.path.join(ROOT, "Tools", "Tripo", "alex_trellis.glb")
+SRC = os.path.join(ROOT, "Tools", "Tripo", "alex_trellis2.glb")  # TRELLIS.2 (bản cũ: alex_trellis.glb)
+TARGET_TRIS = 70000  # tam giác sau khi giảm (model TRELLIS.2 ~400k)
 OUT_DIR = os.path.join(ROOT, "Tools", "Blender", "out", "characters")
 OUT = os.path.join(OUT_DIR, "BW_Alex_Body.fbx")
 TEX = os.path.join(OUT_DIR, "T_PL_Alex_Body_A.png")
@@ -85,6 +86,22 @@ alex = bpy.context.active_object
 alex.name = "PL_Alex_Body"
 bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
 bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+# Ảnh màu gốc (model PBR có cả ảnh nhám/kim loại — chỉ lấy ảnh nối vào Base Color)
+BASE_IMG = None
+for m in alex.data.materials:
+    if m and m.use_nodes:
+        for n in m.node_tree.nodes:
+            if n.type == "BSDF_PRINCIPLED":
+                for l in n.inputs["Base Color"].links:
+                    nd = l.from_node
+                    while nd.type != "TEX_IMAGE" and nd.inputs and nd.inputs[0].links:
+                        nd = nd.inputs[0].links[0].from_node
+                    if nd.type == "TEX_IMAGE": BASE_IMG = nd.image
+_tris = sum(len(p.vertices) - 2 for p in alex.data.polygons)
+if _tris > TARGET_TRIS * 1.2:
+    dm = alex.modifiers.new("Dec", "DECIMATE"); dm.ratio = TARGET_TRIS / _tris
+    bpy.ops.object.modifier_apply(modifier="Dec")
+print("TRIS", _tris, "->", sum(len(p.vertices) - 2 for p in alex.data.polygons), "base image", BASE_IMG.name if BASE_IMG else None)
 
 # Hàn đỉnh trùng (model AI là nhiều mảnh bề mặt rời) rồi mới bỏ mảnh rời phẳng (tấm nền dưới chân) và mảnh vụn
 bm = bmesh.new(); bm.from_mesh(alex.data)
@@ -95,8 +112,10 @@ print("WELD", _n0, "->", len(bm.verts))
 # Tấm nền (dày ~1% chiều cao, rộng gần bằng sải tay): xóa mọi đỉnh dưới đế giày + phần nền ngoài bàn chân
 _zmin = min(v.co.z for v in bm.verts)
 _cx = sum(v.co.x for v in bm.verts) / len(bm.verts)
+_bot = [v for v in bm.verts if v.co.z < _zmin + 0.005 * _h]
+_has_plate = bool(_bot) and (max(v.co.x for v in _bot) - min(v.co.x for v in _bot)) > 0.6 * _h
 _plate = [v for v in bm.verts if v.co.z < _zmin + 0.0099 * _h or
-          (v.co.z < _zmin + 0.013 * _h and abs(v.co.x - _cx) > 0.17 * _h)]
+          (v.co.z < _zmin + 0.013 * _h and abs(v.co.x - _cx) > 0.17 * _h)] if _has_plate else []
 bmesh.ops.delete(bm, geom=_plate, context="VERTS")
 print("PLATE faces removed", len(_plate))
 bm.verts.ensure_lookup_table()
@@ -317,11 +336,7 @@ bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="DESELECT")
 # Cắt theo mặt phẳng ngang giữa cổ và đầu: mép mũ áo/cổ áo gọn một vòng (không răng cưa như tách theo trọng số)
 # Đầu Alex (model AI) thấp hơn xương đầu khung gốc → lấy mép dưới vùng da cổ/mặt trên texture làm mặt cắt,
 # để cả mặt + cổ nằm trong lưới đầu (chỉ đổ bóng, không lọt vào camera góc nhìn thứ nhất).
-_img = None
-for m in alex.data.materials:
-    if m and m.use_nodes:
-        for n in m.node_tree.nodes:
-            if n.type == "TEX_IMAGE" and n.image: _img = n.image
+_img = BASE_IMG
 _px = _img.pixels[:] if _img else None
 _W, _H = (_img.size if _img else (0, 0))
 _uv = alex.data.uv_layers.active.data if alex.data.uv_layers.active else None
@@ -353,14 +368,25 @@ head = [o for o in bpy.context.selected_objects if o != alex]
 if head: head[0].name = "PL_Alex_Head"
 
 # Texture màu gốc của model AI
-img = None
-for m in alex.data.materials:
-    if m and m.use_nodes:
-        for n in m.node_tree.nodes:
-            if n.type == "TEX_IMAGE" and n.image:
-                img = n.image; break
-    if img: break
+img = BASE_IMG
 if img:
+    # Tràn màu ra nền đen giữa các mảnh UV (khi thu nhỏ mipmap, nền đen loang thành đường nứt ở mép mảnh)
+    import numpy as np
+    w_, h_ = img.size
+    px = np.empty(w_ * h_ * 4, dtype=np.float32); img.pixels.foreach_get(px)
+    px = px.reshape(h_, w_, 4)
+    rgb = px[..., :3].copy(); filled = rgb.max(axis=2) > 6 / 255
+    for _ in range(24):
+        if filled.all(): break
+        acc = np.zeros_like(rgb); cnt = np.zeros(filled.shape, np.float32)
+        for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)):
+            f = np.roll(np.roll(filled, dy, 0), dx, 1)
+            acc += np.roll(np.roll(rgb, dy, 0), dx, 1) * f[..., None]; cnt += f
+        grow = (~filled) & (cnt > 0)
+        rgb[grow] = acc[grow] / cnt[grow][:, None]; filled = filled | grow
+    px[..., :3] = rgb; px[..., 3] = 1.0
+    img.pixels.foreach_set(px.ravel())
+    print("TEX dilate: còn trống %.4f" % (1 - filled.mean()))
     img.filepath_raw = TEX; img.file_format = "PNG"; img.save()
 print("TEXTURE", TEX if img else "NONE")
 
