@@ -324,60 +324,79 @@ def typewriter(m):
 
 
 def lord_ghost(m):
-    """Bóng ma Lord Blackwood: quý ông áo đuôi tôm, mũ chóp cao, tay phải chống gậy. Thân/tay/chân dựng bằng khối tròn xoay
-    (không còn khối hộp), mặt có hốc mắt, mũi, râu quai nón để bóng in rõ dáng người."""
+    """Bóng ma Lord Blackwood: quý ông áo choàng đuôi tôm dài, mũ chóp cao, tay phải chống gậy. Không có chân — vạt áo loe
+    rồi rủ thành các dải rách mảnh tan dần (ma lơ lửng). Hợp thành một lớp vỏ kín (voxel remesh), làm mịn nhiều lượt và thêm
+    nếp vải bằng nhiễu để hết dáng "khối"."""
     P = []
     D, G = m["ghost_dark"], m["ghost"]
 
     def put(o, mt):
         assign(o, mt); P.append(o); return o
 
+    # Vạt áo choàng: loe dần từ eo xuống, viền dưới cao 0.42 m
+    put(turned("Coat", [(0, 0.42), (0.33, 0.42), (0.315, 0.55), (0.285, 0.72), (0.25, 0.9), (0.222, 1.02), (0.205, 1.1), (0, 1.1)],
+               (0, 0.01, 0), scale=(1, 0.74, 1), seg=40), D)
+    # Dải vải rách rủ xuống từ viền, dài ngắn khác nhau, hơi xoắn — tan vào sương
+    import random
+    rnd = random.Random(7)
+    for k in range(22):
+        a = 2 * math.pi * k / 22 + rnd.uniform(-0.08, 0.08)
+        r = 0.305
+        x, y = math.sin(a) * r, math.cos(a) * r * 0.74 + 0.01
+        ln = rnd.uniform(0.14, 0.3)
+        # Dải vải dẹt (elip) nằm theo mép áo, đầu trên lấn vào vạt áo → sau remesh thành viền rách liền mạch
+        put(add("sphere", "Wisp", (x, y, 0.45 - ln * 0.55), (rnd.uniform(0.07, 0.1), 0.022, ln / 2),
+                (rnd.uniform(-0.12, 0.12), rnd.uniform(-0.18, 0.18), -a), segments=14, ring_count=10), D)
     for s in (-1, 1):
-        put(add("sphere", "Shoe", (s * 0.1, -0.045, 0.045), (0.055, 0.13, 0.045), segments=14, ring_count=8), D)
-        put(turned("Leg", [(0, 0.05), (0.058, 0.05), (0.062, 0.25), (0.07, 0.48), (0.086, 0.75), (0.094, 0.96), (0, 0.96)], (s * 0.1, 0, 0)), D)
-        put(add("cube", "Tail", (s * 0.085, 0.118, 0.62), (0.078, 0.016, 0.3), (-0.07, 0, s * 0.1)), D)
-        bevel(P[-1], 0.012, 2)
-        put(add("sphere", "Shoulder", (s * 0.25, 0, 1.435), (0.09, 0.085, 0.075), segments=14, ring_count=8), D)
-        put(turned("Arm", [(0, 0), (0.048, 0), (0.056, 0.1), (0.06, 0.3), (0.07, 0.55), (0.076, 0.62), (0, 0.65)], (s * 0.335, -0.01, 0.84), (0, -s * 0.1, 0)), D)
-        put(add("cyl", "Cuff", (s * 0.336, -0.01, 0.845), (0.052, 0.052, 0.02), vertices=14), G)
-        put(add("sphere", "Hand", (s * 0.338, -0.015, 0.775), (0.04, 0.03, 0.065), segments=12, ring_count=8), G)
-        put(add("sphere", "Thumb", (s * 0.325, -0.045, 0.79), (0.014, 0.016, 0.035), segments=8, ring_count=6), G)
-        put(add("cube", "Collar", (s * 0.045, -0.078, 1.545), (0.03, 0.006, 0.04), (0.2, 0, -s * 0.5)), G)
-        put(add("sphere", "Eye", (s * 0.036, -0.097, 1.7), (0.025, 0.014, 0.018), segments=10, ring_count=6), D)
-        put(add("sphere", "Whisker", (s * 0.072, -0.055, 1.625), (0.03, 0.045, 0.055), segments=10, ring_count=6), D)
-        put(add("sphere", "Ear", (s * 0.097, 0.005, 1.68), (0.012, 0.02, 0.03), segments=8, ring_count=6), G)
-    put(turned("Torso", [(0, 0.82), (0.2, 0.82), (0.215, 0.95), (0.2, 1.08), (0.215, 1.25), (0.238, 1.38), (0.21, 1.47), (0.1, 1.535), (0, 1.535)],
-               (0, 0, 0), scale=(1, 0.62, 1), seg=24), D)
-    put(add("cube", "Shirt", (0, -0.139, 1.3), (0.045, 0.006, 0.13)), G); bevel(P[-1], 0.004, 1)
-    put(add("sphere", "Cravat", (0, -0.133, 1.455), (0.05, 0.022, 0.05), segments=12, ring_count=8), G)
+        put(add("sphere", "Shoulder", (s * 0.235, 0, 1.43), (0.1, 0.09, 0.08), segments=20, ring_count=12), D)
+        # Tay áo: nhiều nấc, khuỷu hơi gập, cổ tay áo loe như áo khoác cổ
+        put(turned("Arm", [(0, 0), (0.055, 0), (0.062, 0.05), (0.058, 0.14), (0.06, 0.28), (0.068, 0.42), (0.074, 0.55),
+                           (0.078, 0.62), (0, 0.65)], (s * 0.325, -0.02, 0.84), (0.08, -s * 0.12, 0), seg=20), D)
+        put(add("cyl", "Cuff", (s * 0.33, -0.025, 0.85), (0.058, 0.058, 0.03), vertices=20), G)
+        put(add("sphere", "Hand", (s * 0.335, -0.035, 0.78), (0.042, 0.032, 0.068), segments=16, ring_count=10), G)
+        put(add("sphere", "Thumb", (s * 0.322, -0.065, 0.795), (0.015, 0.017, 0.036), segments=10, ring_count=8), G)
+        for f in range(3):
+            put(add("sphere", "Finger", (s * (0.33 + f * 0.009), -0.04 - f * 0.012, 0.715), (0.012, 0.012, 0.035), segments=8, ring_count=6), G)
+        put(add("cube", "Lapel", (s * 0.07, -0.118, 1.33), (0.05, 0.012, 0.14), (0.12, 0, -s * 0.28)), D)
+        bevel(P[-1], 0.01, 2)
+        put(add("cube", "Collar", (s * 0.045, -0.08, 1.545), (0.03, 0.007, 0.042), (0.2, 0, -s * 0.5)), G)
+        put(add("sphere", "Eye", (s * 0.036, -0.098, 1.7), (0.026, 0.015, 0.019), segments=12, ring_count=8), D)
+        put(add("sphere", "Whisker", (s * 0.07, -0.058, 1.625), (0.03, 0.045, 0.058), segments=12, ring_count=8), D)
+        put(add("sphere", "Ear", (s * 0.097, 0.005, 1.68), (0.012, 0.02, 0.03), segments=10, ring_count=6), G)
+        put(add("sphere", "Cheek", (s * 0.05, -0.08, 1.66), (0.03, 0.025, 0.03), segments=10, ring_count=6), G)
+    put(turned("Torso", [(0, 0.98), (0.2, 0.98), (0.205, 1.08), (0.212, 1.22), (0.232, 1.36), (0.215, 1.46), (0.12, 1.53), (0, 1.535)],
+               (0, 0, 0), scale=(1, 0.64, 1), seg=32), D)
+    put(add("cube", "Shirt", (0, -0.135, 1.31), (0.04, 0.006, 0.12)), G); bevel(P[-1], 0.004, 2)
+    put(add("sphere", "Cravat", (0, -0.13, 1.455), (0.052, 0.024, 0.052), segments=14, ring_count=10), G)
     for k in range(3):
-        put(add("sphere", "Button", (0, -0.147, 1.2 + k * 0.07), (0.009, 0.005, 0.009), segments=8, ring_count=6), D)
-    put(add("cyl", "Neck", (0, 0, 1.55), (0.05, 0.05, 0.05), vertices=14), G)
-    put(add("sphere", "Head", (0, 0, 1.685), (0.095, 0.11, 0.125), segments=24, ring_count=14), G)
-    put(add("sphere", "Jaw", (0, -0.022, 1.605), (0.074, 0.086, 0.08), segments=16, ring_count=10), G)
-    put(add("cone", "Nose", (0, -0.112, 1.672), (0.017, 0.017, 0.03), (math.pi / 2 - 0.35, 0, 0), vertices=10), G)
-    put(add("cube", "Brow", (0, -0.1, 1.727), (0.07, 0.012, 0.008)), G); bevel(P[-1], 0.006, 2)
+        put(add("sphere", "Button", (0, -0.141, 1.2 + k * 0.07), (0.009, 0.005, 0.009), segments=8, ring_count=6), D)
+    put(add("cyl", "Neck", (0, 0, 1.55), (0.05, 0.05, 0.05), vertices=16), G)
+    put(add("sphere", "Head", (0, 0, 1.685), (0.095, 0.11, 0.125), segments=32, ring_count=18), G)
+    put(add("sphere", "Jaw", (0, -0.022, 1.605), (0.072, 0.084, 0.078), segments=20, ring_count=12), G)
+    put(add("cone", "Nose", (0, -0.112, 1.672), (0.017, 0.017, 0.03), (math.pi / 2 - 0.35, 0, 0), vertices=12), G)
+    put(add("cube", "Brow", (0, -0.1, 1.727), (0.07, 0.013, 0.009)), G); bevel(P[-1], 0.007, 2)
     put(add("cube", "Mouth", (0, -0.103, 1.622), (0.03, 0.006, 0.004)), D)
-    put(turned("Hat", [(0, 1.79), (0.168, 1.79), (0.182, 1.802), (0.168, 1.808), (0.099, 1.808), (0.093, 1.825), (0.103, 2.045), (0, 2.05)],
-               (0, 0, 0), seg=28), D)
-    put(add("cyl", "HatBand", (0, 0, 1.835), (0.097, 0.097, 0.014), vertices=28), G)
-    put(add("cyl", "Cane", (0.345, -0.06, 0.37), (0.011, 0.011, 0.37), vertices=10), D)
-    put(add("sphere", "CaneKnob", (0.345, -0.06, 0.755), (0.028, 0.028, 0.028), segments=12, ring_count=8), G)
+    put(turned("Hat", [(0, 1.79), (0.172, 1.79), (0.186, 1.803), (0.17, 1.81), (0.099, 1.81), (0.093, 1.828), (0.104, 2.05), (0, 2.055)],
+               (0, 0, 0), seg=36), D)
+    put(add("cyl", "HatBand", (0, 0, 1.838), (0.098, 0.098, 0.015), vertices=36), G)
+    put(add("cyl", "Cane", (0.34, -0.075, 0.44), (0.011, 0.011, 0.33), vertices=12), D)
+    put(add("sphere", "CaneKnob", (0.34, -0.075, 0.78), (0.028, 0.028, 0.028), segments=14, ring_count=10), G)
     for p in P: apply_all(p)
     o = join(P, "BW_LordGhost")
-    # Vật liệu bóng ma trong suốt: nếu để các khối chồng nhau thì nhìn xuyên thấy "ruột" (chân trong vạt áo, cổ trong đầu…).
-    # Hợp tất cả thành MỘT lớp vỏ kín bằng voxel remesh rồi giảm lưới.
+    # Vật liệu bóng ma trong suốt: hợp tất cả thành MỘT lớp vỏ kín (không lộ "ruột"), rồi làm mịn + nếp vải
     bpy.ops.object.select_all(action="DESELECT")
     o.select_set(True)
     bpy.context.view_layer.objects.active = o
     try:
-        o.data.remesh_voxel_size = 0.009
+        o.data.remesh_voxel_size = 0.0065
         bpy.ops.object.voxel_remesh()
         o = bpy.context.active_object
-        sm = o.modifiers.new("Soften", "SMOOTH"); sm.factor = 0.7; sm.iterations = 9
-        dec = o.modifiers.new("Reduce", "DECIMATE"); dec.ratio = 0.2
+        sm = o.modifiers.new("Soften", "SMOOTH"); sm.factor = 0.75; sm.iterations = 14
+        tex = bpy.data.textures.new("GhostFolds", "CLOUDS"); tex.noise_scale = 0.09; tex.noise_depth = 2
+        disp = o.modifiers.new("Folds", "DISPLACE"); disp.texture = tex; disp.strength = 0.012; disp.mid_level = 0.5
+        sm2 = o.modifiers.new("Soften2", "SMOOTH"); sm2.factor = 0.5; sm2.iterations = 3
+        dec = o.modifiers.new("Reduce", "DECIMATE"); dec.ratio = 0.3
         apply_all(o)
-        # Một vật liệu duy nhất (Unity gán vật liệu ma trong suốt cho mọi ô): chia ô sau remesh để lại viền răng cưa
         o.data.materials.clear()
         o.data.materials.append(D)
         for poly in o.data.polygons:
