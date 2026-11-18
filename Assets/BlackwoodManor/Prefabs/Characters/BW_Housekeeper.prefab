@@ -267,7 +267,7 @@ MonoBehaviour:
   visualRoot: {fileID: 8990840017309631448}
   keysSource: {fileID: 8921977780238282179}
   voiceSource: {fileID: 5207961559803226612}
-  keysLoop: {fileID: 8300000, guid: 7c912e12a3fb21a468825583d7b9fe48, type: 3}
+  keysLoop: {fileID: 8300000, guid: 91346ac140d2f5a4cbf8fd197b97a880, type: 3}
   mumbleLoop: {fileID: 8300000, guid: af2c2e845fdf447989e78a96d646951a, type: 3}
   lullabyClip: {fileID: 8300000, guid: c2d2c2f1647abee43b661a782f74d22f, type: 3}
   screamClip: {fileID: 8300000, guid: 776443bfa4c9f8c4386eda8ab7660445, type: 3}
@@ -275,8 +275,8 @@ MonoBehaviour:
   huntMusic: {fileID: 6829636746587371178}
   breathLoop: {fileID: 0}
   breathSource: {fileID: 0}
-  burnHissLoop: {fileID: 8300000, guid: 8fcd18cbf0ea39b4fb416634b6b52cf6, type: 3}
-  blindShriekClip: {fileID: 8300000, guid: 5aa5ec7196ff5594fbc7f9357213e739, type: 3}
+  burnHissLoop: {fileID: 8300000, guid: d9b752d650a773d49aa170a722961110, type: 3}
+  blindShriekClip: {fileID: 8300000, guid: 7b14252eb8dbb244d89120a7f1a8b6a0, type: 3}
 --- !u!1 &258282525974353601
 GameObject:
   m_ObjectHideFlags: 0
