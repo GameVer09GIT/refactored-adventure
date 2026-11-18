@@ -19,7 +19,7 @@ Mọi phiên làm việc và tác vụ của AI trong workspace này bắt buộ
 ---
 
 ## 3. CÔ LẬP TÍNH NĂNG (FEATURE ISOLATION RULE)
-- **Tuyệt đối không can thiệp chéo:** Khi người dùng yêu cầu sửa một Slot đồ (ví dụ: Slot 2 - Radar) hoặc một tính năng cụ thể:
+- **Tuyệt đối không can thiệp chéo:** Khi người dùng yêu cầu sửa một Slot đồ (ví dụ: Slot 2 - Điện thoại) hoặc một tính năng cụ thể:
   - **TUYỆT ĐỐI KHÔNG** sửa đổi bất kỳ logic, tham số Transform, Pose IK, cường độ ánh sáng, góc xoay hay mã nguồn của các Slot/tính năng khác đã hoạt động ổn định (đặc biệt là Slot 1 - Flashlight).
   - Tách bạch logic xử lý theo từng `ItemType` hoặc component riêng biệt. Bất kỳ thay đổi dùng chung nào đều phải kiểm tra hồi quy trên các slot khác.
 

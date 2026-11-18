@@ -1,0 +1,248 @@
+# CHANGELOG — Khóa Hồn
+
+## Phase 0 — Khảo sát & kế hoạch (2026-11-05)
+- Commit WIP của MapKinhDi lên `main` (`8def707`), tạo nhánh `feature/khoa-hon-v2`.
+- Khảo sát dự án qua Unity MCP; ghi kết quả vào `PLAN.md` mục 1.
+- Thêm font OFL Be Vietnam Pro + Noto Serif và 4 TMP Font Asset Dynamic trong `Assets/_KhoaHon/Fonts/`; đã kiểm chứng hiển thị dấu tiếng Việt.
+- Tạo `CLAUDE.md`, `Docs/KhoaHon/PLAN.md`, `ASSETS_NEEDED.md`, `CHANGELOG.md`.
+- Chưa sửa scene hay code gameplay nào.
+
+## Phase 1 — Greybox & điều khiển (2026-11-05)
+- Scene mới `Assets/_KhoaHon/Scenes/KH_Main.unity` (đã thêm vào Build Settings sau `SampleScene`), dựng hoàn toàn bằng công cụ `KhoaHon/Build/2. Greybox Scene KH_Main`:
+  - Sân, cổng, hàng rào, đường 270 m, xe `Prop_Car_A`.
+  - Biệt thự 2 tầng, 10 phòng (`Room_*` có `RoomMarker`), cầu thang lên tầng 2 (dốc collider + bậc hiển thị), cửa bản lề.
+  - Hầm: cầu thang đá sâu 10 m, chiếu nghỉ + đống đá sập 2009, hành lang, xà lim, sảnh tế bát giác.
+  - NavMesh có area mới `Floor2` (index 3 trong NavMeshAreas): tầng 2 + nửa trên cầu thang.
+- Player: bản sao Player/Canvas/DeathScreenManager/EventSystem/SpawnPoint từ MapKinhDi (không lưu scene nguồn) → prefab `KH_Player.prefab`. Hotbar: Đèn pin · Máy ghi âm · Máy ảnh film · Xà beng (Radar gỡ khỏi hotbar chiến dịch).
+- Code mới (`Assets/_KhoaHon/Scripts`):
+  - Core: StoryFlags, GameEvents, SaveData/SaveSystem, GameManager, Checkpoint/CheckpointManager, HUD, ModalUI, TextTable, UIStyle, FlagActivator, RoomMarker.
+  - Interaction: PlayerInteractor (E, 2.2 m), DoorInteractable (khóa/chìa, mở ra xa người chơi), Pickup, ReadableDocument + DocumentReaderUI, InfoInteractable, StoryTrigger, KeyRing.
+  - Items: BatteryPool, FilmStock, FlashlightBatteryDrain (hook, không sửa FlashlightItem), Recorder/FilmCamera/Crowbar (cầm được), HotbarGate, RelicInventory, ToolsConfig.
+  - Notebook: NotebookManager + NotebookUI 5 tab, dữ liệu Document/Tape/Talisman/Relic/PhotoClue, KhoaHonDatabase.
+  - Debug: KhoaHonCheatPanel (F10), KhoaHonAutoWalker.
+- Dữ liệu: văn bản PROMPT mục 8 (tài liệu 1921–2009, 3 băng của Quân, 5 kỷ vật + 5 trang bùa, ảnh Quân gửi), TextTable tiếng Việt.
+- Code dùng chung bị sửa: chỉ thêm `Recorder, FilmCamera, Crowbar` vào cuối enum `ItemType`.
+- Test EditMode: 10 test (`Assets/_KhoaHon/Tests/Editor/KhoaHonCoreTests.cs`).
+
+## Hướng B — dùng map cũ, AI mới, model Blender (2026-11-05)
+- `KH_Main` giờ là bản sao `MapKinhDi_Ver1`, dựng bằng `KhoaHon/Build/3. Convert MapKinhDi → KH_Main (Hướng B)`. Greybox Phase 1 giữ ở `KH_Greybox.unity`. File map gốc không bị sửa.
+- Bố cục 10 phòng + hầm đặt trong biệt thự Villa1 (xem PLAN.md mục 10). Cửa gốc được chuyển thành cửa tương tác, tầng 2 chia phòng bằng mảnh tường gốc, vá 3 lỗ sàn hư, gỡ rào chắn cầu thang của bản demo, thêm dốc vô hình cho cầu thang chữ U.
+- Bà Quản Gia thay GhostAI demo: `HousekeeperBrain` (thuần, 11 test) + `HousekeeperAI` với tuần tra 16 waypoint, nghi ngờ (tiếng động, đèn pin rọi mặt), truy sát ×1.15 runSpeed, choáng (flash 3 s / lược 20 s), chế độ yếu, bắt → jumpscare → màn hình chết → hồi sinh ở checkpoint. Chỉ hoạt động ở area Floor2.
+- Trốn tủ / gầm giường (`HidingSpot`, 6 chỗ) + nín thở (`BreathHold`) + tiếng bước chân/chạy (`PlayerNoiseEmitter`).
+- Model `civilian_girl` mặc áo bà ba đen (thân, vạt, tay), tóc dài, chùm chìa khóa, da tái, mắt đục; Animator Idle/Walk/Run.
+- Blender (chạy nền): 22 model đạo cụ + icon hotbar + ảnh xem trước (`Tools/Blender/khoahon_props.py`). Vật cầm tay (máy ghi âm, máy ảnh, xà beng) dùng model Blender.
+- Âm thanh tự tổng hợp (`KhoaHonAudioSynth`): chùm chìa khóa kéo lê, hát ru "ầu ơ" (giai điệu tự viết), nhịp truy đuổi, thì thầm "chạy đi".
+- Ánh sáng: nến leo lét ở Phòng Thờ (`CandleFlicker`), đèn chập chờn ở hành lang tầng 2, ánh trăng rọi qua cửa sổ sảnh.
+- Test EditMode: 21/21.
+
+## Bản kinh dị + giao diện kiểu game Steam (2026-11-05)
+- **Luồng vào game như game thương mại** (`Scripts/UI`): màn cảnh báo nội dung → chỉnh độ sáng (lần đầu) → menu chính điện ảnh (biệt thự gothic trong đêm, cửa sổ đỏ ánh máu, sét chớp, nhạc hộp nhạc, tiêu đề chập chờn) → intro chữ gõ → vào game. Nút: Tiếp tục · Trò chơi mới · Cài đặt · Thông tin · Thoát, hộp xác nhận.
+- **Cài đặt đầy đủ** 4 tab — Hình ảnh (chế độ màn hình, độ phân giải, VSync, giới hạn FPS, chất lượng, FOV, làm mờ chuyển động, nhiễu hạt), Âm thanh (Tổng/Nhạc/Hiệu ứng/Môi trường/Giọng nói, phụ đề), Điều khiển (độ nhạy, bảng phím), Hiển thị (độ sáng, FPS, ngôn ngữ). Lưu PlayerPrefs; nút Mặc định/Áp dụng/Quay lại.
+- **Menu tạm dừng (Esc)**: Tiếp tục · Cài đặt · Tải lại điểm lưu · Về menu chính · Thoát. HUD tối giản: chấm tâm phóng to khi nhắm vật, thanh pin 5 ô, đếm FPS.
+- **Hậu kỳ kinh dị** (`KH_HorrorVolume` + `HorrorPostFX`): vignette, quang sai, nhiễu hạt, méo ống kính tăng khi bà Quản Gia lại gần; nhịp đỏ + tim đập khi bị truy sát.
+- **Máu me**: ~90 vết máu (vũng, vệt kéo, dấu tay, dấu tay trẻ con, máu chảy trên tường) đặt theo cốt truyện từng phòng; máu nhỏ giọt (particle) ở 5 điểm; sọ + xương lòi ra từ vách đường hầm (8 phu hồ), đống xương và móc treo trong sảnh tế; xác Quân bọc vải liệm thấm máu (model Blender `KH_XacQuan`) nằm trong vũng máu ở xà lim.
+- **Bà Quản Gia đáng sợ hơn**: máu thấm vào texture áo bà ba và da (mắt chảy máu, vạt áo đẫm máu), mắt đen ánh đỏ, dáng đi khập khiễng/giật cổ (`HousekeeperCreep`), tiếng thở, tiếng thét, nhạc truy đuổi mới; jumpscare mặt 3D áp sát ống kính + nhiễu đỏ + rung → màn "BẠN ĐÃ CHẾT" tiếng Việt.
+- **Âm thanh tự tổng hợp mới** (15 file): không khí nhà cũ, tiếng gõ/kẽo kẹt/thì thầm/đập cửa ngẫu nhiên sau lưng (dày hơn khi tỉnh táo thấp), stinger khi bị phát hiện, tim đập nhanh, jumpscare, hộp nhạc menu, âm UI.
+- Sửa: ảnh ma chụp người thật của `DeathScreenManager` cũ không còn hiện (tắt RawImage + tắt tiếng hét cũ, không sửa file gốc); ký tự `▮ ● →` không có trong font được thay.
+- Test EditMode: 21/21. Console 0 lỗi.
+
+
+## Blackwood A — Đa ngôn ngữ + nội dung kịch bản mới (2026-11-07)
+- Kịch bản mới `Kich_Ban_Game.docx` (Blackwood Manor: The Soul-Lock Curse). Định danh nội bộ giữ nguyên (`StoryFlag`, `Hanh`, id asset) để không vỡ save/test; chỉ đổi nội dung hiển thị. Ánh xạ kỷ vật: Moc → búp bê Annabelle, Thuy → thư khách trọ, Tho → lược Mrs. Peake (giữ choáng 20 s), Kim → búa Thomas, Hoa → giày Isabella (bài chú thứ 5).
+- `Loc` (Core/Localization.cs): ngôn ngữ Việt/Anh, mặc định Việt, lưu PlayerPrefs `kh_lang`, sự kiện `Changed`.
+- `TextTable` có cột `en`; `NotebookSource` có `titleEn/bodyEn`; `TapeData.Line.textEn`, `RelicData.pickupLineEn`, `TalismanData.chantLinesEn`.
+- Toàn bộ chữ song ngữ nằm ở `Editor/KhoaHonContent.cs`; `KhoaHonDataBuilder` đọc từ đó (175 key, 9 tài liệu, 3 băng, 5 kỷ vật + 5 trang Vademecum, thoại Lord Blackwood, 3 kết).
+- `CharacterProfile` (Evelyn, Alex) + `PlayerCharacter`; `GameManager.Character`, `GameFlow.PendingCharacter`; `SaveData` v2 có `character` (v1 tự chuyển, mặc định Evelyn). Intro theo nhân vật.
+- Cài đặt: chọn Tiếng Việt / English, đổi ngay; menu chính và menu tạm dừng dựng lại sau khi đóng Cài đặt.
+- Test: 27/27 (thêm 6 `LocalizationTests`). Ảnh: `Temp/KhoaHon/a_boot.png`, `a_settings_en.png`, `a_menu_en.png`.
+
+## Blackwood B — Nâng đồ họa URP (2026-11-07)
+- Giữ URP (người dùng chọn). Không sửa `Assets/Settings/*`: tạo bản riêng bằng `KhoaHon/Build/4. Graphics (URP + Quality)` (`KhoaHonGraphicsBuilder`).
+  - `Assets/_KhoaHon/Settings/KH_Renderer.asset` (Forward+): SSAO chất lượng cao, Decal, **sương thể tích**.
+  - `KH_URP_Low/Medium/High/Ultra`: bóng 1024→4096 (đèn phụ tới 8192), khoảng cách 25→70 m, 2→4 cascade, soft shadow; STP cho High/Ultra, render scale 0.75/0.85/1/1.
+  - QualitySettings thêm Low/Medium/High/Ultra (Mobile/PC giữ nguyên), mặc định Standalone = High. Cài đặt chỉ hiện 4 mức mới, lưu theo tên (`kh_quality_name`).
+- Sương thể tích tự viết cho Render Graph: `Scripts/Rendering/KHVolumetricFogFeature.cs` + `KHVolumetricFog` (VolumeComponent) + `Shaders/KH_VolumetricFog.shader`. Raymarch nửa độ phân giải, tán xạ ánh trăng có bóng (tia sáng qua cửa sổ) và đèn phụ Forward+ (chùm đèn pin, đèn treo), blur giữ cạnh theo depth, trộn `Blend One SrcAlpha`. Bỏ 0,8 m đầu và kẹp suy giảm gần nguồn để không chói ở tay cầm đèn. Chất lượng theo mức đồ họa.
+- Hậu kỳ `KH_HorrorVolume`: thêm Lift/Gamma/Gain, Split Toning (bóng lạnh, sáng ấm), Bloom chất lượng cao + lens dirt sinh thủ tục, DoF Bokeh (tự bật khi đọc tài liệu/sổ tay hoặc `HorrorPostFX.CinematicFocus`). Các Volume toàn cục cũ của MapKinhDi/greybox bị tắt — chỉ còn 1 profile.
+- Converter: đèn treo tầng 2 có bóng mềm; trăng lạnh bóng mềm; ambient gần đen; LightingSettings riêng `KH_LightingSettings` (không còn trỏ vào Flooded_Grounds); bake 40 reflection probe thành cubemap riêng (`Textures/Probes`, chế độ Custom).
+- Quyết định: máu vẫn là quad URP Lit (giữ độ bóng ướt; Decal Shader Graph mặc định không có smoothness). Decal để dành cho chữ máu/dấu chân night vision (Phase D). Chưa bake GI/APV (scene ~2.300 prefab Flooded_Grounds, bake rất lâu) — ánh sáng trực tiếp realtime phù hợp phong cách "một nguồn sáng".
+- Đo: editor 1080p mức High ~51 fps trên RTX 3050 Laptop. Test 27/27. Ảnh: `Temp/KhoaHon/b2_hall.png`, `b2_f2.png`, `b_fog_dense.png` (thử mật độ cao).
+
+## Blackwood C — Lớp giải đố (2026-11-08)
+- Logic thuần + test: `Scripts/Puzzles/PuzzleLogic.cs` (`SafeLock`, `AltarPuzzle`); `Tests/Editor/PuzzleTests.cs` (5 test).
+- `SafeKeypad`: két 4 vòng số ở Phòng Làm Việc, mã 1921 (ảnh gia tộc). UI lớp trên cùng: A/D chọn vòng, W/S/cuộn chuột/gõ số, Enter thử; sai 3 lần hiện gợi ý "năm cơ nghiệp bắt đầu". Mở xong nhấn E lấy đồ (Pickup không hình: chìa khóa cầu thang + Vademecum tập I + bản thiết kế hầm, tự mở tài liệu). Cờ `SafeOpened`.
+- `CandleStand` ×5 + `CandleAltar` ở Phòng Thờ: mỗi bệ dưới một tấm bia tên Mắt Trận (Annabelle, Vị khách không tên, Eleanor Peake, Thomas Hale, Isabella). Chọn trang Vademecum trong túi; đúng → nến bùng sáng; sai → nến tắt, −8 lý trí, tiếng động bán kính 14 m (Mrs. Peake nghe được). Đủ 5 → nhà rung (`CameraShake`), 5 xích rơi bằng vật lý, `CellarOpened` + Stage3 + lưu tại CP_Shrine.
+- `TapePlayer`: phát băng (rè + clip nếu có + phụ đề "Julian:" theo thời gian), vẫn đi lại được, dừng khi chết/tạm dừng, nghe hết hồi lý trí. Sổ tay: chọn băng + [Space]/Enter để phát.
+- `PryableWindow` ở cửa sổ sảnh (đóng ván): cần xà beng → hỏi xác nhận → `EndingDirector.Play(Coward)`.
+- `EndingDirector` (bản đầu): đặt cờ kết, lưu thành tích `kh_ending_*`, hook cutscene cho Phase F, màn chữ kết (tiêu đề, lời kể, thống kê thời gian/số lần chết/tài liệu), xóa save rồi về menu.
+- Âm thanh tổng hợp mới (`KhoaHonAudioSynthPuzzle.cs`): rè băng, click, núm két, mở két, sai mã, rung nhà, xích đứt, nến bùng/tắt, nạy cửa sổ.
+- Sửa: lỗi `GetComponent<Rigidbody>() ?? AddComponent` (null giả của Unity) khiến xích không rơi.
+- Ghi nhận cho Phase D: bàn thờ còn dáng Á Đông (bài vị sơn đỏ, đài sen) và các vệt máu nhỏ giọt trên cửa sổ trông như thanh nhựa → thay bằng bia đồng + giá nến sắt kiểu phương Tây, làm lại vệt máu.
+- Test 32/32. Ảnh: `Temp/KhoaHon/c_safe_wrong.png`, `c_altar_choice.png`, `c_altar_lit.png`, `c_tape2.png`, `c_flee_confirm.png`, `c_ending_coward.png`.
+
+## Blackwood D — Hai nhân vật và công cụ riêng (2026-11-08)
+- **Màn chọn nhân vật** (sau Trò chơi mới): 2 thẻ Evelyn / Alex (tên, vai trò, động cơ, công cụ, icon). `GameFlow.PendingCharacter`; nạp save tự lấy nhân vật trước khi thanh đồ khởi tạo. `CharacterLoadout` (thứ tự −150) gán slot 2–4 theo `CharacterProfile.hotbar`; slot 1 đèn pin không đụng.
+- **Evelyn**: máy ghi âm định hướng (`RecorderItem`): khi nghe, tiếng chìa khóa của Mrs. Peake pan trái/phải theo hướng + to dần khi gần, la bàn EVP trên HUD, thỉnh thoảng bắt được giọng EVP. Máy ảnh film có flash (`FilmCameraItem`, tốn phim, làm choáng). **Sơ đồ trinh thám** (phím M, `DetectiveMindMap`): bảng ghim 15 manh mối, 11 sợi chỉ đỏ có chú thích suy luận.
+- **Alex**: `ItemType.Phone`, `ItemType.NightVision` (thêm cuối enum). Điện thoại: flash tốn pin, cầm thì khung livestream phóng to. **Livestream** (`LivestreamChat` + logic thuần `ChatDirector`): LIVE, số người xem tăng theo độ sâu, người xem trêu chọc/sợ hãi theo tầng, tài khoản ma (chữ đỏ) báo trước khi Mrs. Peake đến gần hoặc đang săn (từ tầng 2). Máy quay nhìn đêm (`NightVisionItem`): khuếch đại sáng, tông xanh, hạt, đèn hồng ngoại, tốn pin, hiện **dấu vết ẩn** (`HiddenInk`): dấu chân huỳnh quang Sảnh → nắp hầm, chữ "1921", lời cảnh báo của Julian.
+- `FlashUtil` dùng chung cho 2 loại flash (nón 30°, tầm 9 m, kiểm tra che khuất → `HousekeeperAI.OnFlashed`). Tham số mới trong `ToolsConfig`.
+- **Model Blender mới** (`Tools/Blender/blackwood_props.py`, `KH_BW_*`): bia đồng, giá nến sắt rèn, Vademecum, Khối Cổ Vật, điện thoại, máy quay, xe sedan, biển báo, máy chữ, bóng ma Lord Blackwood. Phòng thờ đổi sang kiểu phương Tây (13 bia đồng treo tường, giá nến sắt, tủ gỗ sồi + khăn đỏ).
+- **Sửa lỗi lớn**: camera người chơi (từ MapKinhDi) tắt `renderPostProcessing` và không có tag MainCamera → mọi hậu kỳ chưa từng hiện khi chơi. Converter bật lại + khóa cứng trong `KhoaHonSettings.ApplyLive`. Cân lại tông màu: Tonemapping Neutral (ACES làm tối/ám xanh), phơi sáng nền +0.9, tắt Split Toning/LGG/SMH.
+- Test 35/35 (thêm `ChatDirectorTests`). Ảnh: `Temp/KhoaHon/d_alex_phone.png`, `d_nv_pp.png`, `d_evelyn_compass.png`, `d_mindmap.png`, `d_grade_test1.png`, `d_bw_preview.png`.
+
+## Blackwood E — Lý trí ẩn & Mrs. Peake (2026-11-08)
+- `Sanity/SanityModel` (thuần, 4 test) + `SanitySystem`: lý trí 5–100 không có thanh hiển thị. Giảm trong bóng tối (0.35/s), nhìn thẳng Mrs. Peake (3.5/s), bị săn (1.2/s); trốn trong tối không giảm; chỗ sáng (đèn pin bật hoặc gần đèn) hồi 0.6/s tới 75. 4 bậc → `GameEvents.SanityTierChanged`.
+- Hiệu ứng: quang sai dao động + nhịp tim to dần khi lý trí thấp (HorrorPostFX), bóng người thoáng qua ở rìa tầm nhìn biến mất khi quay sang nhìn, ảo thanh tiếng chìa khóa một bên tai (bậc 2–3).
+- `NoisyProp` (5 đồ vật ở hành lang tầng 2) + `PlayerPushProps` (người chơi xô ngã đồ, chạy thì mạnh hơn) → tiếng động bán kính 11 m → Mrs. Peake nghi ngờ. Đã kiểm chứng: xô ấm đổ → bà tới và bắt người chơi.
+- Âm thanh mới: `sfx_prop_clatter`, `sfx_prop_thud`.
+- Test 39/39.
+
+## Blackwood F — Cutscene & 3 kết thúc (2026-11-08)
+- `Sequences/CutsceneKit`: camera điện ảnh tạm thời (tắt camera + điều khiển người chơi, ẩn HUD/thanh đồ), letterbox, màn mờ đen/trắng, phụ đề cutscene, hình người tối.
+- **Giai đoạn 0 — vòng lặp cổng** (`GateLoopSequence`, chạy sau chữ mở đầu của Trò chơi mới): ngồi trong xe sedan (model Blender) trên đường z=−18, giữ W lái / S phanh / chuột nhìn quanh, đèn pha có bóng xuyên sương dày (Volume riêng). Lần 1 bóng phụ nữ giữa đường → phanh rít → tỉnh dậy trước cổng; lần 2 ba biển báo đổi thành tên người mất tích + radio khóc; lần 3 chết máy, đèn tắt, 2 cánh cổng sắt tự mở. Cờ GateLoop1–3. Đã kiểm chứng chạy trọn vẹn và trao quyền điều khiển trước bậc thềm dinh thự.
+- **Xà lim**: `JulianBody` — xem thi thể Julian → dòng chữ khắc, phản ứng riêng của Alex/Evelyn, nhận chiếc còi (FoundQuan, HasWhistle), −12 lý trí.
+- **Sảnh Tế** (`RitualSequence`): Khối Cổ Vật obsidian lơ lửng xoay trên vạc, bóng ma Lord Blackwood (vật liệu bán trong suốt phát sáng). Bước vào → 4 câu đàm phán với góc máy riêng (thoại riêng khi nói với Alex), DoF lấy nét theo chủ thể (`HorrorPostFX.FocusDistance`), rồi bảng lựa chọn. `EndingRules` (thuần, 2 test): Kết 1 cần đủ 5 kỷ vật + búa Thomas; Kết 2 cần bài chú thứ năm.
+- **3 kết** (`EndingCutscenes` → `EndingDirector.CutsceneHook`, có lưới an toàn timeout):
+  - I Giải thoát: kỷ vật vào vạc, lửa bùng, Cổ Vật vỡ (chớp trắng, rung), Lord tan biến, nhà rung → bình minh ngoài dinh thự (Volume trời quang).
+  - II Tân Chủ Nhân: đọc ngược bài chú thứ năm (chữ đỏ), oan hồn quỳ → "Vài tháng sau": cửa sổ tầng 2 có bóng người, xe đỗ trước cổng, "Vào đi…".
+  - Ẩn Kẻ Hèn Nhát: lái xe lúc 2 giờ sáng, quay lại thấy bóng quản gia ở ghế sau → Phòng 13 bệnh viện tâm thần (dựng trong converter, hình bát giác cào trên tường, tiếng cào).
+- Đếm số lần chết cho màn thống kê (`kh_deaths_run`, reset khi chơi mới).
+- Âm thanh mới: động cơ, phanh rít, chết máy, radio khóc, tiếng cào, Cổ Vật vỡ.
+- Sửa: camera cutscene là con của xe nên bị xóa theo xe (kết ẩn kẹt màn đen).
+- Test 41/41. Ảnh: `Temp/KhoaHon/f_gate1.png`, `f_gate3.png`, `f_after_gate.png`, `f_lord2.png`, `f_choice.png`, `f_nm1.png`, `f_release_end.png`.
+
+## Blackwood G — Giao diện & hệ thống chuẩn Steam (2026-11-08)
+- **3 ô lưu** (`SaveSystem`): `khoahon_save_{0..2}.json`, ô hiện tại nhớ trong PlayerPrefs, file cũ tự chuyển sang ô 1. Save thêm `savedAtTicks` + `playSeconds` (GameManager đếm giờ chơi).
+- **Menu chính**: Tiếp tục (ô mới nhất) · Trò chơi mới (chọn ô → hỏi ghi đè → chọn nhân vật) · Tải trò chơi (danh sách ô: nhân vật, chương, giờ chơi, ngày lưu) · Cài đặt · Thêm · Thoát.
+- **Thêm**: 3 thẻ kết thúc (khóa/mở), 11 thành tựu (`AchievementService`, có `IAchievementBackend` để gắn Steamworks sau), credits cuộn dọc.
+- **Màn tải** (`LoadingScreen`): nạp scene bất đồng bộ, tên dinh thự, mẹo chơi ngẫu nhiên (9 mẹo), thanh tiến trình, mờ dần — dùng cho Trò chơi mới/Tiếp tục/Tải/Về menu/Kết thúc.
+- **Cài đặt**: thêm Sương thể tích bật/tắt, nhóm Hỗ trợ (cỡ phụ đề 100/125/150%, rung camera bật/tắt).
+- Tên vật phẩm trên thanh đồ theo ngôn ngữ (bản sao ItemData lúc chạy, không ghi asset; đổi ngôn ngữ cập nhật ngay). `HotbarGate.ReplaceItem`.
+- Thống kê màn kết dùng giờ chơi thật. Phiên bản hiển thị 1.0.
+- Test 41/41. Ảnh: `Temp/KhoaHon/g_menu.png`, `g_slots.png`, `g_extras.png`, `g_loading.png`.
+
+## Blackwood H — Build Windows (2026-11-08)
+- Sửa lỗi có sẵn khiến bản build phát hành không biên dịch được: `PlayerArmIKTuningUI` chỉ tồn tại trong Editor/Development nhưng `PlayerController` và `HotbarInventory` gọi vô điều kiện → thêm bản rỗng cho bản phát hành (`IsVisible` luôn false). Không sửa PlayerController/HotbarInventory/IK.
+- `KhoaHon/Build/5. Windows Build (Blackwood Manor)` (`KhoaHonBuildTool`): chỉ KH_Main, mở lại scene từ đĩa trước khi build, productName "Blackwood Manor", xuất `Builds/BlackwoodManor/BlackwoodManor.exe`.
+- Kết quả: **Succeeded**, 0 lỗi, 490 cảnh báo, 1.516 MB, 73 phút (lần đầu biên dịch shader; URP Lit 6144 biến thể). Chạy thử 30 giây ở chế độ cửa sổ: không crash, Player.log không có exception (chỉ lỗi chứng chỉ mạng vô hại).
+- Chưa commit: thay đổi URP tự ghi khi build (`m_Prefiltering*` trong `Assets/Settings/*`, `KH_URP_*`, preloadedAssets/batching trong ProjectSettings, LightingData).
+
+## Blackwood I — Sửa lỗi hình ảnh: tay cầm, vật lơ lửng, máu, con ma (2026-11-08)
+- **Tay cầm đồ**: `PlayerArmIK` gập ngón cho mọi vật (trước chỉ đèn pin; Radar giữ nguyên tư thế cũ). Xà beng dùng chung HandPose/IK của đèn pin, nắm kín cán (thân dày ×1.35, thép sơn đỏ sẫm `M_KH_CrowbarSteel`). Máy ghi âm, máy ảnh, điện thoại, camera quay đêm xoay đúng mặt (ống kính ra trước, màn hình về người chơi). Thông số nằm trong `TuneHeldGrips` của converter.
+- **Vật lơ lửng** (`FixPlacement` chạy cuối converter): tờ biên bản 2009 dán sát cửa chính có đinh ghim (trước cách cửa 0,5 m), ván đóng cửa sổ sảnh áp mặt tường + đinh + texture gỗ thật, 13 bia tưởng niệm gắn lên bảng gỗ dựng trên bàn thờ (trước treo lơ lửng trước cửa sổ). Giấy tờ dùng texture giấy cũ có chữ viết tay (`T_PaperNote`). Balo của Julian là model Blender thật (`KH_BW_Backpack`) thay khối hộp trắng. Giá nến làm lại bằng thân tiện (bản cũ bị xoắn méo thành khối bát diện).
+- **Máu**: bỏ quad chữ nhật alpha-clip; thay bằng 103 URP Decal Projector chiếu lên sàn/tường/thảm (ôm theo gờ ván, không lộ khung). Texture sinh mới (`KhoaHonBloodTextures`): vết bắn có tia + giọt nòng nọc + sương li ti, vũng loang nhiều thùy, vệt kéo lê có sọc, dấu tay tách ngón/vân in/vệt trượt, máu chảy trên tường có hạt đọng; mép mềm, viền khô sẫm, normal map theo độ dày. Thêm ~25 vết máu dọc sảnh → cầu thang → hành lang tầng 2 (tường tìm bằng raycast).
+- **Con ma (Mrs. Peake)**: bỏ áo bà ba khối cứng + màu phẳng. Giữ lưới skinned và normal map gốc của civilian_girl, albedo xử lý thành xác chết kiểu Banshee (`KhoaHonBansheeTextures`): da xám tái có gân, hốc mắt thâm đen, tròng trắng đục phát sáng nhẹ, nước mắt máu, máu trào miệng xuống cổ, khoang miệng tối, tóc xám bết, quần áo vải trắng ngà bẩn đẫm máu. Dáng cao gầy (scale 0.96/1.08/0.96). `HousekeeperCreep` thêm há hàm như đang gào (hàm + môi trên, mở rộng khi truy đuổi).
+- Không sửa file asset pack (texture mới ghi vào `Assets/_KhoaHon/Textures/Housekeeper`, `Textures/Gore`).
+- Test 41/41. Ảnh: `Temp/KhoaHon/i_crow3.png`, `i_cam3.png`, `i_rec3.png`, `j_phone2.png`, `j_nv2.png`, `v_doc.png`, `v_plaque.png`, `n_ghost2.png`, `n_crowbar_hall.png`, `blood_preview.png`.
+
+## Blackwood J — Nâng cấp toàn diện: tự vệ bằng đèn pin, con ma mới, giông bão, âm thanh, giao diện (2026-11-16)
+- **Tự vệ bằng đèn pin** (`AI/LightExposure` thuần + 6 test): rọi thẳng tia đèn (hướng thật của bóng đèn) vào mặt Mrs. Peake trong 8,5 m → bà chậm dần (tới 42% tốc độ), đủ 1,7 s thì chói mắt choáng 3,5 s, loạng choạng lùi, sau đó còn lóa 2,2 s (chỉ thấy trong 2,5 m) và mất dấu (Suspicious) thay vì lao tới ngay. Bà "nhờn" đèn 15 s sau mỗi lần (mắt rực đỏ, vòng báo đỏ) nên không lạm dụng được; rọi làm chói tốn thêm 2,2% pin/giây. `StunCause.Light`, `HousekeeperBrain.OnBlinded`. Thông số ở `HousekeeperConfig` (nhóm "Chống lại bằng đèn pin"). Vòng tròn quanh tâm ngắm đầy dần khi rọi trúng; gợi ý hiện 2 lần đầu bị đuổi; thành tựu `first_blind`; 3 mẹo màn tải mới.
+- **Con ma làm lại bằng Blender** (`Tools/Blender/housekeeper_garments.py` → `Tools/Blender/out/characters/KH_HK_Garments.fbx`): váy tang dài thời Victoria xòe có nếp, gấu rách chấm đất; khăn choàng vai bám theo thân; tóc đen dài rũ hai bên má (3 lớp, ~150 lọn dải phẳng, texture sợi alpha). `KhoaHonHousekeeperLook` gắn lưới vào đúng xương civilian_girl (tính lại bindpose theo xương gốc — lệch 0,0 cm), vẽ thân áo bó/tay dài/cổ cao + viền ren thẳng lên texture thân theo vùng UV (bàn tay vẫn là da tử thi), sinh texture vải đen sờn + normal, texture tóc. Xem trước không đụng scene: menu `KhoaHon/Build/Preview Housekeeper Look` → `Temp/KhoaHon/hk_look_*.png`. Không sửa file asset pack.
+- **Chuyển động mượt**: bỏ khựng hình/random tốc độ mỗi khung; ngưỡng blend = tốc độ thật của clip (đi 1,68 m/s, chạy 5,58 m/s) và tốc độ phát khớp tốc độ di chuyển → hết trượt chân; tự xoay người mượt (không bẻ góc tức thời), giảm tốc khi quay gắt, nghiêng người vào cua; giật cổ có nội suy; khập khiễng theo quãng đường. `HousekeeperBodyIK` (IK Pass): quay đầu dõi theo người chơi, giơ hai tay che mặt về phía nguồn sáng khi bị rọi.
+- **Không khí**: `StormDirector` (mưa trên mái + gió rít stereo, đục đi khi ở trong nhà; chớp dùng chính đèn trăng nên hắt qua cửa sổ thành luồng sáng trong sương, sấm đến sau), `DustMotes` (bụi chỉ hiện trong luồng đèn), `PresenceFX` (bà ở gần mà chưa thấy bạn: đèn pin nhiễu chập chờn + rè điện, hơi thở hóa khói).
+- **Âm thanh**: `AudioOcclusion` (tiếng bà bị tường che thì đục), `HousekeeperFootsteps` (bước chân nặng trên sàn gỗ theo sải chân), `TensionMusic` (drone nền + cụm dây nghịch tai dâng theo mức nguy hiểm/lý trí). Clip tổng hợp mới (`KhoaHonAudioSynthAtmos`, `KhoaHonAudioSynthCombat`): mưa, gió, 3 tiếng sấm, cụm dây, drone (đều stereo), 4 bước chân, rè điện, tiếng rít khi bị rọi, tiếng thét chói mắt.
+- **Giao diện**: `ObjectiveTracker` (mục tiêu theo chương ở góc trên trái, tự mờ, bấm [O] để xem lại) + thẻ phím điều khiển lần đầu vào chơi; Cài đặt thêm **Độ khó** (Dễ/Thường/Ác mộng — `Core/Difficulty`: tốc độ đuổi, tầm nhìn, thời gian rọi/nhờn đèn) và bật/tắt bụi không khí; nền menu chính chuyển mượt (bỏ 2 tấm phẳng lộ mép).
+- **Chưa làm (chờ duyệt)**: gom thư mục về `Assets/BlackwoodManor` + `Assets/ThirdParty` và đổi tên đồng bộ `KhoaHon`/`KH_` → `Blackwood`/`BW_` — đụng tới quy tắc "không sửa asset pack" trong CLAUDE.md nên cần người dùng xác nhận.
+
+## Blackwood K — Gom thư mục và đổi tên thống nhất (2026-11-17)
+- `Assets/` chỉ còn `BlackwoodManor/` (code + asset của game), `ThirdParty/` (Flooded_Grounds, Abandoned_Asylum, FpsHorrorKit, civilian_girl, ZNS3D), `Plugins/`, `TextMesh Pro/`, `Resources/DOTweenSettings.asset`. Các thư mục cũ ở gốc (`_KhoaHon`, `Scripts`, `Editor`, `Audio`, `Ghost`, `Items`, `Prefabs`, `UI`, `Animation`, `Settings`, `MapKinhDi*`, `_Recovery`, terrain, báo cáo .txt) đã gộp vào `BlackwoodManor/` theo loại (script cũ → `Scripts/`, công cụ cũ → `Editor/Setup/`, scene gốc → `Scenes/Source/`, URP → `Settings/URP/`…). Di chuyển bằng `AssetDatabase.MoveAsset` nên GUID và mọi tham chiếu giữ nguyên; không sửa nội dung asset pack.
+- Đổi tên: 149 asset `KH_*`/`KhoaHon*` → `BW_*`/`Blackwood*` (scene chính nay là `BW_Main.unity`), namespace `KhoaHon.*` → `Blackwood.*`, `HorrorGame.Inventory` → `Blackwood.Inventory`, `HorrorGame.Lighting` → `Blackwood.Lighting`, `HorrorAudio` → `Blackwood.PlayerAudio`, lớp `KhoaHonX` → `BlackwoodX`, `KHVolumetricFog*`/`KHButtonFX` → `BW*`, menu `Blackwood/Build/...`, shader `Hidden/Blackwood/VolumetricFog`. 173 file code được sửa đường dẫn cứng + tên. `Tools/Blender/khoahon_props.py` → `props_common.py`, FBX/icon trong `Tools/Blender/out` đổi tiền tố theo. Tài liệu chuyển sang `Docs/Blackwood/`.
+- Giữ nguyên có chủ ý: khóa PlayerPrefs `kh_*`, file lưu `khoahon_save_*.json`, các lớp global cũ (`PlayerController`, `GhostAI`, `DeathScreenManager`…), tên object bên trong file FBX.
+- Kiểm chứng: biên dịch 0 lỗi, test 47/47 (`Blackwood.Tests`), converter dựng lại `BW_Main` trọn vẹn (41 model Blender, 13 cửa, NavMesh, 40/40 reflection probe), chơi thử: menu → sảnh → rượt đuổi/chói mắt chạy như trước. Ảnh: `Temp/Blackwood/r_*.png`.
+- Các mục lịch sử phía trên vẫn ghi đường dẫn/tên cũ (`Assets/_KhoaHon`, `KH_*`, `KhoaHon*`) — đọc theo bảng đổi tên này.
+
+## Blackwood L — Chất liệu đạo cụ, model mới, ngoại hình người chơi, sửa lỗi vật liệu tự đổi (2026-11-17)
+- **Chất liệu PBR cho toàn bộ 41 model Blender** (trước chỉ là màu phẳng): `props_common.box_uv` trải UV chiếu hộp theo kích thước thật (mét × mật độ của từng vật liệu, vân gỗ/thớ xương chạy dọc mảnh, vật nhỏ tối thiểu 2,5 lần lặp). `BlackwoodPropTextures` sinh texture lặp liền mạch cho 16 loại bề mặt (sắt gỉ rỗ, gỉ bong vảy, đồng thau xỉn xanh + xước, crôm, gỗ vân + nứt, sơn mài rạn, vải dệt, da nhăn, giấy ố, nhựa, sơn tróc, sáp chảy, đá, xương rỗ, da người, máu khô) gồm albedo riêng từng vật liệu + normal + mask (kim loại/AO/độ nhẵn), áp cho 39 vật liệu đạo cụ và thân đèn pin (khía nhám, không đụng transform/IK/đèn). Menu `Blackwood/Build/Prop Textures (regenerate)`, `Preview Props` (→ `Temp/Blackwood/props_*.png`), `2b. Import Blender Models` (chỉ nhập lại model, không dựng scene).
+- **Model làm lại**: điện thoại (khung kim loại, mặt kính, cụm camera viền crôm, nút bên), máy quay đêm (ống kính nhiều nấc, vòng hồng ngoại, báng + quai da, ống ngắm, màn lật mở), ô tô sedan (biên dạng nắp máy/cốp, khoang kính thu hẹp, trụ A/B/C, hốc bánh, cản, lưới tản nhiệt, gương, tay nắm, biển số), máy chữ (40 phím tròn chân crôm, quạt cần chữ, cuộn ruy băng, trục cao su, cần xuống dòng), biển báo (bu lông), bóng ma Lord Blackwood (dáng người tiện tròn, mặt có râu quai nón, gậy; hợp thành một lớp vỏ kín bằng voxel remesh nên vật liệu trong suốt không lộ "ruột"). Màn hình điện thoại hiện giao diện livestream, màn lật máy quay hiện khung ngắm nhìn đêm (UV màn hình khít 0..1, `ScreenMaterial`).
+- **Ngoại hình người chơi** (`BlackwoodPlayerLook` + `Characters/PlayerLook`): Evelyn mặc áo khoác len dài tay sơn thẳng vào bản sao texture thân (albedo/normal/mask, viền cổ tay), Alex giữ áo thun tay trần; cả hai có normal chi tiết dày cho da (lỗ chân lông, nếp) và vải (sợi dệt) nên tay nhìn sát camera không còn bệt. Đổi theo nhân vật lúc chạy, không đụng xương/IK/tư thế. Xem trước: `Blackwood/Build/Preview Player Look` → `Temp/Blackwood/pl_*.png`.
+- **Sửa lỗi cũ "vật liệu tự đổi sau khi Play"**: trên Unity 6, ShaderGUI của URP chỉ giữ `_EMISSION` khi cờ GI có `RealtimeEmissive`; vật liệu tạo bằng script để `None`/`EmissiveIsBlack` nên bị tắt phát sáng và đổi blend mỗi lần Unity kiểm tra lại. Hậu quả thật: mắt Mrs. Peake không đỏ/lóe được khi bị rọi, bóng ma Lord không phát sáng. `BlackwoodMaterialUtil.Emissive` + `Validate` dùng ở mọi chỗ tạo vật liệu; Lord Blackwood chuyển sang blend Additive. Sau khi Play không còn file `.mat` nào bị ghi đè. (`M_RadarScreen` của Slot 2 cũng mất phát sáng theo lỗi này — chưa sửa vì quy tắc cô lập Slot 2; Radar không còn trên thanh đồ.)
+- **Mục tiêu sau khi nạp save**: `ObjectiveTracker` tự bắt kịp chương khi nạp file lưu (trước hiện "Vào dinh thự Blackwood" dù đang ở tầng 2).
+- Kiểm chứng: biên dịch 0 lỗi, test 47/47, converter dựng lại `BW_Main`. Nạp được file lưu cũ (`khoahon_save_1.json`, Alex, tầng 2) sau khi đổi tên: đúng nhân vật, chương, checkpoint, thanh đồ. Chơi mới với Evelyn qua trọn intro → cổng; đi qua 6 checkpoint: 67–79 FPS trong Editor. Rọi đèn vào Mrs. Peake: độ chói đầy → che mặt → choáng → nhờn đèn. Ảnh: `Temp/Blackwood/props_*.png`, `pl_*.png`, `v5_*.png`, `v6_hk_*.png`, `t_tour_*.png`.
+- Lưu ý khi test: game tự lưu đè slot đang chơi (khi chết, khi qua checkpoint) — thử trên bản chép (slot 2), không thử trên save thật.
+
+## Blackwood M — Chơi thử trọn game tự động, sửa lỗi vặt (2026-11-17)
+- **Tờ biên bản trên cửa chính** không còn lơ lửng giữa khung cửa khi cửa mở: giấy (kèm đinh ghim) là con của bản lề cánh cửa nó dán lên, cửa sập sau lưng thì tờ giấy nằm đúng mặt trong cánh cửa.
+- **Chơi thử tự động** (`Editor/BlackwoodPlaytest`, menu `Blackwood/Test/...`): đi trọn từ menu → cổng → cửa chính → két sắt (1921) → cửa cầu thang → 5 kỷ vật → trốn tủ khi Mrs. Peake đứng ngoài → bàn thờ nến → hầm → thi thể Julian → đàm phán với Lord Blackwood → kết thúc → về menu, bằng đúng các tương tác thật; kiểm tra cờ/chương/chìa sau từng bước, đếm lỗi Console, chụp ảnh mốc. Kết quả: Evelyn/Giải thoát 36/36, Alex/Tân Chủ Nhân 36/36, kết ẩn (cửa sổ) 11/11, đi bộ thật qua 15 chặng 18/19 (bước còn lại do điểm đích đặt lẫn vào giường, đã sửa). 0 lỗi Console, 0 lần chết. Chạy trên slot lưu 2 — không đụng save thật.
+- **Hộp xác nhận "bỏ trốn qua cửa sổ" không bấm được**: trong lúc chơi, hộp này không mở khóa chuột và không chặn điều khiển (mỗi lần bấm chuột PlayerController lại khóa chuột). Nay mở qua `ModalUI` khi đang chơi/tạm dừng, Esc = Không, menu tạm dừng nhường phím Esc.
+- **Vật lún sàn / đặt sai** (`BlackwoodAudit` dò, converter `Settle` sửa): búp bê kỷ vật lún 21 cm (chỉ ló đầu), két sắt lún 45 cm, búa của Thomas cắm đứng xuống sàn (nay nằm nghiêng), lược lún vào bàn, băng cassette lơ lửng 4 cm; "đèn bàn" là đèn chùm treo nằm dưới gầm bàn → thay bằng cây nến trên mặt bàn.
+- **Đồ nhặt là hộp vàng giữ chỗ** → model Blender thật: pin cỡ D, hộp phim 35 mm, băng cassette (nhãn giấy, ô kính, 2 lõi), tờ báo 1953 gấp quăn.
+- **Bóng đổ**: 17 đèn điểm/đèn chiếu cùng đổ bóng (84 shadow map > atlas 4096) làm URP bóp độ phân giải mỗi khung — Console báo 6.021 lần trong một lượt chơi. `Rendering/ShadowBudget` chỉ cho 2 đèn điểm + 2 đèn chiếu gần camera đang hiển thị nhất đổ bóng (kể cả menu, cảnh cắt); đèn pin không bị đụng.
+- **Cầu thang chữ U**: NavMesh (leo 0,75 m) cho Mrs. Peake đi tắt trèo qua đầu vách giữa hai vế thang; thêm tấm chặn vô hình dọc vách, đường NavMesh giờ đi qua chiếu nghỉ.
+- **Âm thanh** (đo bằng số: đỉnh, RMS, DC, cắt đỉnh, tiếng tách chỗ nối vòng lặp): `sfx_jumpscare` bị cắt đỉnh, `jumpscare_scream` cũ quá to (RMS −2,5 dB, gần sóng vuông) → hạ còn −10 dB và lọc bớt phần chói; khử lệch DC. Bộ tổng hợp có tầng master (khử DC + giới hạn −1 dBFS) nên clip sinh mới không bao giờ cắt đỉnh. Mọi vòng lặp nối mượt. Sau sửa: 0/186 file có vấn đề.
+- **Lỗi khác**: nguồn tiếng rít của Mrs. Peake tạo bằng `AddComponent` tự phát khi chưa có clip (cảnh báo "Only custom filters…") → tạo sẵn trong builder; converter từng dừng giữa chừng vì Windows khóa file `T_PaperNote.png` (IOException 1224) → mọi chỗ ghi PNG dùng `BlackwoodDataBuilder.WriteBytesIfChanged` (bỏ qua nếu không đổi, thử lại khi bị khóa); Build Settings để `SampleScene` demo đứng đầu → `BW_Main` đứng đầu, scene cũ tắt; component mất script trong `BW_Player.prefab` (greybox); màn hình Radar mất phát sáng (cờ GI) — quy tắc không đụng Slot 2 được người dùng bỏ; bóng ma Lord bớt chói, nền chữ lựa chọn ở Sảnh Tế tối hơn cho dễ đọc, bỏ viền răng cưa ở băng mũ.
+- Kiểm chứng chữ: 397 khóa TextTable đủ tiếng Việt + tiếng Anh, mọi khóa dùng trong code đều có.
+
+## Blackwood N — Pin riêng cho từng dụng cụ, sửa đèn pin, trang phục 3D người chơi, soát âm thanh (2026-11-17)
+- **Đèn pin hết pin vẫn sáng / không tắt được / đổi slot vẫn sáng** — nguyên nhân: coroutine tăng sáng của `FlashlightItem` chạy xong mới đặt cường độ tối đa, đè lên lệnh tắt của hệ thống pin; nhịp chập chờn khi pin yếu (và khi Mrs. Peake ở gần) "khôi phục" bằng cách bật lại đèn. Nay `SetLightStateImmediate` dừng coroutine trước, coroutine kết thúc bằng trạng thái hiện tại, chập chờn tách thành `SetFlicker` (không đổi trạng thái bật). Hết pin thì đèn tắt hẳn, bấm lại chỉ nghe tiếng công tắc + gợi ý; đổi slot thì tắt. Không đụng IK/tư thế/vị trí/thông số đèn.
+- **Pin riêng cho từng dụng cụ** (`Items/PowerCells`, thuần + 6 test): đèn pin = pin đại D, máy ghi âm = pin tiểu AA, điện thoại = sạc dự phòng (đèn flash + hao nhẹ khi cầm, hết thì màn hình tắt), kính nhìn đêm = pin máy quay. HUD hiện thanh pin của dụng cụ đang cầm + số pin dự phòng. **Phím R** thay pin (`Items/BatteryReload`, 1,1 s, tiếng tháo/lắp), hết dự phòng thì báo phải đi tìm; đang bật đèn mà thay (pin yếu) thì lắp xong đèn tự sáng lại, dòng gợi ý "nhấn [R]" tự tắt khi đã thay. Mỗi nhân vật bắt đầu với 1 viên dự phòng mỗi loại.
+- **Hết pin nhanh**: trước đây mọi dụng cụ ăn chung một cục pin (kính nhìn đêm của Alex 1,1 %/s + rọi Mrs. Peake 2,2 %/s rút cạn đèn pin). Nay đèn pin 1/6 %/s (≈ 10 phút liên tục), rọi Mrs. Peake 0,5 %/s, máy ghi âm 0,2 %/s, kính nhìn đêm 0,42 %/s (≈ 4 phút), flash điện thoại 4 %/lần.
+- **Pin rải trong dinh thự**: 10 viên mới (2 D, 3 AA, 2 sạc dự phòng, 3 pin máy quay) đặt sát tường phòng gia nhân, phòng làm việc, phòng ngủ chủ, phòng khách, bếp, thư viện, phòng trẻ, hầm; model Blender mới `BW_BatteryAA`, `BW_PowerBank`, `BW_CamPack`. Pin của dụng cụ mà nhân vật không có thì tự ẩn. File lưu ghi điện + dự phòng từng loại (save cũ tự chuyển).
+- **Trang phục 3D cho tay người chơi** (`BlackwoodPlayerGarments`): tay áo dày có cổ tay áo phồng, dựng thẳng từ lưới tay civilian_girl (giữ UV/bindpose/trọng số → khớp IK cầm đồ, không cần Blender). Alex: áo nỉ xám than + **găng tay da** (bàn tay nữ của model gốc không còn lộ), Evelyn: áo khoác len có tay áo nổi khối. Găng chỉ bật khi chơi Alex.
+- **Soát âm thanh** (đo LUFS trọng số K, phân bố phổ, dò tiếng tách, mép đầu/cuối, mối nối vòng lặp + ảnh phổ từng file): tầng `Polish` mới — lọc thông cao 24 Hz (hạ âm vô ích, mối nối vòng lặp không giật), vào 1 ms/tắt 8 ms cho âm một lần (hết "tách" ở đầu/cuối, vd. `sfx_jumpscare`, `sfx_safe_tick`), hạ jumpscare/tiếng thét/rít chói/phanh xe ~3 dB (gần sóng vuông, chói tai). Sửa riêng: `sfx_safe_wrong` từng là bản sao y hệt `sfx_prop_thud` → âm chốt két bị chặn riêng (2 cú cạch + chốt rung + đùng); `sfx_scratch_loop` chỉ là tiếng xì trên 10 kHz → tiếng cào móng tay dải giữa có hạt dính-trượt; chìa khóa leng keng bớt chói; tiếng xèo khi bị rọi bớt rít; nhạc truy đuổi thêm quãng tám cho nền trầm nghe được trên loa nhỏ.
+- **Lỗi giao diện**: với Alex, khung chat livestream đè lên thẻ phím điều khiển lúc mới vào game (chữ chồng nhau) → thẻ phím dời sang góc dưới phải khi có khung chat. `BlackwoodHUD.ClearSubtitle` để lại ô nền trống (gặp khi dừng băng cassette) → ẩn luôn nền.
+- Kiểm chứng: biên dịch 0 lỗi; test 53/53 (thêm 6 `PowerCellsTests`); converter dựng lại `BW_Main` không cảnh báo (48 model Blender, trang phục cho 2 cánh tay, 40/40 reflection probe). Chơi thử tự động trên slot 2: Evelyn/Giải thoát 47/47, Alex/Tân Chủ Nhân 48/48, 0 lỗi Console, 0 lần chết — gồm các bước pin: cạn thì đèn tắt hẳn, bấm lại không sáng, R thay đúng, hết dự phòng không thay được, thay lúc đèn còn sáng thì lắp xong tự sáng lại, đổi slot thì tắt, (Alex) kính nhìn đêm cạn pin máy quay thì tắt và không ăn pin đèn pin. `BlackwoodAudit`: 10 viên pin mới nằm sát sàn, không lơ lửng/lún. Âm thanh soát bằng số đo + ảnh phổ, **chưa có người nghe thẩm định bằng tai**. Ảnh: `Temp/Blackwood/pl_*.png`, `pt_*_bat_swapped.png`, `audio/spec_*.png`.
+
+## Blackwood O — Thu gọn map + sương mù, bóng ma Lord mới, âm thanh ElevenLabs (đợt 1) (2026-11-18)
+- **Thu gọn map** (`BlackwoodVillaConverter.TrimPlayArea`, vùng `VisibleArea` x −45..225, z −130..100 quanh dinh thự): xóa 427 vật thể của map gốc nằm hẳn ngoài vùng (≈ 2 triệu tam giác, 101 đèn), gồm cả tầng hầm cũ `MapDuoiLongDat` dưới sân nam (1.483 renderer + 96 đèn, không ai tới được — hầm của game nằm dưới Nhà Bếp). Sương exp² 0,012 → 0,017 (còn ≈ 4 % ở 100 m) và camera người chơi chỉ vẽ tới 170 m nên ngoài vùng là sương mù. Người chơi vẫn bị chặn trong sân bởi tường vô hình có sẵn (`Bound_*`, nằm gọn trong vùng).
+- **Probe phản chiếu**: 40 probe của map gốc đều nằm trong tầng hầm cũ (cách dinh thự ~100 m, không phục vụ phòng nào) → thay bằng 12 probe đặt đúng từng khu (sảnh, bếp, phòng làm việc, thư viện, 5 khu tầng 2, hầm, Sảnh Tế, sân), hộp chiếu theo kích thước phòng.
+- **Bóng ma Lord Blackwood** làm lại (Blender, vì tài khoản API Tripo đang 0 credit): bỏ hai chân ghép khối, áo choàng đuôi tôm dài loe rồi rủ thành viền vải rách lơ lửng, tay áo nhiều nấc, ve áo, ngón tay; một lớp vỏ kín (voxel 6,5 mm) làm mịn 17 lượt + nếp vải bằng nhiễu (84k tam giác). `Horror/GhostFloat`: nhấp nhô, nghiêng nhẹ, hào quang phập phồng.
+- **Âm thanh ElevenLabs (đợt 1, 10 file)**: mưa trên mái, gió hú, sấm gần, chùm chìa khóa kéo lê, tiếng thét Mrs. Peake, tiếng rít khi bị rọi, tiếng xèo, hơi thở khò khè, jumpscare, cửa kẽo kẹt. `BlackwoodAudioEL`: giải mã bằng Unity, cắt lặng, nối vòng, khớp độ to BS.1770 với bản tổng hợp cũ (giữ cân bằng âm lượng đã chỉnh), nén mềm cho âm có đỉnh nhọn → `Audio/EL/*.wav`; mọi công cụ nạp clip qua `BlackwoodAudioSynth.Load` (ưu tiên bản ElevenLabs). Còn ~30 hiệu ứng, 3 bản nhạc, giọng Lord Blackwood chờ đợt sau (gói miễn phí giới hạn số lượt tạo mỗi phút).
+- Kiểm chứng: biên dịch 0 lỗi, test 53/53, converter dựng lại `BW_Main` (13 cửa, 12/12 probe), chơi thử tự động Evelyn/Giải thoát 47/47, 0 lỗi Console, 0 lần chết; trong Editor 107 FPS ở cổng (trước 67–79). Lần dựng đầu lỡ xóa gốc `Door` (chứa 13 cửa của dinh thự, tưởng thuộc tầng hầm) — chơi thử bắt được, đã sửa. Âm thanh soát bằng số đo, chưa có người nghe bằng tai.
+
+## Blackwood P — Âm thanh ElevenLabs đợt 2: nhạc, giọng Lord Blackwood, toàn bộ hiệu ứng (2026-11-18)
+- **Nhạc mới (ElevenLabs Music)**: chủ đề menu (hộp nhạc lệch tông + dây trầm + hợp xướng xa, 58 s), nhạc truy đuổi (trống taiko + dây tremolo + kèn đồng, 43 s), nền u ám khi khám phá (drone cello/contrabass, 43 s). Nối vòng đan chéo 2,5 s.
+- **Giọng Lord Blackwood** (giọng "Romulus II — Deep, Mysterious", `eleven_v4` có chỉ dẫn diễn xuất: thì thầm, cười khẽ, thở dài): 10 câu tiếng Việt + tiếng Anh, có bản riêng cho Alex (xưng "anh", "em trai anh"). `RitualSequence` phát giọng theo ngôn ngữ đang chọn, phụ đề giữ đến hết câu, tiếng thì thầm nền nhỏ lại khi có giọng. Thiếu 3 câu (câu 3 tiếng Anh, câu 3 bản Alex cả hai thứ tiếng) vì ElevenLabs khóa gói miễn phí giữa chừng — các câu này chỉ hiện phụ đề, không lùi về câu của Evelyn (khác xưng hô).
+- **Hiệu ứng ElevenLabs** thay bản tổng hợp: nền nhà, sấm xa, hát ru, stinger phát hiện, gõ cửa, thì thầm, đập cửa, tim đập, két mở/sai mã, xích đứt, vỡ Cổ Vật, nhà rung sập, cạy ván, quẹt diêm/tắt nến, cào cửa, xe chạy/phanh/chết máy, radio khóc, bấm cassette, tháo/lắp pin, đồ rơi, đèn rè, 4 biến thể bước chân Mrs. Peake. Giữ bản tổng hợp cho `sfx_safe_tick` (bản ElevenLabs là 6 tiếng tách thay vì 1) và `sfx_prop_clatter` (bản ElevenLabs gần như im lặng, chỉ còn tiếng xì) — soát bằng ảnh phổ.
+- ElevenLabs: tổng cộng ~4.000/10.000 credit tháng; tài khoản miễn phí bị khóa tạo mới ("Unusual activity… Free Tier access has been disabled") sau khi chạy liên tục nhiều đợt.
+- Kiểm chứng: biên dịch 0 lỗi, test 53/53, converter dựng lại `BW_Main`, chơi thử tự động Evelyn/Giải thoát 47/47 và Alex/Tân Chủ Nhân 48/48, 0 lỗi Console, 0 lần chết; cảnh Lord đàm phán dài 32–35 s (trước 24 s) do phụ đề chờ giọng đọc hết. Âm thanh soát bằng số đo + ảnh phổ, chưa có người nghe bằng tai (nhất là giọng tiếng Việt của Lord).
+
+## Blackwood Q — Tờ biên bản trên cửa chính hết lơ lửng (2026-11-18)
+- **Nguyên nhân thật**: đợt M đã gắn tờ giấy làm con của cánh cửa, nhưng nó vẫn mang cờ **Static** (do `GB.Readable` đặt). Unity gộp lưới mọi vật Static lúc chạy game (static batching) nên tờ giấy + đinh vẫn được vẽ ở chỗ cũ dù transform đã quay theo cửa → mở cửa là thấy tờ giấy đứng giữa khung cửa. Bài chạy thử cũ chỉ kiểm tra quan hệ cha–con nên không bắt được.
+- Sửa: bỏ cờ Static cho tờ giấy và đinh khi gắn vào cửa; thêm bước chung trong converter bỏ cờ Static cho mọi vật con của `DoorInteractable` (sau này gắn gì lên cửa cũng không bị lại). `BlackwoodPlaytest` kiểm tra thêm cờ Static.
+- Kiểm chứng: trong Play mở cửa chính — cửa xoay 100°, tờ giấy dời theo (80,00; 7,44) → (79,32; 7,90), `isPartOfStaticBatch = False`; ảnh trước/sau (`Temp/Blackwood/note_closed.png`, `note_open.png`) khung cửa trống. Chơi thử Evelyn 47/47, 0 lỗi Console.
+
+## Blackwood R — Thân 3D riêng cho Alex (2026-11-18)
+- **Nguồn model**: Tripo Studio tạo được model nhưng muốn xuất file phải mua gói trả phí, còn API Tripo đang 0 credit → dùng **TRELLIS** (Microsoft, giấy phép MIT) qua Hugging Face Space miễn phí (`Tools/Tripo/trellis_gen.py`) để dựng model từ ảnh tham chiếu Alex (`Tools/Tripo/alex_ref.png`): áo nỉ có mũ, ba lô, jean, giày, texture 2048.
+- **Gắn xương trong Blender** (`Tools/Blender/alex_body.py`, chỉ đọc `civilian_girl.FBX`):
+  - Bỏ tấm nền dưới chân, đưa về cùng chiều cao.
+  - Nắn tay: đường tâm tay của model được đặt trùng đường xương tay khung gốc ở tư thế chữ T. Giữ bề rộng vai nam, chỉ co chiều dài nách → ngón; chỉ áp dụng từ ngang vai trở lên.
+  - Lấy trọng số xương theo thân gốc (IDW 16 điểm, làm mượt 4 lượt theo cạnh lưới), rồi tháo tư thế về chữ A bằng nghịch đảo phép skin.
+  - Bỏ cẳng tay + bàn tay (góc nhìn thứ nhất vẫn dùng tay gốc + tay áo/găng đã khớp IK), bề mặt mượt (không còn mặt phẳng gãy khối).
+  - Tách đầu ra lưới riêng, chỉ đổ bóng.
+  - Xem trước: `alex_preview.py` → `Temp/Blackwood/alex_*.png`.
+- **Unity** (`BlackwoodAlexBody`, menu `Blackwood/Build/Alex Body (3D)`, converter gọi sau Garments): nhập FBX + texture, vật liệu URP `M_PL_Alex_Outfit3D` (vân vải chi tiết), gắn vào xương Player. Bindpose lấy từ bindpose gốc của civilian_girl nên không phụ thuộc tư thế đang lưu trong scene (lệch xương đầu 0,0 cm).
+- **PlayerLook**: thêm danh sách `evelynOnly`. Khi chơi Alex thì ẩn 14 lưới thân/đầu gốc và hiện `PL_Alex_Body` (đổ bóng) + `PL_Alex_Head` (chỉ bóng). Evelyn giữ nguyên.
+- Kiểm chứng:
+  - Biên dịch 0 lỗi, test 53/53.
+  - Converter dựng lại `BW_Main` (13 cửa).
+  - Trong Play với Alex: nhìn từ ngoài thấy thân mới cầm đèn pin bằng IK, găng + tay áo khớp. Góc nhìn thứ nhất nhìn thẳng/40°/75° không bị mũ áo che camera; cúi xuống thấy áo nỉ và giày.
+  - Chơi thử tự động Alex/Tân Chủ Nhân 48/48, 0 lỗi Console, 0 lần chết.
+  - Ảnh: `Temp/Blackwood/alex3p_front.png`, `alexfp_*_lit.png`.
+- Giới hạn còn lại: mặt và găng của model AI hơi mờ (chỉ thấy qua bóng đổ, đầu không hiện trước camera); vai áo có nếp mũ hơi dày.
+
+## Blackwood S — Thân Alex: vai gọn, đầu không lọt camera (2026-11-18)
+- **Vai**: bản R tháo tư thế chữ T → A bằng nghịch đảo phép skin, làm vai nhăn như bèo nhún (khớp vai của khung gốc nằm sâu trong thân Alex rộng vai hơn).
+  - Nay giữ lưới ở chữ T và lấy chính tư thế T làm bind của khung xương xuất ra; Unity dùng bindpose theo FBX.
+  - Cắt tay ngay tại nách, hạ dốc vai 28° trước khi cắt, bịt kín (pháp tuyến hướng ra, màu vải). Cả cánh tay là tay áo/găng 3D đã khớp IK.
+  - Trọng số vai chuyển mượt thân → cánh tay (tối đa 35 %).
+- **Đầu**: đầu của model AI thấp hơn xương đầu khung gốc nên cằm/miệng từng nằm trong lưới thân. Nay cắt theo mặt phẳng ngang tại mép dưới vùng da trên texture, nên mặt, cổ, mũ áo và đỉnh vai nằm trong lưới chỉ đổ bóng. Bóng đổ vẫn đủ hình.
+- `Tools/Tripo/trellis2_gen.py` (TRELLIS.2 — bản mới, texture PBR 4096) đã sẵn sàng. Lần chạy đầu hết hạn mức GPU miễn phí của khách (ZeroGPU), cần token Hugging Face (đặt ngoài repo) để tạo lại model chi tiết hơn.
+- Kiểm chứng:
+  - Biên dịch 0 lỗi, converter dựng lại `BW_Main`.
+  - Trong Play với Alex: cúi 75° chỉ thấy bụng áo nỉ, giày, tay cầm đèn pin; hết cục vai lấn góc màn hình. Bóng đổ đủ người.
+  - Chơi thử tự động Alex 48/48 và Evelyn 44/44, 0 lỗi Console, 0 lần chết.
+  - Ảnh: `Temp/Blackwood/alexfp2_down.png`, `alex3p2_*.png`.
+
+## Blackwood T — Alex dựng lại bằng TRELLIS.2 (2026-11-18)
+- Model Alex tạo lại bằng **TRELLIS.2** (Microsoft, MIT; Space `microsoft/TRELLIS.2`, độ phân giải 1536, 20 bước lấy mẫu, texture PBR 4096) với token Hugging Face miễn phí của người dùng (lưu ngoài repo).
+  - Chi tiết hơn hẳn bản TRELLIS 1: mặt rõ, tóc xoăn, dây rút áo, ba lô, giày buộc dây, nếp quần jean.
+  - Không còn tấm nền dưới chân.
+- `alex_body.py`:
+  - Giảm 400k → 70k tam giác.
+  - Lấy đúng ảnh nối vào Base Color (model PBR có nhiều ảnh).
+  - Chỉ cắt tấm nền khi có.
+  - Tràn màu texture ra nền đen giữa các mảnh UV (hết đường nứt đen khi mipmap).
+  - Unity nhập texture 4096.
+- Sửa: `BlackwoodAudioSynth.WriteStereo` ghi qua `WriteBytesIfChanged`. Converter từng dừng vì Windows khóa `sfx_thunder_02.wav` (IOException 1224).
+- Kiểm chứng:
+  - Converter dựng lại `BW_Main`.
+  - Trong Play với Alex: góc nhìn thứ nhất sạch, nhìn từ ngoài rõ chi tiết, không còn đường nứt.
+  - Chơi thử tự động Alex 48/48. Evelyn lần đầu hỏng 3 bước kiểm tra pin đèn pin (Unity không focus, đèn chưa kịp sáng), chạy lại 44/44. 0 lỗi Console.
