@@ -217,3 +217,16 @@
   - Chơi thử tự động Alex/Tân Chủ Nhân 48/48, 0 lỗi Console, 0 lần chết.
   - Ảnh: `Temp/Blackwood/alex3p_front.png`, `alexfp_*_lit.png`.
 - Giới hạn còn lại: mặt và găng của model AI hơi mờ (chỉ thấy qua bóng đổ, đầu không hiện trước camera); vai áo có nếp mũ hơi dày.
+
+## Blackwood S — Thân Alex: vai gọn, đầu không lọt camera (2026-11-18)
+- **Vai**: bản R tháo tư thế chữ T → A bằng nghịch đảo phép skin, làm vai nhăn như bèo nhún (khớp vai của khung gốc nằm sâu trong thân Alex rộng vai hơn).
+  - Nay giữ lưới ở chữ T và lấy chính tư thế T làm bind của khung xương xuất ra; Unity dùng bindpose theo FBX.
+  - Cắt tay ngay tại nách, hạ dốc vai 28° trước khi cắt, bịt kín (pháp tuyến hướng ra, màu vải). Cả cánh tay là tay áo/găng 3D đã khớp IK.
+  - Trọng số vai chuyển mượt thân → cánh tay (tối đa 35 %).
+- **Đầu**: đầu của model AI thấp hơn xương đầu khung gốc nên cằm/miệng từng nằm trong lưới thân. Nay cắt theo mặt phẳng ngang tại mép dưới vùng da trên texture, nên mặt, cổ, mũ áo và đỉnh vai nằm trong lưới chỉ đổ bóng. Bóng đổ vẫn đủ hình.
+- `Tools/Tripo/trellis2_gen.py` (TRELLIS.2 — bản mới, texture PBR 4096) đã sẵn sàng. Lần chạy đầu hết hạn mức GPU miễn phí của khách (ZeroGPU), cần token Hugging Face (đặt ngoài repo) để tạo lại model chi tiết hơn.
+- Kiểm chứng:
+  - Biên dịch 0 lỗi, converter dựng lại `BW_Main`.
+  - Trong Play với Alex: cúi 75° chỉ thấy bụng áo nỉ, giày, tay cầm đèn pin; hết cục vai lấn góc màn hình. Bóng đổ đủ người.
+  - Chơi thử tự động Alex 48/48 và Evelyn 44/44, 0 lỗi Console, 0 lần chết.
+  - Ảnh: `Temp/Blackwood/alexfp2_down.png`, `alex3p2_*.png`.

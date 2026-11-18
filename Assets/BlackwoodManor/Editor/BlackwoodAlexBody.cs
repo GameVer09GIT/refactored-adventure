@@ -8,9 +8,9 @@ namespace Blackwood.EditorTools
 {
     /// <summary>
     /// Thân 3D riêng của Alex (áo nỉ có mũ, ba lô, quần jean, giày) — model AI (TRELLIS) đã gắn xương civilian_girl trong Blender
-    /// (<c>Tools/Blender/alex_body.py</c> → <c>Tools/Blender/out/characters/BW_Alex_Body.fbx</c>).
-    /// Ở đây nhập FBX + texture, gắn lưới vào đúng xương của Player (bindpose tính từ bindpose gốc của civilian_girl nên
-    /// không phụ thuộc tư thế đang lưu trong scene), rồi khai báo cho <see cref="Blackwood.Characters.PlayerLook"/>:
+    /// (<c>Tools/Blender/alex_body.py</c> → <c>Tools/Blender/out/characters/BW_Alex_Body.fbx</c>, lưới + khung xương ở tư thế chữ T).
+    /// Ở đây nhập FBX + texture, gắn lưới vào đúng xương của Player theo tên (bindpose = tư thế chữ T trong FBX, nên
+    /// không phụ thuộc tư thế đang lưu trong scene; vị trí xương gốc được kiểm bằng xương đầu), rồi khai báo cho <see cref="Blackwood.Characters.PlayerLook"/>:
     /// chơi Alex thì hiện thân mới, ẩn thân/đầu gốc; Evelyn giữ nguyên. Tay góc nhìn thứ nhất (tay gốc + tay áo/găng) không đổi.
     /// </summary>
     public static class BlackwoodAlexBody
@@ -136,12 +136,14 @@ namespace Blackwood.EditorTools
                     Matrix4x4 Ld = inst.transform.worldToLocalMatrix * sb[0].localToWorldMatrix * sbind[0];
                     var nb = new Transform[sb.Length]; var nbind = new Matrix4x4[sb.Length];
                     int missing = 0;
+                    var instInv = inst.transform.worldToLocalMatrix;
                     for (int i = 0; i < sb.Length; i++)
                     {
                         string n = sb[i] != null ? sb[i].name : "";
-                        if (!bone.TryGetValue(n, out var ob)) { missing++; ob = pelvis; n = "pelvis"; }
+                        if (!bone.TryGetValue(n, out var ob)) { missing++; ob = pelvis; }
                         nb[i] = ob;
-                        var bm = bindInGirl.TryGetValue(n, out var g) ? g : girlInv * ob.localToWorldMatrix;
+                        // Tư thế bind = tư thế nghỉ của khung xương trong FBX (chữ T, cùng hệ gốc với civilian_girl)
+                        var bm = sb[i] != null ? instInv * sb[i].localToWorldMatrix : girlInv * ob.localToWorldMatrix;
                         nbind[i] = bm.inverse * Ld;
                     }
                     var mesh = Object.Instantiate(sm);

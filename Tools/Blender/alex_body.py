@@ -4,8 +4,8 @@
 # Không sửa file asset pack: chỉ ĐỌC civilian_girl.FBX lấy khung xương + hình thể. Các bước:
 #   1. Đặt khung xương gốc (tư thế chữ A) sang chữ T cho khớp model AI.
 #   2. Bỏ tấm nền thừa của model, co giãn cho cùng chiều cao, kéo tay khớp sải tay + độ cao vai của khung xương.
-#   3. Lấy trọng số xương theo bề mặt thân gốc gần nhất (IDW), rồi "tháo tư thế" từng đỉnh về tư thế bind (chữ A)
-#      bằng nghịch đảo phép skin — Unity gắn lại vào đúng xương người chơi nên IK cầm đồ/animation dùng chung.
+#   3. Lấy trọng số xương theo bề mặt thân gốc gần nhất (IDW); tư thế chữ T thành tư thế bind của khung xương xuất ra
+#      — Unity gắn vào đúng xương người chơi (theo tên) nên IK cầm đồ/animation dùng chung.
 #   4. Tách đầu (PL_Alex_Head: chỉ đổ bóng, không che camera góc nhìn thứ nhất) và thân (PL_Alex_Body).
 # Xuất: Tools/Blender/out/characters/BW_Alex_Body.fbx + texture màu Tools/Blender/out/characters/T_PL_Alex_Body_A.png
 import bpy, bmesh, math, os
@@ -52,6 +52,7 @@ bpy.context.view_layer.update()
 # Đỉnh thân gốc ở tư thế chữ T (world) + trọng số
 dg = bpy.context.evaluated_depsgraph_get()
 SRCV = []
+HANDL = []  # da cánh tay trái gốc (tay áo 3D của game dựng từ lưới này)
 for n in BODY:
     o = bpy.data.objects[n]
     gname = {g.index: g.name for g in o.vertex_groups}
@@ -61,6 +62,7 @@ for n in BODY:
         w = {gname[g.group]: g.weight for g in v.groups if g.weight > 0.001 and gname[g.group] in BONES}
         if w:
             SRCV.append((mw @ ve.co, w))
+            if n == "hand_left": HANDL.append(mw @ ve.co)
     o.evaluated_get(dg).to_mesh_clear()
 zs = [p.z for p, _ in SRCV]; g_min, g_max = min(zs), max(zs)
 xs = [p.x for p, _ in SRCV]
@@ -193,6 +195,45 @@ for v in vs:
     gy, gz = gline(sgn, gx)
     nv = Vector((sgn * gx, v.co.y - c[0] + gy, v.co.z - c[1] + gz))
     v.co = v.co.lerp(nv, t)
+
+# Cánh tay: thân Alex rộng vai hơn khung gốc (khớp vai gốc nằm sâu trong người) nên ống tay áo nỉ bám xương kiểu gì cũng
+# nhăn khi hạ/giơ tay. Cắt ngay tại nách, bịt kín thành mặt vai tròn — cả cánh tay là tay áo/găng 3D của game (khớp IK sẵn).
+CUT_X = a_ap + 0.012
+# Hạ dốc vai (ở chữ T vai nằm ngang nối vào tay; bỏ tay đi thì thành gờ ngang như cánh): xoay vùng vai quanh gốc cổ
+SL_X0, SL_ANG = 0.09, math.radians(28)
+for v in vs:
+    ax = abs(v.co.x)
+    if ax <= SL_X0: continue
+    tz = (v.co.z - (g_arm_z - 0.13)) / 0.10
+    if tz <= 0: continue
+    tz = min(1.0, tz); tz = tz * tz * (3 - 2 * tz)
+    tx = min(1.0, (ax - SL_X0) / (CUT_X - SL_X0)); tx = tx * tx * (3 - 2 * tx)
+    a = SL_ANG * tx * tz
+    sgn = 1 if v.co.x > 0 else -1
+    dx, dz = ax - SL_X0, v.co.z - (g_arm_z + 0.06)
+    nx = dx * math.cos(a) + dz * math.sin(a); nz = -dx * math.sin(a) + dz * math.cos(a)
+    v.co.x = sgn * (SL_X0 + nx); v.co.z = g_arm_z + 0.06 + nz
+alex.data.update()
+bm = bmesh.new(); bm.from_mesh(alex.data)
+for sgn in (1, -1):
+    geom = bm.verts[:] + bm.edges[:] + bm.faces[:]
+    bmesh.ops.bisect_plane(bm, geom=geom, dist=1e-5, plane_co=Vector((sgn * CUT_X, 0, 0)),
+                           plane_no=Vector((sgn, 0, 0)), clear_outer=True)
+rim = [e for e in bm.edges if e.is_boundary and all(abs(abs(v.co.x) - CUT_X) < 2e-4 for v in e.verts)]
+caps = bmesh.ops.holes_fill(bm, edges=rim, sides=0)["faces"]
+bmesh.ops.recalc_face_normals(bm, faces=caps)
+for f in caps:
+    if (f.normal.x > 0) != (f.calc_center_median().x > 0): f.normal_flip()
+bmesh.ops.triangulate(bm, faces=caps)
+caps = [f for f in bm.faces if all(abs(abs(v.co.x) - CUT_X) < 2e-4 for v in f.verts)]
+uvl = bm.loops.layers.uv.active
+if uvl:  # mặt bịt lấy màu vải tại một điểm trên mép (UV gộp một điểm, không kéo texture)
+    for f in caps:
+        uv0 = f.loops[0][uvl].uv.copy()
+        for lp in f.loops: lp[uvl].uv = uv0
+bm.to_mesh(alex.data); bm.free()
+vs = alex.data.vertices
+print("ARMHOLE cut at x=%.3f, rim edges %d, cap faces %d, verts %d" % (CUT_X, len(rim), len(caps), len(vs)))
 alex.data.update()
 
 # ----------------------------------------------------------------------------- 3. trọng số + tháo tư thế
@@ -213,6 +254,21 @@ def idw(co, k=10, power=2.0):
 
 
 W = [idw(v.co, k=16) for v in vs]
+# Vai: thân Alex rộng hơn khung gốc nên điểm gần nhất trên thân gốc cho trọng số nhiễu (nếp gãy khi hạ tay).
+# Đặt lại: từ nách ra mỏm cụt tay áo, trọng số chuyển mượt thân (xương đòn/cột sống) → xương cánh tay trên.
+ARM_PREFIX = ("upperarm", "lowerarm", "hand", "thumb", "index", "middle", "ring", "pinky")
+SH0, SH1 = g_ap + 0.02, CUT_X
+SH_MAX = 0.35  # mặt vai chỉ theo cánh tay một phần (giơ đèn pin không kéo méo cả vai)
+for i, v in enumerate(vs):
+    ax = abs(v.co.x)
+    if ax <= SH0 or not (g_arm_z - 0.10 < v.co.z < g_arm_z + 0.14): continue
+    side = "l" if v.co.x > 0 else "r"
+    w = min(1.0, (ax - SH0) / (SH1 - SH0)); w = w * w * (3 - 2 * w) * SH_MAX
+    base = {g: f for g, f in W[i].items() if not g.startswith(ARM_PREFIX)} or {"clavicle_" + side: 1.0}
+    t = sum(base.values())
+    nw = {g: f / t * (1 - w) for g, f in base.items()}
+    nw["upperarm_" + side] = nw.get("upperarm_" + side, 0.0) + w
+    W[i] = {g: f for g, f in nw.items() if f > 0.01}
 # Làm mượt trọng số theo cạnh lưới (nối tay–thân, hông–đùi biến dạng êm, không gãy gắt)
 nbr = [[] for _ in vs]
 for e in alex.data.edges:
@@ -231,20 +287,14 @@ for _ in range(4):
         t = sum(f for _, f in items) or 1.0
         NW.append({g: f / t for g, f in items if f / t > 0.01})
     W = NW
-# Ma trận biến dạng từng xương (world): posed @ rest^-1
-D = {}
-for pb in arm.pose.bones:
-    D[pb.name] = arm.matrix_world @ pb.matrix @ pb.bone.matrix_local.inverted() @ arm.matrix_world.inverted()
-for v, w in zip(vs, W):
-    M = Matrix(((0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0)))
-    for g, f in w.items():
-        M = M + D[g] * f
-    v.co = M.inverted() @ v.co
-alex.data.update()
-
-# Về lại tư thế bind
-for pb in arm.pose.bones:
-    pb.matrix_basis = Matrix.Identity(4)
+# Giữ lưới ở tư thế chữ T và lấy chính tư thế T làm tư thế nghỉ (bind) của khung xương xuất ra: Unity tính bindpose
+# theo xương trong FBX này, khi chạy xương của Player (animation/IK) kéo lưới theo skin xuôi chuẩn — không "tháo tư thế"
+# bằng nghịch đảo skin (gây nếp gãy ở vai khi góc xoay lớn).
+bpy.context.view_layer.objects.active = arm
+bpy.ops.object.mode_set(mode="POSE")
+bpy.ops.pose.select_all(action="SELECT")
+bpy.ops.pose.armature_apply(selected=False)
+bpy.ops.object.mode_set(mode="OBJECT")
 bpy.context.view_layer.update()
 
 groups = {}
@@ -256,16 +306,7 @@ alex.parent = arm
 alex.matrix_parent_inverse = arm.matrix_world.inverted()
 mod = alex.modifiers.new("Armature", "ARMATURE"); mod.object = arm
 
-# Cẳng tay + bàn tay: bỏ — góc nhìn thứ nhất vẫn dùng tay gốc + tay áo/găng 3D (BlackwoodPlayerGarments) đã khớp IK
-FORE = ("lowerarm", "hand_", "thumb", "index", "middle", "ring", "pinky")
-for i, w in enumerate(W):
-    vs[i].select = sum(f for g, f in w.items() if g.startswith(FORE)) > 0.5
-bm = bmesh.new(); bm.from_mesh(alex.data)
-bm.verts.ensure_lookup_table()
-_cut = [bm.verts[i] for i in range(len(W)) if vs[i].select]
-bmesh.ops.delete(bm, geom=_cut, context="VERTS")
-bm.to_mesh(alex.data); bm.free()
-print("FOREARM verts removed", len(_cut))
+# Cánh tay đã cắt ở nách (CUT_X) — góc nhìn thứ nhất vẫn dùng tay gốc + tay áo/găng 3D
 for p in alex.data.polygons: p.use_smooth = True
 
 # ----------------------------------------------------------------------------- 4. tách đầu
@@ -273,9 +314,40 @@ HEADB = {"head", "neck_01"}
 bpy.ops.object.select_all(action="DESELECT")
 alex.select_set(True); bpy.context.view_layer.objects.active = alex
 bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="DESELECT"); bpy.ops.object.mode_set(mode="OBJECT")
-_hidx = {g.index for g in alex.vertex_groups if g.name in HEADB}
+# Cắt theo mặt phẳng ngang giữa cổ và đầu: mép mũ áo/cổ áo gọn một vòng (không răng cưa như tách theo trọng số)
+# Đầu Alex (model AI) thấp hơn xương đầu khung gốc → lấy mép dưới vùng da cổ/mặt trên texture làm mặt cắt,
+# để cả mặt + cổ nằm trong lưới đầu (chỉ đổ bóng, không lọt vào camera góc nhìn thứ nhất).
+_img = None
+for m in alex.data.materials:
+    if m and m.use_nodes:
+        for n in m.node_tree.nodes:
+            if n.type == "TEX_IMAGE" and n.image: _img = n.image
+_px = _img.pixels[:] if _img else None
+_W, _H = (_img.size if _img else (0, 0))
+_uv = alex.data.uv_layers.active.data if alex.data.uv_layers.active else None
+_skz = []
+if _px and _uv:
+    for poly in alex.data.polygons:
+        for li in poly.loop_indices:
+            vi = alex.data.loops[li].vertex_index
+            co = alex.data.vertices[vi].co
+            if abs(co.x) > 0.12 or co.z < g_arm_z - 0.15: continue
+            u, w = _uv[li].uv
+            i = (min(_H - 1, max(0, int(w * _H))) * _W + min(_W - 1, max(0, int(u * _W)))) * 4
+            r, g, b_ = _px[i], _px[i + 1], _px[i + 2]
+            if r > 0.25 and r > g > b_ and r - b_ > 0.10:
+                _skz.append(co.z)
+_skz.sort()
+Z_SKIN = _skz[int(len(_skz) * 0.03)] if len(_skz) > 50 else pa("neck_01").z
+Z_HEAD = Z_SKIN - 0.005
+print("SKIN samples %d, lowest skin z %.3f (neck bone %.3f, head bone %.3f)" % (len(_skz), Z_SKIN, pa("neck_01").z, pa("head").z))
+bm = bmesh.new(); bm.from_mesh(alex.data)
+bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], dist=1e-5,
+                       plane_co=Vector((0, 0, Z_HEAD)), plane_no=Vector((0, 0, 1)))
+bm.to_mesh(alex.data); bm.free()
 for v in alex.data.vertices:
-    v.select = sum(g.weight for g in v.groups if g.group in _hidx) > 0.5
+    v.select = v.co.z >= Z_HEAD - 1e-5
+print("HEAD split at z=%.3f" % Z_HEAD)
 bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.separate(type="SELECTED"); bpy.ops.object.mode_set(mode="OBJECT")
 head = [o for o in bpy.context.selected_objects if o != alex]
 if head: head[0].name = "PL_Alex_Head"
