@@ -157,7 +157,7 @@ namespace Blackwood.EditorTools
             // Nguồn tiếng rít khi bị rọi đèn: tạo sẵn (playOnAwake = false). AddComponent lúc chạy sẽ tự phát khi chưa có clip.
             voiceSrc.gameObject.AddComponent<AudioSource>().playOnAwake = false;
             var music = Src("HuntMusic", hkRoot.transform);
-            music.clip = AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/hk_hunt_pulse_loop.wav");
+            music.clip = BlackwoodAudioSynth.Load("hk_hunt_pulse_loop");
 
             // Đèn tái mờ quanh bà (chỉ thấy khi gần, giúp đọc dáng trong bóng tối)
             var aura = new GameObject("PaleAura").AddComponent<Light>();
@@ -173,13 +173,13 @@ namespace Blackwood.EditorTools
             so.FindProperty("keysSource").objectReferenceValue = keysSrc;
             so.FindProperty("voiceSource").objectReferenceValue = voiceSrc;
             so.FindProperty("huntMusic").objectReferenceValue = music;
-            so.FindProperty("keysLoop").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/hk_keys_drag_loop.wav");
-            so.FindProperty("lullabyClip").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/hk_lullaby_hum.wav");
-            so.FindProperty("whisperRunClip").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/hk_whisper_run.wav");
+            so.FindProperty("keysLoop").objectReferenceValue = BlackwoodAudioSynth.Load("hk_keys_drag_loop");
+            so.FindProperty("lullabyClip").objectReferenceValue = BlackwoodAudioSynth.Load("hk_lullaby_hum");
+            so.FindProperty("whisperRunClip").objectReferenceValue = BlackwoodAudioSynth.Load("hk_whisper_run");
             so.FindProperty("mumbleLoop").objectReferenceValue = FindClip("ghost_moan_loop");
             so.FindProperty("screamClip").objectReferenceValue = FindClip("jumpscare_scream") ?? FindClip("ghost_scare_01");
-            so.FindProperty("burnHissLoop").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/hk_burn_hiss_loop.wav");
-            so.FindProperty("blindShriekClip").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/hk_blind_shriek.wav");
+            so.FindProperty("burnHissLoop").objectReferenceValue = BlackwoodAudioSynth.Load("hk_burn_hiss_loop");
+            so.FindProperty("blindShriekClip").objectReferenceValue = BlackwoodAudioSynth.Load("hk_blind_shriek");
 
             // Waypoint: hành lang vòng + ghé từng phòng (tầng 2, y=18)
             var wpRoot = new GameObject("HK_Waypoints").transform;

@@ -434,7 +434,7 @@ namespace Blackwood.EditorTools
             return m;
         }
 
-        static AudioClip Clip(string n) => AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/" + n + ".wav");
+        static AudioClip Clip(string n) => BlackwoodAudioSynth.Load(n);
 
         // ================================================================== Hậu kỳ
         static void BuildPostFx()
