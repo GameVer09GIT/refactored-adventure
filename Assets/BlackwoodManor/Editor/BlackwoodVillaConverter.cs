@@ -111,6 +111,12 @@ namespace Blackwood.EditorTools
             log.Add(BlackwoodHorrorBuilder.Build(root, CellarOrigin));
             BuildSequences(systems);
             FixPlacement();
+            // Vật gắn trên cánh cửa (giấy, đinh, máu…) phải theo cửa xoay: bỏ cờ Static (static batching đóng băng vị trí lúc chạy)
+            int unstatic = 0;
+            foreach (var d in Object.FindObjectsByType<DoorInteractable>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                foreach (var t in d.GetComponentsInChildren<Transform>(true))
+                    if (GameObjectUtility.GetStaticEditorFlags(t.gameObject) != 0) { GameObjectUtility.SetStaticEditorFlags(t.gameObject, 0); unstatic++; }
+            log.Add("Door children made non-static: " + unstatic);
             BakeReflectionProbes();
 
             EditorSceneManager.SaveScene(scene);
@@ -1163,6 +1169,9 @@ namespace Blackwood.EditorTools
                 // Dán lên mặt trong cánh cửa chính → phải là con của bản lề, nếu không cửa mở thì tờ giấy đứng giữa khung cửa
                 var leaf = docHit != null ? docHit.GetComponentInParent<DoorInteractable>() : null;
                 if (leaf != null) doc.SetParent(leaf.transform, true);
+                // Bỏ cờ Static (do GB.Readable đặt): vật Static bị gộp lưới (static batching) lúc chạy game nên vẫn vẽ ở chỗ cũ
+                // dù cánh cửa đã xoay — tờ giấy + đinh "lơ lửng" giữa khung cửa
+                foreach (var t in doc.GetComponentsInChildren<Transform>(true)) GameObjectUtility.SetStaticEditorFlags(t.gameObject, 0);
                 log.Add("Doc_BienBan2009 -> " + doc.position.ToString("F3") + (leaf != null ? " (gắn vào " + leaf.name + ")" : " (KHÔNG thấy cánh cửa)"));
             }
             // Model Blender có tâm ở giữa vật: đặt theo tâm tại mặt sàn/bàn là lún nửa dưới (búp bê chỉ ló đầu, két chìm nửa).

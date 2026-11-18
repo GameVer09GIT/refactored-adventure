@@ -309,6 +309,9 @@ namespace Blackwood.EditorTools
                 var door = doc.GetComponentInParent<DoorInteractable>();
                 if (door == null) return "tờ giấy không gắn vào cánh cửa (parent = " + (doc.parent ? doc.parent.name : "-") + ")";
                 if (door.IsOpen) return "cửa chính chưa đóng sau khi vào nhà";
+                // Vật Static bị gộp lưới lúc chạy → không theo cửa xoay dù là con của cửa
+                foreach (var t in doc.GetComponentsInChildren<Transform>(true))
+                    if (GameObjectUtility.GetStaticEditorFlags(t.gameObject) != 0) return "tờ giấy còn cờ Static (" + t.name + ") — sẽ lơ lửng khi cửa mở";
                 return null;
             });
 
