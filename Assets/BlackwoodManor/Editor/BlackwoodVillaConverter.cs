@@ -85,6 +85,7 @@ namespace Blackwood.EditorTools
             if (player.GetComponent<Blackwood.Interaction.PlayerPushProps>() == null) player.AddComponent<Blackwood.Interaction.PlayerPushProps>();
             log.Add(BlackwoodPlayerLook.Build(player));
             log.Add(BlackwoodPlayerGarments.Build(player)); // tay áo + găng 3D (sau PlayerLook: cần component để khai báo găng)
+            log.Add(BlackwoodAlexBody.Build(player)); // thân 3D riêng của Alex (sau Garments: nối thêm vào alexOnly)
             // Camera người chơi: bật hậu kỳ (bản MapKinhDi để tắt) + tag MainCamera
             var pcam = player.GetComponent<PlayerController>().playerCamera.GetComponent<Camera>();
             pcam.tag = "MainCamera";

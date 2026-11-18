@@ -198,3 +198,22 @@
 - **Nguyên nhân thật**: đợt M đã gắn tờ giấy làm con của cánh cửa, nhưng nó vẫn mang cờ **Static** (do `GB.Readable` đặt). Unity gộp lưới mọi vật Static lúc chạy game (static batching) nên tờ giấy + đinh vẫn được vẽ ở chỗ cũ dù transform đã quay theo cửa → mở cửa là thấy tờ giấy đứng giữa khung cửa. Bài chạy thử cũ chỉ kiểm tra quan hệ cha–con nên không bắt được.
 - Sửa: bỏ cờ Static cho tờ giấy và đinh khi gắn vào cửa; thêm bước chung trong converter bỏ cờ Static cho mọi vật con của `DoorInteractable` (sau này gắn gì lên cửa cũng không bị lại). `BlackwoodPlaytest` kiểm tra thêm cờ Static.
 - Kiểm chứng: trong Play mở cửa chính — cửa xoay 100°, tờ giấy dời theo (80,00; 7,44) → (79,32; 7,90), `isPartOfStaticBatch = False`; ảnh trước/sau (`Temp/Blackwood/note_closed.png`, `note_open.png`) khung cửa trống. Chơi thử Evelyn 47/47, 0 lỗi Console.
+
+## Blackwood R — Thân 3D riêng cho Alex (2026-11-18)
+- **Nguồn model**: Tripo Studio tạo được model nhưng muốn xuất file phải mua gói trả phí, còn API Tripo đang 0 credit → dùng **TRELLIS** (Microsoft, giấy phép MIT) qua Hugging Face Space miễn phí (`Tools/Tripo/trellis_gen.py`) để dựng model từ ảnh tham chiếu Alex (`Tools/Tripo/alex_ref.png`): áo nỉ có mũ, ba lô, jean, giày, texture 2048.
+- **Gắn xương trong Blender** (`Tools/Blender/alex_body.py`, chỉ đọc `civilian_girl.FBX`):
+  - Bỏ tấm nền dưới chân, đưa về cùng chiều cao.
+  - Nắn tay: đường tâm tay của model được đặt trùng đường xương tay khung gốc ở tư thế chữ T. Giữ bề rộng vai nam, chỉ co chiều dài nách → ngón; chỉ áp dụng từ ngang vai trở lên.
+  - Lấy trọng số xương theo thân gốc (IDW 16 điểm, làm mượt 4 lượt theo cạnh lưới), rồi tháo tư thế về chữ A bằng nghịch đảo phép skin.
+  - Bỏ cẳng tay + bàn tay (góc nhìn thứ nhất vẫn dùng tay gốc + tay áo/găng đã khớp IK), bề mặt mượt (không còn mặt phẳng gãy khối).
+  - Tách đầu ra lưới riêng, chỉ đổ bóng.
+  - Xem trước: `alex_preview.py` → `Temp/Blackwood/alex_*.png`.
+- **Unity** (`BlackwoodAlexBody`, menu `Blackwood/Build/Alex Body (3D)`, converter gọi sau Garments): nhập FBX + texture, vật liệu URP `M_PL_Alex_Outfit3D` (vân vải chi tiết), gắn vào xương Player. Bindpose lấy từ bindpose gốc của civilian_girl nên không phụ thuộc tư thế đang lưu trong scene (lệch xương đầu 0,0 cm).
+- **PlayerLook**: thêm danh sách `evelynOnly`. Khi chơi Alex thì ẩn 14 lưới thân/đầu gốc và hiện `PL_Alex_Body` (đổ bóng) + `PL_Alex_Head` (chỉ bóng). Evelyn giữ nguyên.
+- Kiểm chứng:
+  - Biên dịch 0 lỗi, test 53/53.
+  - Converter dựng lại `BW_Main` (13 cửa).
+  - Trong Play với Alex: nhìn từ ngoài thấy thân mới cầm đèn pin bằng IK, găng + tay áo khớp. Góc nhìn thứ nhất nhìn thẳng/40°/75° không bị mũ áo che camera; cúi xuống thấy áo nỉ và giày.
+  - Chơi thử tự động Alex/Tân Chủ Nhân 48/48, 0 lỗi Console, 0 lần chết.
+  - Ảnh: `Temp/Blackwood/alex3p_front.png`, `alexfp_*_lit.png`.
+- Giới hạn còn lại: mặt và găng của model AI hơi mờ (chỉ thấy qua bóng đổ, đầu không hiện trước camera); vai áo có nếp mũ hơi dày.

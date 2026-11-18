@@ -5,7 +5,7 @@ namespace Blackwood.Characters
 {
     /// <summary>
     /// Ngoại hình cơ thể người chơi theo nhân vật: Evelyn mặc áo khoác len dài tay, Alex áo nỉ xám than + găng tay da.
-    /// Chỉ đổi vật liệu của lưới thân/tay (kể cả tay áo/găng 3D gắn thêm) và bật/tắt găng — không đụng xương, IK, tư thế hay đèn.
+    /// Đổi vật liệu của lưới thân/tay (kể cả tay áo/găng 3D gắn thêm), bật/tắt găng và thân 3D riêng của Alex (BlackwoodAlexBody) — không đụng xương, IK, tư thế hay đèn.
     /// Vật liệu do công cụ BlackwoodPlayerLook tạo trong Assets/BlackwoodManor/Materials/Player, lưới tay áo/găng do BlackwoodPlayerGarments.
     /// </summary>
     [DefaultExecutionOrder(-140)]
@@ -17,6 +17,8 @@ namespace Blackwood.Characters
         [SerializeField] private Material[] skinMaterials = new Material[2];
         [Tooltip("Renderer chỉ hiện khi chơi Alex (găng tay)")]
         [SerializeField] private Renderer[] alexOnly = new Renderer[0];
+        [Tooltip("Renderer chỉ hiện khi chơi Evelyn (thân/đầu gốc — Alex có thân 3D riêng)")]
+        [SerializeField] private Renderer[] evelynOnly = new Renderer[0];
 
         private Renderer[] bodyRenderers, skinRenderers;
         private int[] bodySlots, skinSlots;
@@ -65,6 +67,9 @@ namespace Blackwood.Characters
             if (alexOnly != null)
                 foreach (var r in alexOnly)
                     if (r != null) r.enabled = c == PlayerCharacter.Alex;
+            if (evelynOnly != null)
+                foreach (var r in evelynOnly)
+                    if (r != null) r.enabled = c != PlayerCharacter.Alex;
         }
 
         private static void Swap(Renderer[] rs, int[] slots, Material m)
