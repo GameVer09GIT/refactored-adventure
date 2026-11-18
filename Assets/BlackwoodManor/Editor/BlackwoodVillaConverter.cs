@@ -553,6 +553,11 @@ namespace Blackwood.EditorTools
                 var bc = trig.AddComponent<BoxCollider>(); bc.isTrigger = true; bc.size = new Vector3(5f, 3f, 1.6f);
                 ritual = trig.AddComponent<Blackwood.Sequences.RitualSequence>();
                 ritual.Configure(lord != null ? lord.transform : null, relic, Sfx("sfx_scare_whispers"), null);
+                // Giọng Lord Blackwood (ElevenLabs): lord_1..4 + lord_2a..4a (bản Alex), theo ngôn ngữ
+                // Câu 4 bản Alex tiếng Anh trùng chữ với bản Evelyn → dùng chung clip
+                AudioClip[] V(string lang) => new[] { "1", "2", "3", "4", "2a", "3a", "4a" }
+                    .Select(k => BlackwoodAudioSynth.Load("lord_" + k + "_" + lang) ?? (lang == "en" && k == "4a" ? BlackwoodAudioSynth.Load("lord_4_en") : null)).ToArray();
+                ritual.ConfigureVoice(V("vi"), V("en"));
             }
             else log.Add("WARN no relic in ritual hall");
 

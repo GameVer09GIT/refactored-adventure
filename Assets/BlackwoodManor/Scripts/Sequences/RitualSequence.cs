@@ -33,6 +33,9 @@ namespace Blackwood.Sequences
         [SerializeField] private Transform lord;
         [SerializeField] private Transform relic;
         [SerializeField] private AudioClip lordVoice, ambience;
+        [Tooltip("Giọng Lord Blackwood (ElevenLabs): 0–3 = lord.1–4, 4–6 = lord.2–4 bản Alex. Thiếu thì chỉ hiện phụ đề.")]
+        [SerializeField] private AudioClip[] voiceVi = new AudioClip[7];
+        [SerializeField] private AudioClip[] voiceEn = new AudioClip[7];
 
         private bool running;
         private GameObject choiceUI;
@@ -43,6 +46,18 @@ namespace Blackwood.Sequences
         public void Configure(Transform lordGhost, Transform relicObj, AudioClip voice, AudioClip amb)
         {
             lord = lordGhost; relic = relicObj; lordVoice = voice; ambience = amb;
+        }
+
+        public void ConfigureVoice(AudioClip[] vi, AudioClip[] en) { voiceVi = vi; voiceEn = en; }
+
+        /// <summary>Clip giọng của câu thứ i (1–4) theo ngôn ngữ đang chọn; bản Alex dùng ô 4–6.</summary>
+        private AudioClip VoiceFor(int i, bool alex)
+        {
+            var set = Loc.IsEnglish ? voiceEn : voiceVi;
+            if (set == null) return null;
+            int k = alex && i >= 2 ? 4 + (i - 2) : i - 1;
+            // Không lùi về câu của Evelyn: lời thoại bản Alex khác xưng hô — thiếu giọng thì chỉ hiện phụ đề
+            return k < set.Length ? set[k] : null;
         }
 
         private void Update()
@@ -83,7 +98,15 @@ namespace Blackwood.Sequences
             bool alex = gm.Character == PlayerCharacter.Alex;
             for (int i = 1; i <= 4; i++)
             {
-                if (lordVoice != null) AmbientScares.Play2D(lordVoice, 0.35f);
+                var spoken = VoiceFor(i, alex);
+                if (lordVoice != null) AmbientScares.Play2D(lordVoice, spoken != null ? 0.12f : 0.35f); // thì thầm nền nhỏ lại khi có giọng
+                AudioSource voiceSrc = null;
+                if (spoken != null)
+                {
+                    voiceSrc = new GameObject("LordVoice").AddComponent<AudioSource>();
+                    voiceSrc.clip = spoken; voiceSrc.spatialBlend = 0f; voiceSrc.volume = AudioMix.Voice; voiceSrc.Play();
+                    Destroy(voiceSrc.gameObject, spoken.length + 0.3f);
+                }
                 Vector3 pos, look;
                 if (i == 3) { pos = relicPos + side * 1.1f + (lordHead - relicPos).normalized * -0.4f + Vector3.up * 0.15f; look = relicPos; }
                 else if (i == 4) { pos = lordHead + (relicPos - lordHead).normalized * 1.7f + side * 0.5f; look = lordHead; }
@@ -93,7 +116,7 @@ namespace Blackwood.Sequences
                 yield return SlowPush(cam.transform, look, 0.3f, 0.25f);
                 string key = "lord." + i;
                 if (alex && T.Table != null && T.Table.Has(key + ".alex")) key += ".alex";
-                yield return CutsceneKit.Line("<color=#B8A07A>Lord Blackwood:</color> " + T.Get(key), 5.2f);
+                yield return CutsceneKit.Line("<color=#B8A07A>Lord Blackwood:</color> " + T.Get(key), spoken != null ? Mathf.Max(4f, spoken.length + 0.7f) : 5.2f);
             }
             HorrorPostFX.CinematicFocus = false;
 
