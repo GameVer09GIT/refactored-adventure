@@ -65,6 +65,7 @@ namespace Blackwood.EditorTools
                       ?? FindMaterial("BLD_Villa1");
 
             RemoveDemo();
+            TrimPlayArea();
             var systems = GB.BuildSystems();
             systems.AddComponent<Blackwood.Narrative.TapePlayer>().Configure(Sfx("sfx_tape_hiss_loop"), Sfx("sfx_tape_click"));
             systems.AddComponent<Blackwood.Narrative.EndingDirector>();
@@ -92,6 +93,8 @@ namespace Blackwood.EditorTools
             acd.renderPostProcessing = true;
             acd.antialiasing = UnityEngine.Rendering.Universal.AntialiasingMode.None;
             acd.stopNaN = true;
+            // Ngoài vùng dinh thự chỉ còn sương: không vẽ xa hơn mức sương đã nuốt hết (đỡ lag)
+            pcam.farClipPlane = 170f;
 
             var doors = ConvertDoors();
             BuildFloor2Partitions();
@@ -345,8 +348,8 @@ namespace Blackwood.EditorTools
             RenderSettings.reflectionIntensity = 0.25f;
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogDensity = 0.012f; // sương thể tích lo phần chính, fog chuẩn chỉ làm xa mờ
-            RenderSettings.fogColor = new Color(0.02f, 0.028f, 0.04f);
+            RenderSettings.fogDensity = 0.017f; // ~4% còn thấy ở 100 m: ngoài vùng dinh thự (VisibleArea) chìm hẳn trong sương
+            RenderSettings.fogColor = new Color(0.05f, 0.06f, 0.078f); // xám xanh dưới trăng: ngoài vùng là màn sương, không phải màn đen
 
             // Không ghi vào LightingSettings/LightingData của Flooded_Grounds
             string lsPath = "Assets/BlackwoodManor/Settings/BW_LightingSettings.lighting";
@@ -374,8 +377,37 @@ namespace Blackwood.EditorTools
             return false;
         }
 
+        /// <summary>
+        /// Probe phản chiếu cho từng khu của dinh thự (40 probe của map gốc nằm trong tầng hầm cũ dưới sân nam — đã gỡ cùng tầng hầm,
+        /// vốn không phục vụ các phòng trong nhà). Hộp chiếu theo kích thước phòng để phản chiếu khớp tường.
+        /// </summary>
+        static void AddHouseProbes()
+        {
+            var g = new GameObject("BW_ReflectionProbes").transform;
+            g.SetParent(root);
+            void P(string n, Vector3 c, Vector3 size)
+            {
+                var go = new GameObject(n); go.transform.SetParent(g); go.transform.position = c;
+                var p = go.AddComponent<ReflectionProbe>(); p.size = size; p.boxProjection = true; p.blendDistance = 1f;
+                p.mode = UnityEngine.Rendering.ReflectionProbeMode.Baked; p.importance = 1;
+            }
+            P("Probe_Hall", new Vector3(84f, 12.6f, 11f), new Vector3(12f, 5f, 8f));
+            P("Probe_Kitchen", new Vector3(71.5f, 12.6f, 22f), new Vector3(8f, 5f, 8f));
+            P("Probe_Study", new Vector3(100f, 12.6f, 11.5f), new Vector3(8f, 5f, 8f));
+            P("Probe_Library", new Vector3(107.5f, 12.6f, 15f), new Vector3(7f, 5f, 9f));
+            P("Probe_F2_Hall", new Vector3(88f, 19.6f, 16f), new Vector3(14f, 5f, 10f));
+            P("Probe_F2_Master", new Vector3(105f, 19.6f, 11.5f), new Vector3(8f, 5f, 8f));
+            P("Probe_F2_Guest", new Vector3(106f, 19.6f, 21.5f), new Vector3(8f, 5f, 8f));
+            P("Probe_F2_Servant", new Vector3(71.5f, 19.6f, 11f), new Vector3(8f, 5f, 8f));
+            P("Probe_F2_Child", new Vector3(70f, 19.6f, 22.5f), new Vector3(8f, 5f, 8f));
+            P("Probe_Cellar", CellarOrigin + new Vector3(-6f, -9f, -1f), new Vector3(10f, 4f, 14f));
+            P("Probe_RitualHall", new Vector3(58.7f, 2.4f, 8.5f), new Vector3(10f, 5f, 12f));
+            P("Probe_Yard",new Vector3(83f, 12.5f, -8f), new Vector3(40f, 8f, 20f));
+        }
+
         static void BakeReflectionProbes()
         {
+            AddHouseProbes();
             const string dir = "Assets/BlackwoodManor/Textures/Probes";
             BlackwoodDataBuilder.EnsureFolder(dir);
             var probes = Object.FindObjectsByType<ReflectionProbe>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
@@ -504,6 +536,9 @@ namespace Blackwood.EditorTools
                     var aura = new GameObject("LordAura").AddComponent<Light>();
                     aura.transform.SetParent(lord.transform, false); aura.transform.localPosition = new Vector3(0f, 1.6f, 0.6f);
                     aura.type = LightType.Point; aura.range = 4f; aura.intensity = 1.2f; aura.color = new Color(0.55f, 0.65f, 0.9f);
+                    lord.isStatic = false;
+                    foreach (var c in lord.GetComponentsInChildren<Transform>()) c.gameObject.isStatic = false;
+                    lord.AddComponent<Blackwood.Horror.GhostFloat>().Configure(aura); // lơ lửng nhấp nhô, hào quang phập phồng
                 }
             }
             Blackwood.Sequences.RitualSequence ritual = null;
@@ -571,7 +606,7 @@ namespace Blackwood.EditorTools
 
         static AudioClip Sfx(string n)
         {
-            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(BlackwoodAudioSynth.Dir + "/" + n + ".wav");
+            var clip = BlackwoodAudioSynth.Load(n);
             if (clip == null) log.Add("WARN missing audio " + n);
             return clip;
         }
@@ -597,6 +632,64 @@ namespace Blackwood.EditorTools
         }
 
         // =====================================================================
+        // =====================================================================
+        // Thu gọn map: chỉ giữ vùng quanh dinh thự (người chơi vốn bị chặn trong sân bởi Bound_*), ngoài vùng này là sương mù.
+        // Xóa vật thể của map gốc nằm hẳn ngoài vùng (đỡ lag) + tầng hầm cũ của MapKinhDi không còn dùng.
+        public static readonly Rect VisibleArea = Rect.MinMaxRect(-45f, -130f, 225f, 100f);
+        const float VisibleMargin = 30f;
+
+        static bool WorldBounds(Transform t, out Bounds b)
+        {
+            b = default; bool any = false;
+            foreach (var r in t.GetComponentsInChildren<Renderer>(true))
+            {
+                if (r is ParticleSystemRenderer) continue;
+                if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
+            }
+            if (any) return true;
+            foreach (var c in t.GetComponentsInChildren<Transform>(true))
+            {
+                if (!any) { b = new Bounds(c.position, Vector3.zero); any = true; } else b.Encapsulate(c.position);
+            }
+            return any;
+        }
+
+        static long Tris(GameObject g)
+        {
+            long n = 0;
+            foreach (var mf in g.GetComponentsInChildren<MeshFilter>(true)) if (mf.sharedMesh != null) n += mf.sharedMesh.triangles.Length / 3;
+            return n;
+        }
+
+        static void TrimPlayArea()
+        {
+            int removed = 0, lights = 0; long tris = 0;
+            void Kill(GameObject g) { tris += Tris(g); lights += g.GetComponentsInChildren<Light>(true).Length; removed++; Object.DestroyImmediate(g); }
+            // Tầng hầm cũ (dưới sân phía nam) của MapKinhDi: hầm của game nay nằm dưới Nhà Bếp, phần này không ai tới được
+            // (gốc "Door" KHÔNG thuộc tầng hầm: nó chứa 13 cánh cửa của dinh thự mà ConvertDoors dùng)
+            foreach (var n in new[] { "Map/MapDuoiLongDat", "FlickerLight_Hall1F", "FlickerLight_DayRoom", "FlickerLight_Hall2F", "FlickerLight_Basement" })
+            {
+                var g = GameObject.Find(n);
+                if (g != null) Kill(g);
+            }
+            var keep = Rect.MinMaxRect(VisibleArea.xMin - VisibleMargin, VisibleArea.yMin - VisibleMargin, VisibleArea.xMax + VisibleMargin, VisibleArea.yMax + VisibleMargin);
+            void Visit(Transform t)
+            {
+                foreach (var c in t.Cast<Transform>().ToArray())
+                {
+                    if (c == null || !WorldBounds(c, out var b)) continue;
+                    var r = Rect.MinMaxRect(b.min.x, b.min.z, b.max.x, b.max.z);
+                    bool inner = PrefabUtility.IsPartOfPrefabInstance(c) && !PrefabUtility.IsOutermostPrefabInstanceRoot(c.gameObject);
+                    if (!r.Overlaps(keep)) { if (!inner) Kill(c.gameObject); continue; }
+                    bool contained = keep.Contains(r.min) && keep.Contains(r.max);
+                    if (!contained && c.childCount > 0 && c.GetComponent<LODGroup>() == null && c.GetComponent<Renderer>() == null) Visit(c);
+                }
+            }
+            var map = GameObject.Find("Map");
+            if (map != null) Visit(map.transform);
+            log.Add($"Play area trimmed: removed {removed} objects ({tris / 1000}k tris, {lights} lights) outside x[{VisibleArea.xMin},{VisibleArea.xMax}] z[{VisibleArea.yMin},{VisibleArea.yMax}]");
+        }
+
         static void RemoveDemo()
         {
             foreach (var n in new[] { "Ghost" })
