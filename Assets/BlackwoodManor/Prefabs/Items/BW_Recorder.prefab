@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5684726734494375440}
+  - {fileID: 8704296357997347938}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &9195149001699998883
@@ -145,12 +145,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Blackwood.Items.RecorderItem
   itemData: {fileID: 11400000, guid: 485721bc0446d4d49b5f8e0ebaeba25c, type: 2}
   audioSource: {fileID: 0}
-  ledRenderer: {fileID: 7673782925759053670}
+  ledRenderer: {fileID: 6652145793871373588}
   ledOn: {r: 1.6, g: 0.1, b: 0.05, a: 1}
-  toggleClip: {fileID: 8300000, guid: 0a0c889bc7de9fd42852444efa7c2df8, type: 3}
+  toggleClip: {fileID: 8300000, guid: 4fc9aecb2227e1148822c8c86ad4411a, type: 3}
   evpLoop: {fileID: 8300000, guid: 91346ac140d2f5a4cbf8fd197b97a880, type: 3}
   staticLoop: {fileID: 8300000, guid: 7c88197def9e40f428d71193dee9ca91, type: 3}
---- !u!1001 &5291322355908966907
+--- !u!1001 &9169722564880491401
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -215,13 +215,13 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a43bded02985a9849b3b2f3c872aa2a1, type: 3}
---- !u!4 &5684726734494375440 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a43bded02985a9849b3b2f3c872aa2a1, type: 3}
-  m_PrefabInstance: {fileID: 5291322355908966907}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &7673782925759053670 stripped
+--- !u!23 &6652145793871373588 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2526604380662793885, guid: a43bded02985a9849b3b2f3c872aa2a1, type: 3}
-  m_PrefabInstance: {fileID: 5291322355908966907}
+  m_PrefabInstance: {fileID: 9169722564880491401}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8704296357997347938 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a43bded02985a9849b3b2f3c872aa2a1, type: 3}
+  m_PrefabInstance: {fileID: 9169722564880491401}
   m_PrefabAsset: {fileID: 0}

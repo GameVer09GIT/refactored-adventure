@@ -269,7 +269,7 @@ MonoBehaviour:
   voiceSource: {fileID: 5207961559803226612}
   keysLoop: {fileID: 8300000, guid: 91346ac140d2f5a4cbf8fd197b97a880, type: 3}
   mumbleLoop: {fileID: 8300000, guid: af2c2e845fdf447989e78a96d646951a, type: 3}
-  lullabyClip: {fileID: 8300000, guid: c2d2c2f1647abee43b661a782f74d22f, type: 3}
+  lullabyClip: {fileID: 8300000, guid: 94162514085a4464b91d96a0f86e280c, type: 3}
   screamClip: {fileID: 8300000, guid: 776443bfa4c9f8c4386eda8ab7660445, type: 3}
   whisperRunClip: {fileID: 8300000, guid: 78f2e70f4c98d9344b0aa2f4219747c2, type: 3}
   huntMusic: {fileID: 6829636746587371178}
