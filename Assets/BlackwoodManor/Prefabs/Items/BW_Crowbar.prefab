@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7220626603224595656}
+  - {fileID: 1559078228879298121}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &8947780827229809873
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Blackwood.Items.CrowbarItem
   itemData: {fileID: 11400000, guid: ef0f363928ba9dc4696237658b4428fe, type: 2}
   audioSource: {fileID: 0}
---- !u!1001 &7187297361818983203
+--- !u!1001 &1308379387641997730
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -218,8 +218,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a3409b724291b445a3c5313e411a327, type: 3}
---- !u!4 &7220626603224595656 stripped
+--- !u!4 &1559078228879298121 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4a3409b724291b445a3c5313e411a327, type: 3}
-  m_PrefabInstance: {fileID: 7187297361818983203}
+  m_PrefabInstance: {fileID: 1308379387641997730}
   m_PrefabAsset: {fileID: 0}

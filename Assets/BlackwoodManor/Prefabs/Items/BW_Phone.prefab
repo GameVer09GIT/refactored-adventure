@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8005694527010717725}
+  - {fileID: 849295218284740324}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &6821956912399687465
@@ -146,7 +146,7 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 736af6205ca26bc44b99e4b9654e2a52, type: 2}
   audioSource: {fileID: 0}
   flashClip: {fileID: 8300000, guid: a58d39e7e6cbfd048bd4ffdf8781e081, type: 3}
---- !u!1001 &7535447677090015222
+--- !u!1001 &883819320129476879
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -223,8 +223,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39aac16609bdab34b834f68b1e76e4e5, type: 3}
---- !u!4 &8005694527010717725 stripped
+--- !u!4 &849295218284740324 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 39aac16609bdab34b834f68b1e76e4e5, type: 3}
-  m_PrefabInstance: {fileID: 7535447677090015222}
+  m_PrefabInstance: {fileID: 883819320129476879}
   m_PrefabAsset: {fileID: 0}
